@@ -1,0 +1,476 @@
+/**
+ * LoopMosaic - CSS Grid Mosaic Layout
+ * Author: Abe Prangishvili
+ * Version: 1.0.0
+ */
+
+/* === Base Grid Container === */
+.loopmosaic-grid {
+    display: grid;
+    gap: var(--lm-gap, 15px);
+    width: 100%;
+}
+
+/* === Column Configurations === */
+.loopmosaic-grid.columns-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.loopmosaic-grid.columns-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.loopmosaic-grid.columns-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.loopmosaic-grid.columns-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+/* === Mosaic Card Base === */
+.loopmosaic-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--lm-border-radius, 8px);
+    min-height: var(--lm-min-height, 200px);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* === Pattern 1: Classic Mosaic (Based on Screenshot) === */
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+1) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+2) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+3) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+4) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+5) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+6) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+7) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+8) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+9) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+10) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+11) {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+12) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+13) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 2: Metro Style === */
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+1) {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+2),
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+3) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+4) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+5),
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+6) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 3: Masonry Alternating === */
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+1) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+2) {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+3),
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+4),
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+5) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 4: Highlight First === */
+.loopmosaic-grid.pattern-highlight .loopmosaic-item:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-highlight .loopmosaic-item:not(:first-child) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 5: Uniform Grid === */
+.loopmosaic-grid.pattern-uniform .loopmosaic-item {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Card Content Styling === */
+.loopmosaic-item__inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: var(--lm-v-align, flex-end);
+    align-items: var(--lm-h-align, flex-start);
+    text-align: var(--lm-text-align, left);
+    padding: var(--lm-padding, 20px);
+    background: var(--lm-overlay-gradient, linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 60%));
+    transition: background 0.3s ease;
+}
+
+.loopmosaic-item__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.loopmosaic-item:hover .loopmosaic-item__image {
+    transform: scale(1.08);
+}
+
+/* === Card Content Elements === */
+.loopmosaic-item__title {
+    margin: 0 0 8px;
+    font-size: var(--lm-title-size, 18px);
+    font-weight: 600;
+    color: var(--lm-title-color, #ffffff);
+    line-height: 1.3;
+}
+
+.loopmosaic-item__excerpt {
+    margin: 0;
+    font-size: var(--lm-excerpt-size, 14px);
+    color: var(--lm-excerpt-color, rgba(255, 255, 255, 0.85));
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.loopmosaic-item__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    font-size: var(--lm-meta-size, 12px);
+    color: var(--lm-meta-color, rgba(255, 255, 255, 0.7));
+}
+
+.loopmosaic-item__category {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--lm-category-bg, rgba(255, 255, 255, 0.2));
+    border-radius: 4px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--lm-category-color, #ffffff);
+    backdrop-filter: blur(4px);
+}
+
+/* === Color Overlays (Based on Screenshot) === */
+.loopmosaic-item.overlay-purple .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.85) 0%, rgba(75, 0, 130, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-teal .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(0, 128, 128, 0.85) 0%, rgba(32, 178, 170, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-gold .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(218, 165, 32, 0.85) 0%, rgba(184, 134, 11, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-coral .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(255, 127, 80, 0.85) 0%, rgba(205, 92, 92, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-cyan .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(0, 206, 209, 0.85) 0%, rgba(64, 224, 208, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-green .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(60, 179, 113, 0.85) 0%, rgba(46, 139, 87, 0.9) 100%);
+}
+
+/* === Link Styling === */
+.loopmosaic-item__link {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    text-decoration: none;
+}
+
+/* === Hover Effects === */
+.loopmosaic-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.loopmosaic-item:hover .loopmosaic-item__inner {
+    background: var(--lm-overlay-hover, linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.1) 70%));
+}
+
+/* === JetEngine Listing Template Support === */
+.loopmosaic-item .jet-listing-grid__item {
+    position: static;
+}
+
+.loopmosaic-item .jet-listing-dynamic-link {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+}
+
+/* === JetSmartFilters Loading State === */
+.loopmosaic-grid.jet-filters-loading {
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.loopmosaic-grid.jet-filters-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--lm-loader-color, #6366f1);
+    border-radius: 50%;
+    animation: loopmosaic-spin 0.8s linear infinite;
+}
+
+@keyframes loopmosaic-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* === Responsive Design === */
+@media screen and (max-width: 1024px) {
+    .loopmosaic-grid.columns-6 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .loopmosaic-grid.columns-5 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .loopmosaic-grid.columns-6,
+    .loopmosaic-grid.columns-5,
+    .loopmosaic-grid.columns-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .loopmosaic-grid.pattern-classic .loopmosaic-item,
+    .loopmosaic-grid.pattern-metro .loopmosaic-item,
+    .loopmosaic-grid.pattern-masonry .loopmosaic-item {
+        grid-column: span 1 !important;
+        grid-row: span 1 !important;
+    }
+
+    .loopmosaic-grid.pattern-highlight .loopmosaic-item:first-child {
+        grid-column: span 2 !important;
+        grid-row: span 1 !important;
+    }
+
+    .loopmosaic-item {
+        min-height: 180px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .loopmosaic-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .loopmosaic-item {
+        min-height: 150px;
+    }
+
+    .loopmosaic-item__title {
+        font-size: 14px;
+    }
+
+    .loopmosaic-item__excerpt {
+        display: none;
+    }
+}
+
+/* === Editor Preview Styles === */
+.elementor-editor-active .loopmosaic-grid {
+    min-height: 300px;
+}
+
+.elementor-editor-active .loopmosaic-item {
+    cursor: pointer;
+}
+
+/* === No Posts Message === */
+.loopmosaic-no-posts {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+/* === Image Height Modes === */
+.loopmosaic-grid.img-mode-fill .loopmosaic-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.loopmosaic-grid.img-mode-auto .loopmosaic-item__image {
+    position: relative;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.loopmosaic-grid.img-mode-auto .loopmosaic-item {
+    min-height: auto;
+}
+
+.loopmosaic-grid.img-mode-auto .loopmosaic-item__inner {
+    position: relative;
+    background: var(--lm-overlay-gradient, linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 60%));
+}
+
+.loopmosaic-grid.img-mode-fixed .loopmosaic-item__image {
+    position: relative;
+    width: 100%;
+}
+
+/* === Elementor Loop Template Support === */
+.loopmosaic-item .elementor-loop-container,
+.loopmosaic-item .e-loop-item,
+.loopmosaic-item .elementor-widget-container {
+    height: 100%;
+}
+
+.loopmosaic-item .elementor-section,
+.loopmosaic-item .elementor-container,
+.loopmosaic-item .e-con {
+    height: 100%;
+}
+
+.loopmosaic-item .elementor-section-wrap {
+    height: 100%;
+}
+
+/* Template content stretching */
+.loopmosaic-item>.elementor {
+    height: 100%;
+}
+
+.loopmosaic-item>.elementor>.elementor-inner {
+    height: 100%;
+}
+
+/* Template Placeholder */
+.loopmosaic-template-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 200px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    color: #6c757d;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+}
+
+/* === Elementor Container/Flex support === */
+.loopmosaic-item .e-con {
+    height: 100%;
+    min-height: inherit;
+}
+
+.loopmosaic-item .e-con-inner {
+    height: 100%;
+}
+
+/* Dynamic image in template */
+.loopmosaic-item .elementor-widget-image img,
+.loopmosaic-item .jet-listing-dynamic-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}

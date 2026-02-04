@@ -1,0 +1,184 @@
+/**
+ * LoopMosaic - Built-in Modal Styles
+ */
+
+/* Modal Overlay */
+.loopmosaic-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.loopmosaic-modal-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Container */
+.loopmosaic-modal-container {
+    position: relative;
+    background-color: #fff;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.loopmosaic-modal-overlay.is-active .loopmosaic-modal-container {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Close Button */
+.loopmosaic-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    z-index: 10;
+}
+
+.loopmosaic-modal-close:hover {
+    background-color: #e0e0e0;
+}
+
+.loopmosaic-modal-close svg {
+    width: 14px;
+    height: 14px;
+    color: #333;
+}
+
+/* Content */
+.loopmosaic-modal-content {
+    padding: 0;
+}
+
+.loopmosaic-modal-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 20px 20px 0 0;
+    display: block;
+}
+
+.loopmosaic-modal-body {
+    padding: 40px;
+}
+
+.loopmosaic-modal-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+.loopmosaic-elementor-content {
+    width: 100%;
+}
+
+.loopmosaic-modal-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.loopmosaic-modal-text p {
+    margin-bottom: 1em;
+}
+
+/* Gallery - Simple Grid */
+.loopmosaic-modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.loopmosaic-modal-gallery img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: zoom-in;
+    transition: transform 0.2s;
+}
+
+.loopmosaic-modal-gallery img:hover {
+    transform: scale(1.05);
+}
+
+/* Loading State */
+.loopmosaic-modal-loader {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.loopmosaic-modal-overlay.is-loading .loopmosaic-modal-loader {
+    display: block;
+}
+
+.loopmosaic-modal-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+    .loopmosaic-modal-container {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .loopmosaic-modal-image {
+        height: 250px;
+    }
+
+    .loopmosaic-modal-body {
+        padding: 25px;
+    }
+
+    .loopmosaic-modal-title {
+        font-size: 22px;
+    }
+}
