@@ -601,6 +601,211 @@ class Mosaic_Loop_Widget extends Widget_Base {
 
         $this->end_controls_section();
 
+        // Modal Style Section
+        $this->start_controls_section(
+            'section_modal_style',
+            [
+                'label'     => esc_html__( 'Modal Style', 'loop-mosaic' ),
+                'tab'       => Controls_Manager::TAB_STYLE,
+                'condition' => [
+                    'click_action' => 'modal',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_width',
+            [
+                'label'      => esc_html__( 'Modal Width', 'loop-mosaic' ),
+                'type'       => Controls_Manager::SLIDER,
+                'size_units' => [ 'px', '%', 'vw' ],
+                'range'      => [
+                    'px' => [
+                        'min' => 200,
+                        'max' => 1600,
+                    ],
+                    '%' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                    'vw' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                ],
+                'default'    => [
+                    'size' => 90,
+                    'unit' => '%',
+                ],
+                'selectors'  => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-container, #loopmosaic-modal .loopmosaic-modal-container' => 'width: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_max_width',
+            [
+                'label'      => esc_html__( 'Modal Max Width', 'loop-mosaic' ),
+                'type'       => Controls_Manager::SLIDER,
+                'size_units' => [ 'px', '%', 'vw' ],
+                'range'      => [
+                    'px' => [
+                        'min' => 200,
+                        'max' => 1920,
+                    ],
+                    '%' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                    'vw' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                ],
+                'default'    => [
+                    'size' => 900,
+                    'unit' => 'px',
+                ],
+                'selectors'  => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-container, #loopmosaic-modal .loopmosaic-modal-container' => 'max-width: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_height',
+            [
+                'label'      => esc_html__( 'Modal Height', 'loop-mosaic' ),
+                'type'       => Controls_Manager::SLIDER,
+                'size_units' => [ 'px', '%', 'vh' ],
+                'range'      => [
+                    'px' => [
+                        'min' => 200,
+                        'max' => 1200,
+                    ],
+                    '%' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                    'vh' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                ],
+                'default'    => [
+                    'size' => 'auto',
+                    'unit' => 'px',
+                ],
+                'selectors'  => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-container, #loopmosaic-modal .loopmosaic-modal-container' => 'height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_max_height',
+            [
+                'label'      => esc_html__( 'Modal Max Height', 'loop-mosaic' ),
+                'type'       => Controls_Manager::SLIDER,
+                'size_units' => [ 'px', '%', 'vh' ],
+                'range'      => [
+                    'px' => [
+                        'min' => 200,
+                        'max' => 1200,
+                    ],
+                    '%' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                    'vh' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                ],
+                'default'    => [
+                    'size' => 90,
+                    'unit' => 'vh',
+                ],
+                'selectors'  => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-container, #loopmosaic-modal .loopmosaic-modal-container' => 'max-height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_padding',
+            [
+                'label'      => esc_html__( 'Modal Padding', 'loop-mosaic' ),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', 'em', '%' ],
+                'default'    => [
+                    'top'    => 30,
+                    'right'  => 30,
+                    'bottom' => 30,
+                    'left'   => 30,
+                    'unit'   => 'px',
+                ],
+                'selectors'  => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-content, #loopmosaic-modal .loopmosaic-modal-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_border_radius',
+            [
+                'label'      => esc_html__( 'Border Radius', 'loop-mosaic' ),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%' ],
+                'default'    => [
+                    'top'    => 12,
+                    'right'  => 12,
+                    'bottom' => 12,
+                    'left'   => 12,
+                    'unit'   => 'px',
+                ],
+                'selectors'  => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-container, #loopmosaic-modal .loopmosaic-modal-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'modal_background_color',
+            [
+                'label'     => esc_html__( 'Background Color', 'loop-mosaic' ),
+                'type'      => Controls_Manager::COLOR,
+                'default'   => '#ffffff',
+                'selectors' => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-container, #loopmosaic-modal .loopmosaic-modal-container' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'modal_overlay_color',
+            [
+                'label'     => esc_html__( 'Overlay Color', 'loop-mosaic' ),
+                'type'      => Controls_Manager::COLOR,
+                'default'   => 'rgba(0,0,0,0.7)',
+                'selectors' => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal.loopmosaic-modal-overlay, #loopmosaic-modal.loopmosaic-modal-overlay' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Box_Shadow::get_type(),
+            [
+                'name'     => 'modal_box_shadow',
+                'label'    => esc_html__( 'Box Shadow', 'loop-mosaic' ),
+                'selector' => '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-container, #loopmosaic-modal .loopmosaic-modal-container',
+            ]
+        );
+
+        $this->end_controls_section();
+
         // === STYLE TAB ===
 
         // Card Styling Section
