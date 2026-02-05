@@ -1,12 +1,12 @@
 /**
- * LoopMosaic - JetSmartFilters Integration
+ * LoopMosaic - JetSmartFilters Integration (Vanilla JS)
  * 
  * @package LoopMosaic
  * @author Abe Prangishvili
- * @version 1.0.0
+ * @version 1.2.2
  */
 
-(function ($) {
+(function () {
     'use strict';
 
     // LoopMosaic Filter Handler
@@ -29,12 +29,12 @@
          * Disable native links for popups to prevent navigation
          */
         disableNativeLinks: function () {
-            // Modal Triggers
-            $('.loopmosaic-modal-trigger').each(function () {
-                var $link = $(this);
-                if ($link.attr('href') && $link.attr('href') !== '#' && $link.attr('href').indexOf('javascript') === -1) {
-                    $link.attr('data-href', $link.attr('href'));
-                    $link.attr('href', 'javascript:void(0);');
+            const triggers = document.querySelectorAll('.loopmosaic-modal-trigger');
+            triggers.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href !== '#' && href.indexOf('javascript') === -1) {
+                    link.setAttribute('data-href', href);
+                    link.setAttribute('href', 'javascript:void(0);');
                 }
             });
         },
@@ -46,8 +46,8 @@
             const self = this;
 
             // Create Modal HTML if not exists
-            if ($('#loopmosaic-modal').length === 0) {
-                $('body').append(`
+            if (!document.getElementById('loopmosaic-modal')) {
+                const modalHTML = `
                     <div id="loopmosaic-modal" class="loopmosaic-modal-overlay">
                         <div class="loopmosaic-modal-loader">
                             <div class="loopmosaic-modal-spinner"></div>
@@ -61,113 +61,130 @@
                             </div>
                         </div>
                     </div>
-                `);
+                `;
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
             }
 
-            const $modal = $('#loopmosaic-modal');
-            const $container = $modal.find('.loopmosaic-modal-container');
-            const $content = $modal.find('.loopmosaic-modal-content');
+            const modal = document.getElementById('loopmosaic-modal');
+            const container = modal.querySelector('.loopmosaic-modal-container');
+            const content = modal.querySelector('.loopmosaic-modal-content');
+            const closeBtn = modal.querySelector('.loopmosaic-modal-close');
 
             // Close events
-            $modal.find('.loopmosaic-modal-close').on('click', function () {
+            closeBtn.addEventListener('click', function () {
                 self.closeModal();
             });
 
-            $modal.on('click', function (e) {
-                if ($(e.target).hasClass('loopmosaic-modal-overlay')) {
+            modal.addEventListener('click', function (e) {
+                if (e.target.classList.contains('loopmosaic-modal-overlay')) {
                     self.closeModal();
                 }
             });
 
-            $(document).on('keydown', function (e) {
-                if (e.key === 'Escape' && $modal.hasClass('is-active')) {
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('is-active')) {
                     self.closeModal();
                 }
             });
 
-            // Trigger Event
-            $(document).on('click', '.loopmosaic-modal-trigger', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
+            // Trigger Event Delegation
+            document.addEventListener('click', function (e) {
+                const target = e.target.closest('.loopmosaic-modal-trigger');
+                if (target) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                const $target = $(this);
-                const postId = $target.data('post-id');
-                const templateId = $target.data('modal-template-id');
-                const autoTemplate = $target.data('auto-template');
+                    const postId = target.getAttribute('data-post-id');
+                    const templateId = target.getAttribute('data-modal-template-id');
+                    const autoTemplate = target.getAttribute('data-auto-template');
 
-                if (!postId) return;
+                    if (!postId) return;
 
-                // Open Modal & Show Loader
-                $modal.addClass('is-active is-loading');
-                $container.css({ opacity: 0, transform: 'translateY(20px)' }); // Reset container state
-                $content.empty(); // Clear old content
-                $('html, body').css('overflow', 'hidden'); // Prevent scrolling
+                    // Open Modal & Show Loader
+                    modal.classList.add('is-active', 'is-loading');
+                    container.style.opacity = '0';
+                    container.style.transform = 'translateY(20px)';
+                    content.innerHTML = ''; // Clear old content
+                    document.documentElement.style.overflow = 'hidden';
+                    document.body.style.overflow = 'hidden';
 
-                // Fetch Content
-                $.ajax({
-                    url: loopMosaicConfig.ajaxUrl,
-                    type: 'POST',
-                    data: {
-                        action: 'loopmosaic_get_modal_content',
-                        nonce: loopMosaicConfig.nonce,
-                        post_id: postId,
-                        template_id: templateId,
-                        auto_template: autoTemplate
-                    },
-                    success: function (response) {
-                        $modal.removeClass('is-loading');
+                    // Prepare FormData
+                    const formData = new FormData();
+                    formData.append('action', 'loopmosaic_get_modal_content');
+                    formData.append('nonce', loopMosaicConfig.nonce);
+                    formData.append('post_id', postId);
+                    if (templateId) formData.append('template_id', templateId);
+                    if (autoTemplate) formData.append('auto_template', autoTemplate);
 
-                        if (response.success && response.data.content) {
-                            $content.html(response.data.content);
+                    // Fetch Content
+                    fetch(loopMosaicConfig.ajaxUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(response => {
+                            modal.classList.remove('is-loading');
 
-                            // Re-init Elementor Frontend
-                            if (window.elementorFrontend) {
-                                // Trigger standard elementor init
-                                window.elementorFrontend.init();
+                            if (response.success && response.data.content) {
+                                content.innerHTML = response.data.content;
 
-                                // Manually trigger widget handlers for the new content
-                                $content.find('[data-element_type]').each(function () {
-                                    var $element = $(this);
-                                    var elementType = $element.data('element_type');
+                                // Re-init Elementor Frontend
+                                if (window.elementorFrontend) {
+                                    // Trigger standard elementor init
+                                    window.elementorFrontend.init();
 
-                                    if ('widget' === elementType) {
-                                        elementType = $element.data('widget_type');
-                                        window.elementorFrontend.hooks.doAction('frontend/element_ready/' + elementType, $element);
-                                    }
-                                });
+                                    // Manually trigger widget handlers
+                                    const elements = content.querySelectorAll('[data-element_type]');
+                                    elements.forEach(element => {
+                                        let elementType = element.getAttribute('data-element_type');
+                                        if ('widget' === elementType) {
+                                            elementType = element.getAttribute('data-widget_type');
+                                            // Use jQuery bridge for Elementor hooks as they are jQuery based
+                                            if (window.jQuery) {
+                                                window.elementorFrontend.hooks.doAction('frontend/element_ready/' + elementType, window.jQuery(element));
+                                            }
+                                        }
+                                    });
 
-                                // Specific fix for Swiper/Gallery
+                                    // Specific fix for Swiper/Gallery
+                                    setTimeout(function () {
+                                        window.dispatchEvent(new Event('resize'));
+                                    }, 200);
+                                }
+
+                                // Animate container in
                                 setTimeout(function () {
-                                    $(window).trigger('resize'); // Force recalculation
-                                }, 200);
+                                    container.style.opacity = '1';
+                                    container.style.transform = 'translateY(0)';
+                                }, 50);
+                            } else {
+                                content.innerHTML = '<div class="loopmosaic-modal-body"><p>Error loading content.</p></div>';
+                                container.style.opacity = '1';
+                                container.style.transform = 'translateY(0)';
                             }
-
-                            // Animate container in
-                            setTimeout(function () {
-                                $container.css({ opacity: 1, transform: 'translateY(0)' });
-                            }, 50);
-                        } else {
-                            $content.html('<div class="loopmosaic-modal-body"><p>Error loading content.</p></div>');
-                            $container.css({ opacity: 1, transform: 'translateY(0)' });
-                        }
-                    },
-                    error: function () {
-                        $modal.removeClass('is-loading');
-                        $content.html('<div class="loopmosaic-modal-body"><p>Connection error.</p></div>');
-                        $container.css({ opacity: 1, transform: 'translateY(0)' });
-                    }
-                });
+                        })
+                        .catch(() => {
+                            modal.classList.remove('is-loading');
+                            content.innerHTML = '<div class="loopmosaic-modal-body"><p>Connection error.</p></div>';
+                            container.style.opacity = '1';
+                            container.style.transform = 'translateY(0)';
+                        });
+                }
             });
         },
 
         closeModal: function () {
-            const $modal = $('#loopmosaic-modal');
-            $modal.removeClass('is-active');
-            setTimeout(function () {
-                $modal.removeClass('is-loading');
-                $modal.find('.loopmosaic-modal-content').empty();
-            }, 300);
-            $('html, body').css('overflow', '');
+            const modal = document.getElementById('loopmosaic-modal');
+            if (modal) {
+                modal.classList.remove('is-active');
+                setTimeout(function () {
+                    modal.classList.remove('is-loading');
+                    const content = modal.querySelector('.loopmosaic-modal-content');
+                    if (content) content.innerHTML = '';
+                }, 300);
+                document.documentElement.style.overflow = '';
+                document.body.style.overflow = '';
+            }
         },
 
         /**
@@ -175,14 +192,25 @@
          */
         storeGridSettings: function () {
             const self = this;
+            const grids = document.querySelectorAll('.loopmosaic-grid[data-provider="loopmosaic"]');
 
-            $('.loopmosaic-grid[data-provider="loopmosaic"]').each(function () {
-                const $grid = $(this);
-                const queryId = $grid.data('query-id') || 'default';
+            grids.forEach(grid => {
+                const queryId = grid.getAttribute('data-query-id') || 'default';
+                // Dataset access creates a DOMStringMap, need to parse if it's JSON in DOM
+                // But typically data-settings is a string attribute
+                let settings = {};
+                try {
+                    const settingsAttr = grid.getAttribute('data-settings');
+                    if (settingsAttr) {
+                        settings = JSON.parse(settingsAttr);
+                    }
+                } catch (e) {
+                    console.error('LoopMosaic: Error parsing grid settings', e);
+                }
 
                 self.grids[queryId] = {
-                    $grid: $grid,
-                    settings: $grid.data('settings') || {}
+                    element: grid,
+                    settings: settings
                 };
             });
         },
@@ -193,38 +221,52 @@
         bindEvents: function () {
             const self = this;
 
-            // Listen for JetSmartFilters events
-            $(document).on('jet-smart-filters/inited', this.onFiltersInit.bind(this));
-            $(document).on('jet-filter-content-rendered', this.onContentRendered.bind(this));
+            // Use jQuery for external integrations if available
+            if (window.jQuery) {
+                const $ = window.jQuery;
 
-            // JetSmartFilters AJAX events
-            $(document).on('jet-smart-filters/before-filter', function (event, $provider, filterGroup, data) {
-                if (data.provider === 'loopmosaic') {
-                    self.beforeFilter(data);
-                }
-            });
+                // Listen for JetSmartFilters events
+                $(document).on('jet-smart-filters/inited', function (e, filterGroup) {
+                    self.onFiltersInit();
+                });
 
-            $(document).on('jet-smart-filters/ajax-content-rendered', function (event, data) {
-                if (data.provider === 'loopmosaic') {
-                    self.afterFilter(data);
-                }
-            });
+                $(document).on('jet-filter-content-rendered', function (e, provider, queryId, response) {
+                    self.onContentRendered(provider, queryId, response);
+                });
 
-            // Custom AJAX filter event
-            $(document).on('loopmosaic:filter', this.handleFilter.bind(this));
+                // JetSmartFilters AJAX events
+                $(document).on('jet-smart-filters/before-filter', function (event, $provider, filterGroup, data) {
+                    if (data.provider === 'loopmosaic') {
+                        self.beforeFilter(data);
+                    }
+                });
 
-            // Pagination event
-            $(document).on('jet-smart-filters/pagination-applied', function (event, data) {
-                if (data.provider === 'loopmosaic') {
-                    self.handlePagination(data);
-                }
-            });
+                $(document).on('jet-smart-filters/ajax-content-rendered', function (event, data) {
+                    if (data.provider === 'loopmosaic') {
+                        self.afterFilter(data);
+                    }
+                });
+
+                // Pagination event
+                $(document).on('jet-smart-filters/pagination-applied', function (event, data) {
+                    if (data.provider === 'loopmosaic') {
+                        self.handlePagination(data);
+                    }
+                });
+
+                // Custom AJAX filter event (support both jQuery and Native if needed, keeping jQuery for bridge)
+                $(document).on('loopmosaic:filter', function (e, data) {
+                    self.handleFilter(null, data);
+                });
+            }
         },
 
         /**
          * Initialize JetSmartFilters integration
          */
         initJetSmartFilters: function () {
+            // Check if JetSmartFilters global exists
+            // Since this variable is likely defined by JSF plugin, we access it globally
             if (typeof window.JetSmartFilters === 'undefined') {
                 return;
             }
@@ -249,22 +291,22 @@
             }
 
             // Mark grids as filter targets
-            $('.loopmosaic-grid[data-provider="loopmosaic"]').each(function () {
-                const $grid = $(this);
-                const queryId = $grid.data('query-id') || 'default';
-
-                $grid.attr('data-jet-filter-visible', 'true');
-                $grid.attr('data-jet-filter', queryId);
+            const grids = document.querySelectorAll('.loopmosaic-grid[data-provider="loopmosaic"]');
+            grids.forEach(grid => {
+                const queryId = grid.getAttribute('data-query-id') || 'default';
+                grid.setAttribute('data-jet-filter-visible', 'true');
+                grid.setAttribute('data-jet-filter', queryId);
             });
         },
 
         /**
          * On filters initialized
          */
-        onFiltersInit: function (event, filterGroup) {
+        onFiltersInit: function () {
             // Mark all LoopMosaic grids as initialized
-            $('.loopmosaic-grid[data-provider="loopmosaic"]').each(function () {
-                $(this).addClass('jsf-initialized');
+            const grids = document.querySelectorAll('.loopmosaic-grid[data-provider="loopmosaic"]');
+            grids.forEach(grid => {
+                grid.classList.add('jsf-initialized');
             });
             this.disableNativeLinks();
         },
@@ -274,10 +316,10 @@
          */
         beforeFilter: function (data) {
             const queryId = data.queryId || 'default';
-            const $grid = this.getGrid(queryId);
+            const grid = this.getGrid(queryId);
 
-            if ($grid.length) {
-                $grid.addClass('jet-filters-loading');
+            if (grid) {
+                grid.classList.add('jet-filters-loading');
             }
         },
 
@@ -286,38 +328,41 @@
          */
         afterFilter: function (data) {
             const queryId = data.queryId || 'default';
-            const $grid = this.getGrid(queryId);
+            const grid = this.getGrid(queryId);
 
-            if ($grid.length) {
-                $grid.removeClass('jet-filters-loading');
-                this.animateItems($grid);
+            if (grid) {
+                grid.classList.remove('jet-filters-loading');
+                this.animateItems(grid);
             }
         },
 
         /**
          * On content rendered after filter
          */
-        onContentRendered: function (event, provider, queryId, response) {
+        onContentRendered: function (provider, queryId, response) {
             if (provider !== 'loopmosaic') {
                 return;
             }
 
-            const $grid = this.getGrid(queryId);
+            const grid = this.getGrid(queryId);
 
-            if (!$grid.length) {
+            if (!grid) {
                 return;
             }
 
             // Remove loading state
-            $grid.removeClass('jet-filters-loading');
+            grid.classList.remove('jet-filters-loading');
 
             // Update content if provided
+            // JetSmartFilters often provides the HTML content in response
+            // The structure of 'response' depends on the plugin logic
+            // Assuming response contains 'content' property as per previous code
             if (response && response.content) {
-                $grid.html(response.content);
+                grid.innerHTML = response.content;
             }
 
             // Trigger animation
-            this.animateItems($grid);
+            this.animateItems(grid);
             this.disableNativeLinks();
         },
 
@@ -326,14 +371,14 @@
          */
         applyFiltersAjax: function (queryId, filters, pagination) {
             const self = this;
-            const $grid = this.getGrid(queryId);
+            const grid = this.getGrid(queryId);
 
-            if (!$grid.length) {
+            if (!grid) {
                 return;
             }
 
             // Add loading state
-            $grid.addClass('jet-filters-loading');
+            grid.classList.add('jet-filters-loading');
 
             // Get widget settings
             const settings = this.grids[queryId] ? this.grids[queryId].settings : {};
@@ -343,44 +388,77 @@
             const ajaxUrl = (typeof loopMosaicJSF !== 'undefined' && loopMosaicJSF.ajaxUrl) ? loopMosaicJSF.ajaxUrl : loopMosaicConfig.ajaxUrl;
             const nonce = (typeof loopMosaicJSF !== 'undefined' && loopMosaicJSF.nonce) ? loopMosaicJSF.nonce : loopMosaicConfig.nonce;
 
-            // AJAX request
-            $.ajax({
-                url: ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'loopmosaic_jsf_filter',
-                    nonce: nonce,
-                    query_id: queryId,
-                    page: page,
-                    settings: JSON.stringify(settings),
-                    filters: filters
-                },
-                success: function (response) {
+            const formData = new FormData();
+            formData.append('action', 'loopmosaic_jsf_filter');
+            formData.append('nonce', nonce);
+            formData.append('query_id', queryId);
+            formData.append('page', page);
+            formData.append('settings', JSON.stringify(settings));
+            // filters is typically an object, needs serialization if array/obj or individual appending
+            // JSF usually expects 'filters' as key
+            // We need to check how JSF sends it. Usually it's handled by PHP correctly if POSTed.
+            // But complex objects in FormData can be tricky.
+            // Let's iterate and append or stringify depending on expectations.
+            // Previous code used `filters: filters` in jQuery ajax data object.
+            // jQuery serializes objects recursively.
+            // We will do a simple recursive append for FormData helper
+            this.appendFormData(formData, 'filters', filters);
+
+            fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(response => {
                     if (response.success && response.data) {
                         // Update content
                         if (response.data.content) {
-                            $grid.html(response.data.content);
+                            grid.innerHTML = response.data.content;
                         }
 
-                        // Trigger events
-                        $(document).trigger('jet-filter-content-rendered', ['loopmosaic', queryId, response.data]);
+                        // Trigger events (jQuery for JSF compatibility)
+                        if (window.jQuery) {
+                            window.jQuery(document).trigger('jet-filter-content-rendered', ['loopmosaic', queryId, response.data]);
+                        }
 
                         // Update pagination info
                         if (response.data.max_pages) {
-                            $grid.data('max-pages', response.data.max_pages);
-                            $grid.data('found-posts', response.data.found_posts);
+                            grid.setAttribute('data-max-pages', response.data.max_pages);
+                            grid.setAttribute('data-found-posts', response.data.found_posts);
                         }
                     }
 
-                    $grid.removeClass('jet-filters-loading');
-                    self.animateItems($grid);
+                    grid.classList.remove('jet-filters-loading');
+                    self.animateItems(grid);
                     self.disableNativeLinks();
-                },
-                error: function (xhr, status, error) {
-                    $grid.removeClass('jet-filters-loading');
+                })
+                .catch(error => {
+                    grid.classList.remove('jet-filters-loading');
                     console.error('LoopMosaic: Filter request failed', error);
+                });
+        },
+
+        /**
+         * Helper to append object to FormData
+         */
+        appendFormData: function (formData, key, data) {
+            if (data === null || data === undefined) return;
+            if (typeof data === 'object' && !(data instanceof File) && !(data instanceof Blob)) {
+                if (Array.isArray(data)) {
+                    // PHP expects array as key[]
+                    data.forEach((value, index) => {
+                        this.appendFormData(formData, `${key}[${index}]`, value);
+                    });
+                } else {
+                    for (const prop in data) {
+                        if (data.hasOwnProperty(prop)) {
+                            this.appendFormData(formData, `${key}[${prop}]`, data[prop]);
+                        }
+                    }
                 }
-            });
+            } else {
+                formData.append(key, data);
+            }
         },
 
         /**
@@ -415,36 +493,33 @@
          * Get grid element by query ID
          */
         getGrid: function (queryId) {
-            // First try stored grid
-            if (this.grids[queryId] && this.grids[queryId].$grid) {
-                return this.grids[queryId].$grid;
+            // First try stored grid (but return DOM element)
+            if (this.grids[queryId] && this.grids[queryId].element) {
+                return this.grids[queryId].element;
             }
 
             // Otherwise find by data attribute
-            return $('.loopmosaic-grid[data-query-id="' + queryId + '"]');
+            return document.querySelector('.loopmosaic-grid[data-query-id="' + queryId + '"]');
         },
 
         /**
          * Animate items after content load
          */
-        animateItems: function ($grid) {
-            const $items = $grid.find('.loopmosaic-item');
+        animateItems: function (grid) {
+            const items = grid.querySelectorAll('.loopmosaic-item');
 
-            $items.each(function (index) {
-                const $item = $(this);
-
+            items.forEach((item, index) => {
                 // Reset and animate
-                $item.css({
-                    'opacity': '0',
-                    'transform': 'translateY(20px)'
-                });
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+
+                // Force reflow
+                void item.offsetWidth;
 
                 setTimeout(function () {
-                    $item.css({
-                        'transition': 'opacity 0.4s ease, transform 0.4s ease',
-                        'opacity': '1',
-                        'transform': 'translateY(0)'
-                    });
+                    item.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
                 }, index * 50);
             });
         },
@@ -453,11 +528,17 @@
          * Refresh grid layout
          */
         refreshLayout: function (queryId) {
-            const $grid = queryId ? this.getGrid(queryId) : $('.loopmosaic-grid');
+            let grids = [];
+            if (queryId) {
+                const g = this.getGrid(queryId);
+                if (g) grids.push(g);
+            } else {
+                grids = document.querySelectorAll('.loopmosaic-grid');
+            }
 
             // Trigger reflow
-            $grid.each(function () {
-                this.offsetHeight;
+            grids.forEach(grid => {
+                void grid.offsetHeight;
             });
         },
 
@@ -466,48 +547,47 @@
          */
         initInfiniteScroll: function () {
             const self = this;
-            const $grids = $('.loopmosaic-grid[data-infinite-scroll="true"]');
+            const grids = document.querySelectorAll('.loopmosaic-grid[data-infinite-scroll="true"]');
 
-            if (!$grids.length) return;
+            if (!grids.length) return;
 
             // Throttled Scroll Event
             let ticking = false;
-            $(window).on('scroll', function () {
+            window.addEventListener('scroll', function () {
                 if (!ticking) {
                     window.requestAnimationFrame(function () {
-                        self.handleScroll($grids);
+                        self.handleScroll(grids);
                         ticking = false;
                     });
                     ticking = true;
                 }
-            });
+            }, { passive: true });
 
             // Initial check in case content is short
-            self.handleScroll($grids);
+            self.handleScroll(grids);
         },
 
         /**
          * Handle Scroll for Infinite Grids
          */
-        handleScroll: function ($grids) {
+        handleScroll: function (grids) {
             const self = this;
-            const windowHeight = $(window).height();
-            const scrollTop = $(window).scrollTop();
+            const windowHeight = window.innerHeight;
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
             const buffer = 300; // Load when within 300px of bottom
 
-            $grids.each(function () {
-                const $grid = $(this);
-
+            grids.forEach(grid => {
                 // Skip if loading or finished
-                if ($grid.hasClass('is-loading-more') || $grid.hasClass('is-finished')) return;
+                if (grid.classList.contains('is-loading-more') || grid.classList.contains('is-finished')) return;
 
-                const gridOffset = $grid.offset().top;
-                const gridHeight = $grid.outerHeight();
+                const rect = grid.getBoundingClientRect();
+                const gridOffset = rect.top + scrollTop;
+                const gridHeight = grid.offsetHeight;
                 const gridBottom = gridOffset + gridHeight;
                 const scrollBottom = scrollTop + windowHeight;
 
                 if (scrollBottom > gridBottom - buffer) {
-                    self.loadMorePosts($grid);
+                    self.loadMorePosts(grid);
                 }
             });
         },
@@ -515,103 +595,126 @@
         /**
          * Load More Posts AJAX
          */
-        loadMorePosts: function ($grid) {
+        loadMorePosts: function (grid) {
             const self = this;
-            const maxPages = parseInt($grid.data('max-pages')) || 1;
-            const currentPage = parseInt($grid.data('paged')) || 1;
+            const maxPages = parseInt(grid.getAttribute('data-max-pages')) || 1;
+            const currentPage = parseInt(grid.getAttribute('data-paged')) || 1;
             const nextPage = currentPage + 1;
 
             if (nextPage > maxPages) {
-                $grid.addClass('is-finished');
+                grid.classList.add('is-finished');
                 return;
             }
 
             // Create Loader if not exists
-            let $loader = $grid.next('.loopmosaic-infinite-loader');
-            if (!$loader.length) {
-                $loader = $('<div class="loopmosaic-infinite-loader"><div class="loopmosaic-spinner"></div></div>');
-                $grid.after($loader);
+            let loader = grid.nextElementSibling;
+            if (!loader || !loader.classList.contains('loopmosaic-infinite-loader')) {
+                const loaderDiv = document.createElement('div');
+                loaderDiv.className = 'loopmosaic-infinite-loader';
+                loaderDiv.innerHTML = '<div class="loopmosaic-spinner"></div>';
+                grid.insertAdjacentElement('afterend', loaderDiv);
+                loader = loaderDiv;
             }
 
-            $grid.addClass('is-loading-more');
-            $loader.addClass('is-active');
+            grid.classList.add('is-loading-more');
+            loader.classList.add('is-active');
 
-            const settings = $grid.data('settings') || {};
-            const queryId = $grid.data('query-id');
+            let settings = {};
+            try {
+                const s = grid.getAttribute('data-settings');
+                if (s) settings = JSON.parse(s);
+            } catch (e) { }
+
+            // Allow override from JS globals if needed
             const nonce = (typeof loopMosaicJSF !== 'undefined' && loopMosaicJSF.nonce) ? loopMosaicJSF.nonce : loopMosaicConfig.nonce;
 
-            $.ajax({
-                url: loopMosaicConfig.ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'loopmosaic_load_more',
-                    nonce: nonce,
-                    settings: JSON.stringify(settings),
-                    paged: nextPage
-                },
-                success: function (response) {
-                    if (response.success && response.data.content) {
-                        const $content = $(response.data.content);
+            const formData = new FormData();
+            formData.append('action', 'loopmosaic_load_more');
+            formData.append('nonce', nonce);
+            formData.append('settings', JSON.stringify(settings));
+            formData.append('paged', nextPage);
 
-                        // Append Content
-                        $grid.append($content);
+            fetch(loopMosaicConfig.ajaxUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.success && response.data.content) {
+                        // Append Content - Need to convert string HTML to nodes
+                        // Use insertAdjacentHTML for simpler appending
+                        grid.insertAdjacentHTML('beforeend', response.data.content);
 
                         // Update State
-                        $grid.data('paged', nextPage);
+                        grid.setAttribute('data-paged', nextPage);
                         if (nextPage >= maxPages) {
-                            $grid.addClass('is-finished');
+                            grid.classList.add('is-finished');
                         }
 
                         // Animate New Items
-                        self.animateItems($grid);
-
-                        // Bind Events for new items (like Modals)
-                        // Note: initModalHandler uses delegated events mostly, but let's double check specific bindings if needed
-                        // The modal trigger uses $(document).on, so it should work automatically.
+                        // We only want to animate the new items
+                        // The new items have 'loopmosaic-item-new' class from PHP
+                        // But our animateItems function selects all. 
+                        // Let's refine animateItems to accept a NodeList or just run on grid
+                        // The PHP implementation adds 'loopmosaic-item-new' which has CSS animation. 
+                        // So we might NOT need JS animation for infinite scroll if CSS handles it.
+                        // But let's trigger it anyway for consistency or just layout updates.
 
                         // Trigger resize for layout adjustments
-                        $(window).trigger('resize');
+                        window.dispatchEvent(new Event('resize'));
+
+                        // Re-init Elementor hooks if new content has widgets
+                        if (window.elementorFrontend && window.jQuery) {
+                            // We need to find new widgets.
+                            // Since we just appended text, we don't have direct references to new nodes easily without querying
+                            // But we can query the last X elements or just let Elementor handle it if we trigger general events
+                            // For infinite scroll plain posts, usually no widgets inside unless Elementor Loop.
+                        }
+
                     } else {
-                        // Assumption: No more posts or error treating as end
-                        $grid.addClass('is-finished');
+                        grid.classList.add('is-finished');
                     }
 
-                    $grid.removeClass('is-loading-more');
-                    $loader.removeClass('is-active');
-                },
-                error: function () {
-                    $grid.removeClass('is-loading-more');
-                    $loader.removeClass('is-active');
-                }
-            });
+                    grid.classList.remove('is-loading-more');
+                    loader.classList.remove('is-active');
+                })
+                .catch(() => {
+                    grid.classList.remove('is-loading-more');
+                    loader.classList.remove('is-active');
+                });
         }
     };
 
-    // Initialize on document ready
-    $(document).ready(function () {
+    // Initialize on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function () {
         LoopMosaicFilters.init();
     });
 
     // Reinitialize on Elementor frontend init
-    $(window).on('elementor/frontend/init', function () {
-        if (window.elementorFrontend && elementorFrontend.hooks) {
-            elementorFrontend.hooks.addAction('frontend/element_ready/loopmosaic-grid.default', function ($scope) {
-                LoopMosaicFilters.storeGridSettings();
-                LoopMosaicFilters.initJetSmartFilters();
-            });
+    window.addEventListener('elementor/frontend/init', function () {
+        if (window.elementorFrontend && window.elementorFrontend.hooks) {
+            // Elementor hooks work with jQuery objects usually
+            if (window.jQuery) {
+                window.elementorFrontend.hooks.addAction('frontend/element_ready/loopmosaic-grid.default', function ($scope) {
+                    LoopMosaicFilters.storeGridSettings();
+                    LoopMosaicFilters.initJetSmartFilters();
+                });
+            }
         }
     });
 
-    // Re-init after AJAX complete
-    $(document).ajaxComplete(function (event, xhr, settings) {
-        if (settings.data && settings.data.indexOf('loopmosaic') !== -1) {
-            setTimeout(function () {
-                LoopMosaicFilters.storeGridSettings();
-            }, 100);
-        }
-    });
+    // Re-init after AJAX complete (for compatibility with other plugins using jQuery AJAX)
+    if (window.jQuery) {
+        window.jQuery(document).ajaxComplete(function (event, xhr, settings) {
+            if (settings.data && typeof settings.data === 'string' && settings.data.indexOf('loopmosaic') !== -1) {
+                setTimeout(function () {
+                    LoopMosaicFilters.storeGridSettings();
+                }, 100);
+            }
+        });
+    }
 
     // Expose for external use
     window.LoopMosaicFilters = LoopMosaicFilters;
 
-})(jQuery);
+})();
