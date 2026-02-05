@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic
  * Description: Advanced Elementor addon for displaying posts in flexible Mosaic, Grid, and Masonry layouts. Features built-in AJAX Modals, full JetSmartFilters compatibility, and support for Elementor Loop Items & JetEngine Listings.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-define( 'LOOPMOSAIC_VERSION', '1.2.0' );
+define( 'LOOPMOSAIC_VERSION', '1.2.1' );
 define( 'LOOPMOSAIC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOOPMOSAIC_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOOPMOSAIC_BASENAME', plugin_basename( __FILE__ ) );
@@ -203,6 +203,11 @@ final class LoopMosaic {
                 $wp_the_query = $mock_query;
                 $GLOBALS['post'] = $post;
 
+                // Fix for JetEngine Context
+                if ( function_exists( 'jet_engine' ) ) {
+                    jet_engine()->listings->data->set_current_object( $post );
+                }
+
                 $theme_builder = \ElementorPro\Plugin::instance()->modules_manager->get_modules( 'theme-builder' );
                 $conditions_manager = $theme_builder->get_conditions_manager();
                 
@@ -235,6 +240,17 @@ final class LoopMosaic {
                 if ( $template_id && class_exists( '\Elementor\Plugin' ) ) {
                     // Attempt 1: Standard API
                     $html = \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $template_id, true );
+                    
+                    // FIX: Force Load CSS for this Template
+                    if ( class_exists( '\Elementor\Core\Files\CSS\Post' ) ) {
+                        $css_file = new \Elementor\Core\Files\CSS\Post( $template_id );
+                        $css_file->enqueue(); 
+                        $css = $css_file->get_content();
+                        
+                        if ( ! empty( $css ) ) {
+                            $html = '<style>' . $css . '</style>' . $html;
+                        }
+                    }
                     
                     // Validation: Check if it actually rendered widgets.
                     $has_content = strpos( $html, 'elementor-widget' ) !== false || strpos( $html, 'elementor-section' ) !== false || ( strpos( $html, 'e-con-inner' ) !== false && strlen(strip_tags($html)) > 10 );

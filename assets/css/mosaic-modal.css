@@ -182,3 +182,83 @@
         font-size: 22px;
     }
 }
+
+/* =========================================
+   WordPress Standard Gallery Fallback
+   (Fixes missing columns in AJAX Modal)
+   ========================================= */
+#loopmosaic-modal .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -1.5% 1.5em;
+    width: auto;
+}
+
+#loopmosaic-modal .gallery-item {
+    margin: 0;
+    padding: 0 0.5% 0.5%;
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#loopmosaic-modal .gallery-item img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    /* Force Square */
+    object-fit: cover;
+    /* Crop to fit */
+    display: block;
+    border: none;
+    box-shadow: none;
+    border-radius: 4px;
+    /* Optional: slight rounding */
+}
+
+#loopmosaic-modal .gallery-caption {
+    display: block;
+    font-size: 0.85em;
+    line-height: 1.4;
+    padding: 0.5em 0;
+}
+
+/* Columns Support */
+#loopmosaic-modal .gallery-columns-1 .gallery-item {
+    width: 100%;
+}
+
+#loopmosaic-modal .gallery-columns-2 .gallery-item {
+    width: 50%;
+}
+
+#loopmosaic-modal .gallery-columns-3 .gallery-item {
+    width: 33.333%;
+}
+
+#loopmosaic-modal .gallery-columns-4 .gallery-item {
+    width: 25%;
+}
+
+#loopmosaic-modal .gallery-columns-5 .gallery-item {
+    width: 20%;
+}
+
+#loopmosaic-modal .gallery-columns-6 .gallery-item {
+    width: 16.666%;
+}
+
+#loopmosaic-modal .gallery-columns-7 .gallery-item {
+    width: 14.28%;
+}
+
+#loopmosaic-modal .gallery-columns-8 .gallery-item {
+    width: 12.5%;
+}
+
+#loopmosaic-modal .gallery-columns-9 .gallery-item {
+    width: 11.11%;
+}

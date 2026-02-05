@@ -119,6 +119,28 @@
                         if (response.success && response.data.content) {
                             $content.html(response.data.content);
 
+                            // Re-init Elementor Frontend
+                            if (window.elementorFrontend) {
+                                // Trigger standard elementor init
+                                window.elementorFrontend.init();
+
+                                // Manually trigger widget handlers for the new content
+                                $content.find('[data-element_type]').each(function () {
+                                    var $element = $(this);
+                                    var elementType = $element.data('element_type');
+
+                                    if ('widget' === elementType) {
+                                        elementType = $element.data('widget_type');
+                                        window.elementorFrontend.hooks.doAction('frontend/element_ready/' + elementType, $element);
+                                    }
+                                });
+
+                                // Specific fix for Swiper/Gallery
+                                setTimeout(function () {
+                                    $(window).trigger('resize'); // Force recalculation
+                                }, 200);
+                            }
+
                             // Animate container in
                             setTimeout(function () {
                                 $container.css({ opacity: 1, transform: 'translateY(0)' });
