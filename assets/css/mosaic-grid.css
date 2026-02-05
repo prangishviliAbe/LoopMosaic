@@ -474,3 +474,48 @@
     object-fit: cover;
     object-position: center;
 }
+
+/* Infinite Scroll Loader */
+.loopmosaic-infinite-loader {
+    display: none;
+    width: 100%;
+    padding: 40px 0;
+    text-align: center;
+    clear: both;
+}
+
+.loopmosaic-infinite-loader.is-active {
+    display: block;
+}
+
+.loopmosaic-spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--e-global-color-accent, #61ce70);
+    animation: loopmosaic-spin 1s ease-in-out infinite;
+}
+
+@keyframes loopmosaic-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loopmosaic-grid.is-loading-more .loopmosaic-item-new {
+    animation: loopmosaic-fade-up 0.5s ease forwards;
+}
+
+@keyframes loopmosaic-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

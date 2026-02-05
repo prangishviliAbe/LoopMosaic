@@ -21,6 +21,7 @@
             this.initJetSmartFilters();
             this.storeGridSettings();
             this.initModalHandler();
+            this.initInfiniteScroll();
             this.disableNativeLinks();
         },
 
@@ -457,6 +458,131 @@
             // Trigger reflow
             $grid.each(function () {
                 this.offsetHeight;
+            });
+        },
+
+        /**
+         * Initialize Infinite Scroll
+         */
+        initInfiniteScroll: function () {
+            const self = this;
+            const $grids = $('.loopmosaic-grid[data-infinite-scroll="true"]');
+
+            if (!$grids.length) return;
+
+            // Throttled Scroll Event
+            let ticking = false;
+            $(window).on('scroll', function () {
+                if (!ticking) {
+                    window.requestAnimationFrame(function () {
+                        self.handleScroll($grids);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+
+            // Initial check in case content is short
+            self.handleScroll($grids);
+        },
+
+        /**
+         * Handle Scroll for Infinite Grids
+         */
+        handleScroll: function ($grids) {
+            const self = this;
+            const windowHeight = $(window).height();
+            const scrollTop = $(window).scrollTop();
+            const buffer = 300; // Load when within 300px of bottom
+
+            $grids.each(function () {
+                const $grid = $(this);
+
+                // Skip if loading or finished
+                if ($grid.hasClass('is-loading-more') || $grid.hasClass('is-finished')) return;
+
+                const gridOffset = $grid.offset().top;
+                const gridHeight = $grid.outerHeight();
+                const gridBottom = gridOffset + gridHeight;
+                const scrollBottom = scrollTop + windowHeight;
+
+                if (scrollBottom > gridBottom - buffer) {
+                    self.loadMorePosts($grid);
+                }
+            });
+        },
+
+        /**
+         * Load More Posts AJAX
+         */
+        loadMorePosts: function ($grid) {
+            const self = this;
+            const maxPages = parseInt($grid.data('max-pages')) || 1;
+            const currentPage = parseInt($grid.data('paged')) || 1;
+            const nextPage = currentPage + 1;
+
+            if (nextPage > maxPages) {
+                $grid.addClass('is-finished');
+                return;
+            }
+
+            // Create Loader if not exists
+            let $loader = $grid.next('.loopmosaic-infinite-loader');
+            if (!$loader.length) {
+                $loader = $('<div class="loopmosaic-infinite-loader"><div class="loopmosaic-spinner"></div></div>');
+                $grid.after($loader);
+            }
+
+            $grid.addClass('is-loading-more');
+            $loader.addClass('is-active');
+
+            const settings = $grid.data('settings') || {};
+            const queryId = $grid.data('query-id');
+            const nonce = (typeof loopMosaicJSF !== 'undefined' && loopMosaicJSF.nonce) ? loopMosaicJSF.nonce : loopMosaicConfig.nonce;
+
+            $.ajax({
+                url: loopMosaicConfig.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'loopmosaic_load_more',
+                    nonce: nonce,
+                    settings: JSON.stringify(settings),
+                    paged: nextPage
+                },
+                success: function (response) {
+                    if (response.success && response.data.content) {
+                        const $content = $(response.data.content);
+
+                        // Append Content
+                        $grid.append($content);
+
+                        // Update State
+                        $grid.data('paged', nextPage);
+                        if (nextPage >= maxPages) {
+                            $grid.addClass('is-finished');
+                        }
+
+                        // Animate New Items
+                        self.animateItems($grid);
+
+                        // Bind Events for new items (like Modals)
+                        // Note: initModalHandler uses delegated events mostly, but let's double check specific bindings if needed
+                        // The modal trigger uses $(document).on, so it should work automatically.
+
+                        // Trigger resize for layout adjustments
+                        $(window).trigger('resize');
+                    } else {
+                        // Assumption: No more posts or error treating as end
+                        $grid.addClass('is-finished');
+                    }
+
+                    $grid.removeClass('is-loading-more');
+                    $loader.removeClass('is-active');
+                },
+                error: function () {
+                    $grid.removeClass('is-loading-more');
+                    $loader.removeClass('is-active');
+                }
             });
         }
     };

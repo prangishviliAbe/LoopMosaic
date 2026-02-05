@@ -210,6 +210,19 @@ class Mosaic_Loop_Widget extends Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'enable_infinite_scroll',
+            [
+                'label'        => esc_html__( 'Enable Infinite Scroll', 'loop-mosaic' ),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => esc_html__( 'Yes', 'loop-mosaic' ),
+                'label_off'    => esc_html__( 'No', 'loop-mosaic' ),
+                'return_value' => 'yes',
+                'default'      => 'no',
+                'separator'    => 'before',
+            ]
+        );
+
         $this->end_controls_section();
 
         // Layout Section
@@ -1260,7 +1273,12 @@ class Mosaic_Loop_Widget extends Widget_Base {
 
         // JetSmartFilters data attributes
         $data_attrs = '';
-        if ( $query_id ) {
+        $jsf_settings = []; // Define it here to use for infinite scroll too
+
+        // Always prepare settings if JSF OR Infinite Scroll is used
+        $is_infinite_scroll = ! empty( $settings['enable_infinite_scroll'] ) && 'yes' === $settings['enable_infinite_scroll'];
+
+        if ( $query_id || $is_infinite_scroll ) {
             // Prepare settings for AJAX
             $jsf_settings = [
                 'post_type'       => $settings['post_type'],
@@ -1282,6 +1300,10 @@ class Mosaic_Loop_Widget extends Widget_Base {
                 'click_action'    => $settings['click_action'] ?? 'permalink',
                 'click_popup_id'  => $settings['click_popup_id'] ?? '',
                 'click_jet_popup_id' => $settings['click_jet_popup_id'] ?? '',
+                // Modal Specifics
+                'modal_use_custom_template' => $settings['modal_use_custom_template'] ?? '',
+                'modal_auto_template'       => $settings['modal_auto_template'] ?? '',
+                'modal_template_id'         => $settings['modal_template_id'] ?? '',
             ];
             
             // Add template IDs if needed
@@ -1291,12 +1313,26 @@ class Mosaic_Loop_Widget extends Widget_Base {
             if ( 'jetengine' === $template_source && ! empty( $settings['jetengine_listing'] ) ) {
                 $jsf_settings['jetengine_listing'] = $settings['jetengine_listing'];
             }
+        }
 
+        if ( $query_id ) {
             $data_attrs = sprintf(
                 'data-query-id="%s" data-provider="loopmosaic" data-settings="%s"',
                 esc_attr( $query_id ),
                 esc_attr( wp_json_encode( $jsf_settings ) )
             );
+        }
+
+        // Add Infinite Scroll Attributes
+        if ( $is_infinite_scroll ) {
+             $data_attrs .= sprintf(
+                ' data-infinite-scroll="true" data-max-pages="%d" data-paged="1"',
+                $query->max_num_pages
+             );
+             // Ensure settings are present even if JSF is off
+             if ( ! $query_id ) {
+                 $data_attrs .= sprintf( ' data-settings="%s"', esc_attr( wp_json_encode( $jsf_settings ) ) );
+             }
         }
 
         echo '<div class="' . esc_attr( implode( ' ', $grid_classes ) ) . '" ' . $data_attrs . '>';

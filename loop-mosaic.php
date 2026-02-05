@@ -75,6 +75,9 @@ final class LoopMosaic {
         // AJAX Actions
         add_action( 'wp_ajax_loopmosaic_get_modal_content', [ $this, 'ajax_get_modal_content' ] );
         add_action( 'wp_ajax_nopriv_loopmosaic_get_modal_content', [ $this, 'ajax_get_modal_content' ] );
+        
+        add_action( 'wp_ajax_loopmosaic_load_more', [ $this, 'ajax_load_more' ] );
+        add_action( 'wp_ajax_nopriv_loopmosaic_load_more', [ $this, 'ajax_load_more' ] );
 
         // Load JetEngine compatibility
         if ( class_exists( 'Jet_Engine' ) ) {
@@ -303,6 +306,167 @@ final class LoopMosaic {
         wp_reset_postdata();
 
         wp_send_json_success( [ 'content' => $html ] );
+    }
+
+    /**
+     * AJAX Load More for Infinite Scroll
+     */
+    public function ajax_load_more() {
+        check_ajax_referer( 'loop_mosaic_nonce', 'nonce' );
+
+        $paged    = isset( $_POST['paged'] ) ? intval( $_POST['paged'] ) : 1;
+        $settings = isset( $_POST['settings'] ) ? json_decode( stripslashes( $_POST['settings'] ), true ) : [];
+        
+        if ( empty( $settings ) ) {
+            wp_send_json_error( 'Invalid Settings' );
+        }
+
+        // Build Query Args
+        $args = [
+            'post_type'      => isset( $settings['post_type'] ) ? $settings['post_type'] : 'post',
+            'posts_per_page' => isset( $settings['posts_per_page'] ) ? $settings['posts_per_page'] : 9,
+            'orderby'        => isset( $settings['orderby'] ) ? $settings['orderby'] : 'date',
+            'order'          => isset( $settings['order'] ) ? $settings['order'] : 'DESC',
+            'post_status'    => 'publish',
+            'paged'          => $paged,
+        ];
+
+        // Taxonomy
+        if ( ! empty( $settings['taxonomy'] ) && ! empty( $settings['taxonomy_terms'] ) ) {
+            $terms = array_map( 'trim', explode( ',', $settings['taxonomy_terms'] ) );
+            $args['tax_query'] = [
+                [
+                    'taxonomy' => $settings['taxonomy'],
+                    'field'    => 'slug',
+                    'terms'    => $terms,
+                ],
+            ];
+        }
+        
+        // Exclude handled by paged, but careful with offset if used later
+        
+        $query = new \WP_Query( $args );
+        $html = '';
+
+        if ( $query->have_posts() ) {
+            // Need to instantiate widget to access render logic or duplicate it.
+            // Since public access to render methods is tricky without instance, we might need a Helper.
+            // But Elementor widgets are classes. We can re-use the renderer partially if we manualy construct HTML.
+            // Or better: Use the same HTML construction logic as in the widget.
+            // To avoid code duplication, I'll implement a static renderer helper in this class or duplicate the minimal render logic here.
+            
+            // For now, let's duplicate the minimal logic for robustness and speed, 
+            // as instantiating the widget fully might require Elementor context.
+            
+            $template_source = isset( $settings['template_source'] ) ? $settings['template_source'] : 'default';
+            $index = 0;
+
+            while ( $query->have_posts() ) {
+                $query->the_post();
+                
+                // Item Wrapper
+                $item_classes = [ 'loopmosaic-item', 'loopmosaic-item-new' ]; // Added new class for animation
+                if ( 'default' === $template_source && ! empty( $settings['color_overlay'] ) && 'yes' === $settings['color_overlay'] ) {
+                    // Helper for overlay color
+                    $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
+                    $color_class = 'overlay-' . $colors[ $index % count( $colors ) ];
+                    $item_classes[] = $color_class;
+                }
+
+                $item_attrs = '';
+                 if ( 'default' === $template_source && 'popup' === ( $settings['click_action'] ?? 'permalink' ) && ! empty( $settings['click_popup_id'] ) ) {
+                    $item_attrs = ' data-popup-id="' . esc_attr( $settings['click_popup_id'] ) . '"';
+                }
+
+                $html .= '<div class="' . esc_attr( implode( ' ', $item_classes ) ) . '"' . $item_attrs . '>';
+
+                // Inner Content
+                if ( 'elementor_loop' === $template_source && ! empty( $settings['elementor_loop_template'] ) ) {
+                     if ( class_exists( '\Elementor\Plugin' ) ) {
+                         $html .= \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $settings['elementor_loop_template'], true );
+                     }
+                } elseif ( 'jetengine' === $template_source && ! empty( $settings['jetengine_listing'] ) ) {
+                    if ( class_exists( 'Jet_Engine' ) ) {
+                        $html .= jet_engine()->listings->get_listing_item_content( $settings['jetengine_listing'] );
+                    }
+                } else {
+                    // Default Card
+                    $post_id = get_the_ID();
+                    $image_size = ! empty( $settings['image_size'] ) ? $settings['image_size'] : 'large';
+                    $thumbnail  = get_the_post_thumbnail_url( $post_id, $image_size );
+                    
+                    $link_url = get_the_permalink( $post_id );
+                    $link_classes = [ 'loopmosaic-item__link' ];
+                    $popup_attr = '';
+                    
+                    $click_action = isset( $settings['click_action'] ) ? $settings['click_action'] : 'permalink';
+                    if ( 'modal' === $click_action ) {
+                        $link_url = '#'; 
+                        $link_classes[] = 'loopmosaic-modal-trigger';
+                        $popup_attr = ' data-post-id="' . $post_id . '"';
+                        
+                        // Pass modal template settings
+                         if ( ! empty( $settings['modal_use_custom_template'] ) && 'yes' === $settings['modal_use_custom_template'] ) {
+                             // Note: We might not have passed these specific sub-settings in the minimal settings array. 
+                             // We should ensure they are passed in the widget.
+                            if ( ! empty( $settings['modal_auto_template'] ) && 'yes' === $settings['modal_auto_template'] ) {
+                                 $popup_attr .= ' data-auto-template="1"';
+                            } elseif ( ! empty( $settings['modal_template_id'] ) ) {
+                                 $popup_attr .= ' data-modal-template-id="' . esc_attr( $settings['modal_template_id'] ) . '"';
+                            }
+                        }
+                    } elseif ( 'none' === $click_action ) {
+                        $link_url = '#';
+                    }
+
+                    $html .= '<a href="' . esc_url( $link_url ) . '" class="' . esc_attr( implode( ' ', $link_classes ) ) . '" aria-label="' . the_title_attribute( 'echo=0' ) . '"' . $popup_attr . '></a>';
+                    
+                    if ( $thumbnail ) {
+                        $html .= '<img src="' . esc_url( $thumbnail ) . '" alt="' . the_title_attribute( 'echo=0' ) . '" class="loopmosaic-item__image">';
+                    }
+                    
+                    // Styles
+                    $inner_styles = [];
+                    if ( ! empty( $settings['card_content_v_align'] ) ) $inner_styles[] = 'justify-content: ' . $settings['card_content_v_align'];
+                    if ( ! empty( $settings['card_content_h_align'] ) ) $inner_styles[] = 'align-items: ' . $settings['card_content_h_align'];
+                    $inner_attr = ! empty( $inner_styles ) ? ' style="' . implode( '; ', $inner_styles ) . '"' : '';
+
+                    $html .= '<div class="loopmosaic-item__inner"' . $inner_attr . '>';
+                    
+                    if ( ! empty( $settings['show_category'] ) && 'yes' === $settings['show_category'] ) {
+                        $cats = get_the_category();
+                        if ( ! empty( $cats ) ) {
+                            $html .= '<span class="loopmosaic-item__category">' . esc_html( $cats[0]->name ) . '</span>';
+                        }
+                    }
+                    
+                    if ( ! empty( $settings['show_title'] ) && 'yes' === $settings['show_title'] ) {
+                        $t_styles = [];
+                        if ( ! empty( $settings['title_align'] ) ) $t_styles[] = 'text-align: ' . $settings['title_align'];
+                        $t_attr = ! empty( $t_styles ) ? ' style="' . implode( '; ', $t_styles ) . '"' : '';
+                        $html .= '<h3 class="loopmosaic-item__title"' . $t_attr . '>' . get_the_title() . '</h3>';
+                    }
+                    
+                     if ( ! empty( $settings['show_excerpt'] ) && 'yes' === $settings['show_excerpt'] ) {
+                         $len = isset( $settings['excerpt_length'] ) ? intval( $settings['excerpt_length'] ) : 20;
+                         $html .= '<p class="loopmosaic-item__excerpt">' . esc_html( wp_trim_words( get_the_excerpt(), $len, '...' ) ) . '</p>';
+                     }
+
+                    $html .= '</div>'; // End inner
+                }
+
+                $html .= '</div>'; // End item
+                $index++;
+            }
+        }
+        
+        wp_reset_postdata();
+        
+        wp_send_json_success( [
+            'content' => $html,
+            'max_pages' => $query->max_num_pages,
+            'found_posts' => $query->found_posts
+        ] );
     }
 }
 
