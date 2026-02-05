@@ -23,6 +23,13 @@ Forget about heavy third-party popup plugins. LoopMosaic comes with a built-in, 
 *   **Dynamic Data**: The modal automatically pulls data (Title, Image, Content, Custom Fields) for the clicked post.
 *   **Gallery Support**: Option to display post gallery inside the modal.
 
+### 🔄 Infinite Scroll & Pagination
+Enable automatic **Infinite Scroll** to keep users engaged.
+*   **Auto-Load**: Posts load automatically as the user scrolls down.
+*   **Smooth Animation**: New items appear with a sleek fade-up animation.
+*   **Integrated Spinner**: Built-in loading indicator.
+*   **Compatibility**: Works alongside JetSmartFilters or independently.
+
 ### 🛠️ Widget Controls
 *   **Query Builder**: Filter posts by type, taxonomy, order, and limit.
 *   **Click Actions**:
@@ -46,6 +53,12 @@ Forget about heavy third-party popup plugins. LoopMosaic comes with a built-in, 
 4.  Toggle **Use Custom Template** to **YES**.
 5.  Select your template from the **Select Template** list.
 6.  Update and preview!
+
+## ♾️ How to Enable Infinite Scroll
+1.  In the LoopMosaic Widget, go to **Content > Query**.
+2.  Enable **Enable Infinite Scroll**.
+3.  Set **Posts Per Page** to limit the initial load.
+4.  Update and scroll on the frontend!
 
 ## 🤝 Requirements
 *   WordPress 6.0+
