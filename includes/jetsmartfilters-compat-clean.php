@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * JetSmartFilters Compatibility Layer
  * 
@@ -46,7 +46,8 @@ class LoopMosaic_JetSmartFilters_Compat {
      * Constructor
      */
     public function __construct() {
-// Register provider class - MUST BE EARLY
+        
+        // Register provider class - MUST BE EARLY
         add_action( 'jet-smart-filters/providers/register', [ $this, 'register_provider_class' ] );
 
         // Register provider list filter (ID => Name)
@@ -129,10 +130,13 @@ class LoopMosaic_JetSmartFilters_Compat {
         $provider = isset( $_REQUEST['provider'] ) ? $_REQUEST['provider'] : 'UNKNOWN';
         $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'UNKNOWN';
         
-if ( self::PROVIDER_ID !== $provider ) {
+        
+        if ( self::PROVIDER_ID !== $provider ) {
             return;
         }
-// We link directly to the data provider hook
+
+
+        // We link directly to the data provider hook
         add_filter( 'jet-smart-filters/render/ajax/data', [ $this, 'supply_ajax_data' ] );
     }
 
@@ -140,9 +144,10 @@ if ( self::PROVIDER_ID !== $provider ) {
      * Supply data during JSF rendering via Filter
      */
     public function supply_ajax_data( $data ) {
-// NOW it is safe to load the provider class, as we are deep in JSF execution
+
+        // NOW it is safe to load the provider class, as we are deep in JSF execution
         if ( ! class_exists( 'Jet_Smart_Filters_Provider_Base' ) ) {
-return $data;
+            return $data;
         }
 
         if ( ! class_exists( 'Jet_Smart_Filters_Provider_LoopMosaic' ) ) {
@@ -159,7 +164,8 @@ return $data;
         $data['provider'] = self::PROVIDER_ID;
         // JSF expects certain keys for pagination etc, which ajax_get_content sets via set_props
         
-return $data;
+
+        return $data;
     }
 
     /**
@@ -202,7 +208,8 @@ return $data;
         }
 
         try {
-// Ensure class is loaded
+            
+            // Ensure class is loaded
             if ( class_exists( 'Jet_Smart_Filters_Provider_Base' ) && ! class_exists( 'Jet_Smart_Filters_Provider_LoopMosaic' ) ) {
                  require_once LOOPMOSAIC_PATH . 'includes/class-jsf-provider.php';
             }
@@ -217,7 +224,7 @@ return $data;
             $providers['LoopMosaic Grid'] = true;
 
         } catch ( Exception $e ) {
-}
+        }
         
         return $providers;
     }
@@ -227,8 +234,9 @@ return $data;
      */
     public function register_provider_class( $providers_manager ) {
         try {
-if ( ! class_exists( 'Jet_Smart_Filters_Provider_Base' ) ) {
-return;
+            
+            if ( ! class_exists( 'Jet_Smart_Filters_Provider_Base' ) ) {
+                return;
             }
     
             if ( ! class_exists( 'Jet_Smart_Filters_Provider_LoopMosaic' ) ) {
@@ -250,12 +258,12 @@ return;
                         $this->provider->register_ajax_handler();
                     }
                     
-} else {
-}
+                } else {
+                }
             }
         } catch ( Exception $e ) {
-} catch ( Error $e ) {
-}
+        } catch ( Error $e ) {
+        }
     }
 
     /**
@@ -263,19 +271,22 @@ return;
      */
     public function store_widget_settings( $widget ) {
         // Log every widget attempt to see if hook fires at all
-        //
-if ( 'loopmosaic-grid' !== $widget->get_name() ) {
+
+        if ( 'loopmosaic-grid' !== $widget->get_name() ) {
             return;
         }
-$settings = $widget->get_settings_for_display();
+
+
+        $settings = $widget->get_settings_for_display();
         
         if ( empty( $settings['enable_jsf'] ) || 'yes' !== $settings['enable_jsf'] ) {
-return;
+            return;
         }
 
         $query_id = ! empty( $settings['jsf_query_id'] ) ? $settings['jsf_query_id'] : 'default';
         
-// Store in transient for AJAX access
+
+        // Store in transient for AJAX access
         set_transient( 'loopmosaic_settings_' . $query_id, $settings, HOUR_IN_SECONDS );
         
         // Store in provider if available
@@ -286,7 +297,7 @@ return;
         // NOTE: All data-* attributes and classes are now added in mosaic-loop-widget.php
         // This hook just stores the settings for AJAX access
         
-}
+    }
 
     /**
      * Apply filters to initial page load
@@ -333,31 +344,33 @@ return;
      * Handle AJAX filter request
      */
     public function handle_filter_request() {
-// Verify nonce
+        
+        // Verify nonce
         if ( ! check_ajax_referer( 'loopmosaic_jsf_nonce', 'nonce', false ) ) {
-wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
+            wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
         }
 
         $query_id = isset( $_POST['query_id'] ) ? sanitize_text_field( $_POST['query_id'] ) : 'default';
         $page     = isset( $_POST['page'] ) ? intval( $_POST['page'] ) : 1;
         
-// Get settings from transient or POST
+
+        // Get settings from transient or POST
         $settings = get_transient( 'loopmosaic_settings_' . $query_id );
         
         if ( ! $settings && isset( $_POST['settings'] ) ) {
             $settings = json_decode( stripslashes( $_POST['settings'] ), true );
-} else {
-}
+        } else {
+        }
         
         if ( empty( $settings ) ) {
-wp_send_json_error( [ 'message' => 'Settings not found' ] );
+            wp_send_json_error( [ 'message' => 'Settings not found' ] );
         }
 
         // Get filter args from JetSmartFilters
         $filter_args = [];
         if ( function_exists( 'jet_smart_filters' ) ) {
             $filter_args = jet_smart_filters()->query->get_query_args();
-}
+        }
         
         // Also check POST filters
         if ( isset( $_POST['filters'] ) ) {

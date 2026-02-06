@@ -1339,9 +1339,6 @@ class Mosaic_Loop_Widget extends Widget_Base {
              }
         }
 
-        // LOGGING: Check what attributes we are printing
-        // file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "Widget Render: Attributes: " . $this->get_render_attribute_string( 'jsf_grid_container' ) . "\n", FILE_APPEND );
-
         echo '<div ' . $this->get_render_attribute_string( 'jsf_grid_container' ) . '>';
 
         if ( $query->have_posts() ) {

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.7
+ * Version: 1.8
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe
  * License: GPL v2 or later
@@ -13,13 +13,11 @@
  * Elementor Pro tested up to: 3.18
  */
 
-file_put_contents( __DIR__ . '/debug_log.txt', "LoopMosaic File Parsed\n", FILE_APPEND );
-
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-define( 'LOOPMOSAIC_VERSION', '1.7' );
+define( 'LOOPMOSAIC_VERSION', '1.8' );
 define( 'LOOPMOSAIC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOOPMOSAIC_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOOPMOSAIC_BASENAME', plugin_basename( __FILE__ ) );
@@ -48,7 +46,6 @@ final class LoopMosaic {
      * Constructor
      */
     public function __construct() {
-        file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "LoopMosaic Init called\n", FILE_APPEND );
         add_action( 'plugins_loaded', [ $this, 'init' ], 0 );
     }
 
@@ -56,15 +53,6 @@ final class LoopMosaic {
      * Initialize the plugin
      */
     public function init() {
-        // GLOBAL AJAX SNIFFER
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-             $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'NONE';
-             file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "GLOBAL SNIFFER: AJAX Action captured: " . $action . "\n", FILE_APPEND );
-             if ( isset( $_REQUEST['provider'] ) ) {
-                 file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "GLOBAL SNIFFER: Provider: " . $_REQUEST['provider'] . "\n", FILE_APPEND );
-             }
-        }
-
         // Check if Elementor is installed and activated
         if ( ! did_action( 'elementor/loaded' ) ) {
             add_action( 'admin_notices', [ $this, 'admin_notice_missing_elementor' ] );
@@ -158,7 +146,7 @@ final class LoopMosaic {
 
         wp_enqueue_script(
             'loop-mosaic-filters',
-            LOOPMOSAIC_URL . 'assets/js/mosaic-filters-v9.js',
+            LOOPMOSAIC_URL . 'assets/js/mosaic-filters.js',
             $deps,
             LOOPMOSAIC_VERSION,
             true

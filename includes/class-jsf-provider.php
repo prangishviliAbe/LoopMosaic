@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * JetSmartFilters Provider Class for LoopMosaic
  * 
@@ -34,7 +34,6 @@ class Jet_Smart_Filters_Provider_LoopMosaic extends Jet_Smart_Filters_Provider_B
      * Provider ID
      */
     public function get_id() {
-        // file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "ID Requested\n", FILE_APPEND );
         return 'loop-mosaic';
     }
 
@@ -42,7 +41,6 @@ class Jet_Smart_Filters_Provider_LoopMosaic extends Jet_Smart_Filters_Provider_B
      * Provider name
      */
     public function get_name() {
-        file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "Provider Name Requested\n", FILE_APPEND );
         return esc_html__( 'LoopMosaic Grid', 'loop-mosaic' );
     }
 
@@ -387,10 +385,8 @@ class Jet_Smart_Filters_Provider_LoopMosaic extends Jet_Smart_Filters_Provider_B
             return;
         }
         
-        file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "LoopMosaic Provider: Applying Filters to Query Args: " . print_r( $args, true ) . "\n", FILE_APPEND );
 
         add_filter( 'loopmosaic/query/args', function( $query_args ) use ( $args ) {
-            file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "LoopMosaic Provider: Merging Query Args\n", FILE_APPEND );
             return $this->merge_query_args( $query_args, $args );
         } );
     }
@@ -423,14 +419,11 @@ class Jet_Smart_Filters_Provider_LoopMosaic extends Jet_Smart_Filters_Provider_B
     public function ajax_response() {
         $provider = isset( $_REQUEST['provider'] ) ? $_REQUEST['provider'] : '';
         
-        file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "AJAX Request Received for provider: " . $provider . "\n", FILE_APPEND );
         
         if ( $this->get_id() !== $provider ) {
-             file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "Mismatch: My ID=" . $this->get_id() . " vs Request=" . $provider . "\n", FILE_APPEND );
             return;
         }
 
-        file_put_contents( LOOPMOSAIC_PATH . 'debug_log.txt', "LoopMosaic Processing AJAX Request\n", FILE_APPEND );
 
         add_filter( 'jet-smart-filters/render/ajax/data', [ $this, 'add_ajax_data' ] );
     }
