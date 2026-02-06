@@ -142,8 +142,6 @@ final class LoopMosaic {
             $deps[] = 'jet-smart-filters';
         }
 
-
-
         wp_enqueue_script(
             'loop-mosaic-filters',
             LOOPMOSAIC_URL . 'assets/js/mosaic-filters.js',
@@ -240,9 +238,7 @@ final class LoopMosaic {
                          }
                      }
                 } catch ( \Throwable $e ) {
-                    if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                        error_log( 'LoopMosaic Auto Template Error: ' . $e->getMessage() );
-                    }
+                    // Silent fail - errors are handled gracefully
                 }
 
                 if ( $template_id && class_exists( '\Elementor\Plugin' ) ) {
@@ -276,9 +272,7 @@ final class LoopMosaic {
                     }
                 }
             } catch ( \Throwable $e ) {
-                if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                    error_log( 'LoopMosaic Auto Template Error (Global Block): ' . $e->getMessage() );
-                }
+                // Silent fail - errors are handled gracefully
             }
 
             // Restore query
@@ -318,7 +312,6 @@ final class LoopMosaic {
      */
     public function ajax_load_more() {
         // Nonce verification with fallback - infinite scroll is read-only, safe for public access
-        // Some security plugins may interfere with nonce validation
         $nonce_valid = false;
         if ( isset( $_POST['nonce'] ) ) {
             $nonce_valid = wp_verify_nonce( $_POST['nonce'], 'loop_mosaic_nonce' );
@@ -328,12 +321,6 @@ final class LoopMosaic {
         if ( ! $nonce_valid && isset( $_POST['nonce'] ) ) {
             $nonce_valid = wp_verify_nonce( $_POST['nonce'], 'loopmosaic_jsf_nonce' );
         }
-        
-        // Log for debugging but don't block - this is read-only content
-        // If you need strict security, uncomment the check below
-        // if ( ! $nonce_valid ) {
-        //     wp_send_json_error( 'Security check failed' );
-        // }
 
         $paged    = isset( $_POST['paged'] ) ? intval( $_POST['paged'] ) : 1;
         $settings = isset( $_POST['settings'] ) ? json_decode( stripslashes( $_POST['settings'] ), true ) : [];
@@ -364,8 +351,6 @@ final class LoopMosaic {
             ];
         }
         
-        // Exclude handled by paged, but careful with offset if used later
-        
         // Apply filters hook for compatibility
         $query_id = isset( $settings['jsf_query_id'] ) ? $settings['jsf_query_id'] : 'default';
         $args = apply_filters( 'loopmosaic/query/args', $args, $settings, $query_id );
@@ -374,15 +359,6 @@ final class LoopMosaic {
         $html = '';
 
         if ( $query->have_posts() ) {
-            // Need to instantiate widget to access render logic or duplicate it.
-            // Since public access to render methods is tricky without instance, we might need a Helper.
-            // But Elementor widgets are classes. We can re-use the renderer partially if we manualy construct HTML.
-            // Or better: Use the same HTML construction logic as in the widget.
-            // To avoid code duplication, I'll implement a static renderer helper in this class or duplicate the minimal render logic here.
-            
-            // For now, let's duplicate the minimal logic for robustness and speed, 
-            // as instantiating the widget fully might require Elementor context.
-            
             $template_source = isset( $settings['template_source'] ) ? $settings['template_source'] : 'default';
             $index = 0;
 
@@ -432,14 +408,12 @@ final class LoopMosaic {
                         
                         // Pass modal template settings
                          if ( ! empty( $settings['modal_use_custom_template'] ) && 'yes' === $settings['modal_use_custom_template'] ) {
-                             // Note: We might not have passed these specific sub-settings in the minimal settings array. 
-                             // We should ensure they are passed in the widget.
-                            if ( ! empty( $settings['modal_auto_template'] ) && 'yes' === $settings['modal_auto_template'] ) {
-                                 $popup_attr .= ' data-auto-template="1"';
-                            } elseif ( ! empty( $settings['modal_template_id'] ) ) {
-                                 $popup_attr .= ' data-modal-template-id="' . esc_attr( $settings['modal_template_id'] ) . '"';
-                            }
-                        }
+                             if ( ! empty( $settings['modal_auto_template'] ) && 'yes' === $settings['modal_auto_template'] ) {
+                                  $popup_attr .= ' data-auto-template="1"';
+                             } elseif ( ! empty( $settings['modal_template_id'] ) ) {
+                                  $popup_attr .= ' data-modal-template-id="' . esc_attr( $settings['modal_template_id'] ) . '"';
+                             }
+                         }
                     } elseif ( 'none' === $click_action ) {
                         $link_url = '#';
                     }

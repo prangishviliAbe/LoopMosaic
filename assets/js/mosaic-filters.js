@@ -5,7 +5,7 @@
  * 
  * @package LoopMosaic
  * @author Abe Prangishvili
- * @version 1.8
+ * @version 1.9
  */
 
 (function ($) {
@@ -499,17 +499,7 @@
         initInfiniteScroll: function () {
             const self = this;
             const $grids = $('.loopmosaic-grid[data-infinite-scroll="true"]');
-            console.log('LoopMosaic: initInfiniteScroll - Found grids:', $grids.length);
             if (!$grids.length) return;
-
-            $grids.each(function () {
-                const $g = $(this);
-                console.log('LoopMosaic: Grid found', {
-                    maxPages: $g.data('max-pages'),
-                    paged: $g.data('paged'),
-                    hasSettings: !!$g.data('settings')
-                });
-            });
 
             let ticking = false;
             $(window).on('scroll', function () {
@@ -522,6 +512,7 @@
                 }
             });
             self.handleScroll($grids);
+            this.initLoadMoreButton();
         },
 
         handleScroll: function ($grids) {
@@ -533,7 +524,6 @@
                 const gridBottom = $grid.offset().top + $grid.outerHeight();
                 const triggerPoint = scrollTop + windowHeight;
                 if (triggerPoint > gridBottom - buffer) {
-                    console.log('LoopMosaic: Trigger load more', { triggerPoint, gridBottom, buffer });
                     self.loadMorePosts($grid);
                 }
             });
@@ -542,10 +532,8 @@
         loadMorePosts: function ($grid) {
             const self = this;
             const maxPages = parseInt($grid.data('max-pages')) || 1, currentPage = parseInt($grid.data('paged')) || 1, nextPage = currentPage + 1;
-            console.log('LoopMosaic: loadMorePosts', { maxPages, currentPage, nextPage });
 
             if (nextPage > maxPages) {
-                console.log('LoopMosaic: No more pages, finished');
                 $grid.addClass('is-finished');
                 return;
             }
@@ -557,19 +545,11 @@
             const settings = $grid.data('settings') || {};
             const nonce = (typeof loopMosaicJSF !== 'undefined' && loopMosaicJSF.nonce) ? loopMosaicJSF.nonce : loopMosaicConfig.nonce;
 
-            console.log('LoopMosaic: AJAX request', {
-                url: loopMosaicConfig.ajaxUrl,
-                nextPage,
-                hasSettings: !!settings,
-                settingsKeys: Object.keys(settings)
-            });
-
             $.ajax({
                 url: loopMosaicConfig.ajaxUrl,
                 type: 'POST',
                 data: { action: 'loopmosaic_load_more', nonce: nonce, settings: JSON.stringify(settings), paged: nextPage },
                 success: function (response) {
-                    console.log('LoopMosaic: AJAX success', response);
                     if (response.success && response.data.content) {
                         // Parse new content and add the -new class for animation
                         const $newItems = $(response.data.content).addClass('loopmosaic-item-new');
@@ -584,15 +564,24 @@
                         $(window).trigger('resize');
                     }
                     else {
-                        console.log('LoopMosaic: No content in response, marking finished');
                         $grid.addClass('is-finished');
                     }
                     $grid.removeClass('is-loading-more'); $loader.removeClass('is-active');
                 },
-                error: function (xhr, status, error) {
-                    console.error('LoopMosaic: AJAX error', { status, error, response: xhr.responseText });
+                error: function () {
                     $grid.removeClass('is-loading-more'); $loader.removeClass('is-active');
                 }
+            });
+        },
+
+        initLoadMoreButton: function () {
+            const self = this;
+            $('.loopmosaic-load-more-button').on('click', function () {
+                const $btn = $(this);
+                const $grid = $btn.closest('.loopmosaic-grid');
+                if (!$grid.length) return;
+
+                self.loadMorePosts($grid);
             });
         }
     };
