@@ -1,0 +1,192 @@
+# LoopMosaic for Elementor
+
+![LoopMosaic Cover](assets/LoopMosaic_cover.png)
+
+**The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
+
+[![Version](https://img.shields.io/badge/version-1.6-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
+[![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
+[![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
+
+---
+
+## 🚀 Key Features
+
+### 🎨 Flexible Layout Patterns
+- **Classic Grid** — Clean, uniform post grid
+- **Metro Mosaic** — Dynamic tile sizes for visual interest
+- **Masonry** — Pinterest-style staggered layout
+- **Highlight First** — Featured first post with smaller cards
+- **Uniform Grid** — Equal-sized cards in perfect rows
+
+### 📐 Full Customization
+- **Columns**: 3-6 column layouts with responsive controls
+- **Gaps & Padding**: Pixel-perfect spacing control
+- **Border Radius**: Rounded corners for modern aesthetics
+- **Color Overlays**: Gradient overlays with multiple color presets
+- **Box Shadows**: Depth and elevation effects
+- **Typography**: Full control over titles and category labels
+
+### 🔗 Template Integrations
+| Integration | Description |
+|-------------|-------------|
+| **Default Cards** | Built-in responsive card design |
+| **Elementor Loop Items** | Use your custom Loop Builder templates |
+| **JetEngine Listings** | Full JetEngine listing template support |
+
+### 🔍 JetSmartFilters Integration
+- **Real-time Search** — Instant results as you type
+- **AJAX Filtering** — No page reloads
+- **Multiple Filter Types** — Search, checkboxes, dropdowns, range
+- **Pagination Support** — Works with JSF pagination widgets
+
+### ⚡ Built-in AJAX Modal System
+Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, performant modal system:
+
+- **Instant Loading** — Content fetched dynamically via AJAX
+- **Custom Templates** — Use any Elementor template as popup content
+- **Dynamic Data** — Automatically pulls post data (title, image, content, custom fields)
+- **Keyboard Navigation** — ESC key to close
+- **Click Outside** — Close by clicking overlay
+- **Smooth Animations** — Elegant open/close transitions
+
+### 🔄 Infinite Scroll Pagination
+- **Auto-Load** — Posts load automatically on scroll
+- **Smooth Animation** — Fade-up animation for new items
+- **Loading Indicator** — Built-in spinner
+- **Smart Detection** — Stops when no more posts
+- **Works with Filters** — Compatible with JetSmartFilters
+
+### 🛠️ Widget Controls
+
+#### Query Builder
+- Post Type selection (Posts, Pages, Custom Post Types)
+- Taxonomy filtering (Categories, Tags, Custom Taxonomies)
+- Order by (Date, Title, Menu Order, Random)
+- Posts per page limit
+- Offset support
+
+#### Click Actions
+| Action | Description |
+|--------|-------------|
+| **Open Single Post** | Navigate to post permalink |
+| **Open Built-in Modal** | Open AJAX modal with post content |
+| **None** | Static grid (no click action) |
+
+#### Styling Options
+- Title typography, color, alignment
+- Category badge styling
+- Overlay gradient colors
+- Hover effects
+- Box shadow presets
+
+---
+
+## 📦 Installation
+
+### From GitHub
+1. Download the latest release from [Releases](https://github.com/prangishviliAbe/LoopMosaic/releases)
+2. Upload to `/wp-content/plugins/` directory
+3. Activate via **Plugins** menu in WordPress
+
+### Requirements
+| Requirement | Version |
+|-------------|---------|
+| WordPress | 6.0+ |
+| PHP | 7.4+ |
+| Elementor | 3.0+ |
+| Elementor Pro | Optional (for Loop Items) |
+| JetEngine | Optional (for Listings) |
+| JetSmartFilters | Optional (for Filtering) |
+
+---
+
+## 🎯 Usage Guide
+
+### Basic Setup
+1. Open Elementor Editor
+2. Drag **LoopMosaic Grid** widget to your page
+3. Configure query settings (post type, taxonomy, limit)
+4. Choose layout pattern
+5. Style as desired
+
+### Using Custom Templates
+
+#### With Elementor Loop Items
+1. Create a Loop Item template in Elementor
+2. In LoopMosaic widget, set **Template Source** to **Elementor Loop Item**
+3. Select your template from dropdown
+
+#### With JetEngine Listings
+1. Create a Listing in JetEngine
+2. In LoopMosaic widget, set **Template Source** to **JetEngine Listing**
+3. Select your listing from dropdown
+
+### Modal with Custom Template
+1. Create a template in **Theme Builder** or **Saved Templates**
+2. In LoopMosaic widget → **Interaction**
+3. Set **Click Action** to **Open Built-in Modal**
+4. Enable **Use Custom Template**
+5. Select your template
+
+### JetSmartFilters Integration
+1. In LoopMosaic widget → **JetSmartFilters**
+2. Enable **Enable JetSmartFilters**
+3. Set a **Query ID** (e.g., `my-grid`)
+4. Add JSF filter widgets (Search, Checkbox, etc.)
+5. Set filter's **Content Provider** to **LoopMosaic Grid**
+6. Set filter's **Query ID** to match (e.g., `my-grid`)
+
+### Infinite Scroll
+1. In LoopMosaic widget → **Query**
+2. Enable **Enable Infinite Scroll**
+3. Set **Posts Per Page** for initial load
+4. Save and test on frontend
+
+---
+
+## 📋 Changelog
+
+### Version 1.6 (2026-02-06)
+- ✅ **Fixed**: JetSmartFilters search integration now works correctly
+- ✅ **New**: Direct search input binding for reliable filtering
+- ✅ **Improved**: Better debouncing for search requests
+- ✅ **Fixed**: Duplicate data attributes issue resolved
+
+### Version 1.5
+- ✅ Added infinite scroll pagination
+- ✅ Improved modal loading animation
+- ✅ Better JetEngine compatibility
+
+### Version 1.0
+- 🚀 Initial release
+- Mosaic, Grid, Masonry layouts
+- AJAX Modal system
+- Elementor Loop Item support
+- JetEngine Listing support
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+## 📄 License
+
+This plugin is licensed under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).
+
+---
+
+## 👤 Author
+
+**Abe Prangishvili**
+- GitHub: [@prangishviliAbe](https://github.com/prangishviliAbe)
+
+---
+
+## ⭐ Support
+
+If you find this plugin useful, please consider giving it a ⭐ on GitHub!
