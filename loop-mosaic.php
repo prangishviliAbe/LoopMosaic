@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.6
+ * Version: 1.7
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-define( 'LOOPMOSAIC_VERSION', '1.6' );
+define( 'LOOPMOSAIC_VERSION', '1.7' );
 define( 'LOOPMOSAIC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOOPMOSAIC_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOOPMOSAIC_BASENAME', plugin_basename( __FILE__ ) );
@@ -158,7 +158,7 @@ final class LoopMosaic {
 
         wp_enqueue_script(
             'loop-mosaic-filters',
-            LOOPMOSAIC_URL . 'assets/js/mosaic-filters-v8.js',
+            LOOPMOSAIC_URL . 'assets/js/mosaic-filters-v9.js',
             $deps,
             LOOPMOSAIC_VERSION,
             true

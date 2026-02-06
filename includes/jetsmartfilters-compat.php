@@ -492,6 +492,36 @@ class LoopMosaic_JetSmartFilters_Compat {
             elseif ( $key === 'order' || $key === '_order' ) {
                 $args['order'] = strtoupper( sanitize_text_field( $value ) );
             }
+            // Checkboxes (array of taxonomy terms)
+            elseif ( $key === 'checkboxes' && is_array( $value ) ) {
+                foreach ( $value as $tax_key => $terms ) {
+                    if ( ! isset( $args['tax_query'] ) ) {
+                        $args['tax_query'] = [ 'relation' => 'AND' ];
+                    }
+                    $args['tax_query'][] = [
+                        'taxonomy' => sanitize_text_field( $tax_key ),
+                        'field'    => 'term_id',
+                        'terms'    => array_map( 'intval', (array) $terms ),
+                    ];
+                }
+            }
+            // Range filter (min/max)
+            elseif ( strpos( $key, '_range_' ) !== false || strpos( $key, 'range_' ) === 0 ) {
+                $meta_key = str_replace( [ '_range_', 'range_' ], '', $key );
+                $range_values = is_array( $value ) ? $value : explode( ';', $value );
+                
+                if ( count( $range_values ) >= 2 ) {
+                    if ( ! isset( $args['meta_query'] ) ) {
+                        $args['meta_query'] = [ 'relation' => 'AND' ];
+                    }
+                    $args['meta_query'][] = [
+                        'key'     => $meta_key,
+                        'value'   => [ floatval( $range_values[0] ), floatval( $range_values[1] ) ],
+                        'type'    => 'NUMERIC',
+                        'compare' => 'BETWEEN',
+                    ];
+                }
+            }
         }
 
         return $args;
