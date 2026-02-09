@@ -223,6 +223,35 @@ class Mosaic_Loop_Widget extends Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'infinite_scroll_trigger',
+            [
+                'label'   => esc_html__( 'Load More Trigger', 'loop-mosaic' ),
+                'type'    => Controls_Manager::SELECT,
+                'options' => [
+                    'scroll' => esc_html__( 'Scroll (Auto)', 'loop-mosaic' ),
+                    'button' => esc_html__( 'Load More Button', 'loop-mosaic' ),
+                ],
+                'default' => 'scroll',
+                'condition' => [
+                    'enable_infinite_scroll' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'load_more_button_text',
+            [
+                'label'       => esc_html__( 'Button Text', 'loop-mosaic' ),
+                'type'        => Controls_Manager::TEXT,
+                'default'     => esc_html__( 'Load More', 'loop-mosaic' ),
+                'condition'   => [
+                    'enable_infinite_scroll' => 'yes',
+                    'infinite_scroll_trigger' => 'button',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
 
         // Layout Section
@@ -587,6 +616,10 @@ class Mosaic_Loop_Widget extends Widget_Base {
             ]
         );
 
+
+
+
+
         // Overlay Color Toggles
         $this->add_control(
             'color_overlay',
@@ -616,6 +649,52 @@ class Mosaic_Loop_Widget extends Widget_Base {
                 'condition'    => [
                     'template_source' => 'default',
                     'color_overlay'   => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'overlay_hover_effect',
+            [
+                'label'   => esc_html__( 'Hover Effect', 'loop-mosaic' ),
+                'type'    => Controls_Manager::SELECT,
+                'options' => [
+                    'none'     => esc_html__( 'None (Always Visible)', 'loop-mosaic' ),
+                    'fade_in'  => esc_html__( 'Fade In (Show on Hover)', 'loop-mosaic' ),
+                    'fade_out' => esc_html__( 'Fade Out (Hide on Hover)', 'loop-mosaic' ),
+                    'custom_opacity' => esc_html__( 'Custom Opacity (On Hover)', 'loop-mosaic' ),
+                ],
+                'default' => 'none',
+                'condition'    => [
+                    'template_source' => 'default',
+                    'color_overlay'   => 'yes',
+                    'use_custom_overlay_colors' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'overlay_hover_opacity_value',
+            [
+                'label' => esc_html__( 'Hover Opacity Value', 'loop-mosaic' ),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => [ 'px' ],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 1,
+                        'step' => 0.05,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 0.5,
+                ],
+                'condition' => [
+                    'template_source' => 'default',
+                    'color_overlay'   => 'yes',
+                    'use_custom_overlay_colors' => 'yes',
+                    'overlay_hover_effect' => 'custom_opacity',
                 ],
             ]
         );
@@ -1295,6 +1374,7 @@ class Mosaic_Loop_Widget extends Widget_Base {
 
         $this->end_controls_section();
 
+        $this->register_load_more_style_controls();
         $this->register_no_posts_style_controls();
     }
 
@@ -1380,6 +1460,179 @@ class Mosaic_Loop_Widget extends Widget_Base {
         return $popups;
     }
 
+    protected function register_load_more_style_controls() {
+        $this->start_controls_section(
+            'section_style_load_more',
+            [
+                'label'     => esc_html__( 'Load More Button', 'loop-mosaic' ),
+                'tab'       => Controls_Manager::TAB_STYLE,
+                'condition' => [
+                    'enable_infinite_scroll' => 'yes',
+                    'infinite_scroll_trigger' => 'button',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name'     => 'load_more_typography',
+                'selector' => '{{WRAPPER}} .loopmosaic-load-more-btn',
+            ]
+        );
+
+        $this->start_controls_tabs( 'tabs_load_more_style' );
+
+        // NORMAL STATE
+        $this->start_controls_tab(
+            'tab_load_more_normal',
+            [
+                'label' => esc_html__( 'Normal', 'loop-mosaic' ),
+            ]
+        );
+
+        $this->add_control(
+            'load_more_text_color',
+            [
+                'label'     => esc_html__( 'Text Color', 'loop-mosaic' ),
+                'type'      => Controls_Manager::COLOR,
+                'default'   => '#ffffff',
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-load-more-btn' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'load_more_bg_color',
+            [
+                'label'     => esc_html__( 'Background Color', 'loop-mosaic' ),
+                'type'      => Controls_Manager::COLOR,
+                'default'   => '#8a2be2',
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-load-more-btn' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        // HOVER STATE
+        $this->start_controls_tab(
+            'tab_load_more_hover',
+            [
+                'label' => esc_html__( 'Hover', 'loop-mosaic' ),
+            ]
+        );
+
+        $this->add_control(
+            'load_more_text_color_hover',
+            [
+                'label'     => esc_html__( 'Text Color', 'loop-mosaic' ),
+                'type'      => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-load-more-btn:hover' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'load_more_bg_color_hover',
+            [
+                'label'     => esc_html__( 'Background Color', 'loop-mosaic' ),
+                'type'      => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-load-more-btn:hover' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+         $this->add_control(
+            'load_more_hover_animation',
+            [
+                'label' => esc_html__( 'Hover Animation', 'loop-mosaic' ),
+                'type' => Controls_Manager::HOVER_ANIMATION,
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        $this->end_controls_tabs();
+
+        $this->add_group_control(
+            Group_Control_Border::get_type(),
+            [
+                'name'     => 'load_more_border',
+                'selector' => '{{WRAPPER}} .loopmosaic-load-more-btn',
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'load_more_border_radius',
+            [
+                'label'      => esc_html__( 'Border Radius', 'loop-mosaic' ),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%' ],
+                'selectors'  => [
+                    '{{WRAPPER}} .loopmosaic-load-more-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'load_more_padding',
+            [
+                'label'      => esc_html__( 'Padding', 'loop-mosaic' ),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%', 'em' ],
+                'selectors'  => [
+                    '{{WRAPPER}} .loopmosaic-load-more-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'load_more_margin',
+            [
+                'label'      => esc_html__( 'Margin', 'loop-mosaic' ),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%', 'em' ],
+                'selectors'  => [
+                    '{{WRAPPER}} .loopmosaic-load-more-btn-wrapper' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+        
+        $this->add_responsive_control(
+            'load_more_align',
+            [
+                'label'     => esc_html__( 'Alignment', 'loop-mosaic' ),
+                'type'      => Controls_Manager::CHOOSE,
+                'options'   => [
+                    'left'   => [
+                        'title' => esc_html__( 'Left', 'loop-mosaic' ),
+                        'icon'  => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => esc_html__( 'Center', 'loop-mosaic' ),
+                        'icon'  => 'eicon-text-align-center',
+                    ],
+                    'right'  => [
+                        'title' => esc_html__( 'Right', 'loop-mosaic' ),
+                        'icon'  => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'center',
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-load-more-btn-wrapper' => 'text-align: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+    
     /**
      * Get JetPopups
      */
@@ -1656,7 +1909,10 @@ class Mosaic_Loop_Widget extends Widget_Base {
                 'show_category'   => $settings['show_category'] ?? 'yes',
                 'excerpt_length'  => $settings['excerpt_length'] ?? 20,
                 'color_overlay'   => $settings['color_overlay'] ?? '',
+                'infinite_scroll_trigger' => $settings['infinite_scroll_trigger'] ?? 'scroll',
                 'use_custom_overlay_colors' => $settings['use_custom_overlay_colors'] ?? '',
+                'overlay_hover_effect'      => $settings['overlay_hover_effect'] ?? 'none',
+                'overlay_hover_opacity_value' => $settings['overlay_hover_opacity_value']['size'] ?? 0.5,
                 'custom_overlay_colors' => $settings['custom_overlay_colors'] ?? [],
                 'overlay_opacity' => $settings['overlay_opacity']['size'] ?? 0.85,
                 'image_size'      => $settings['image_size'] ?? 'large',
@@ -1748,7 +2004,16 @@ class Mosaic_Loop_Widget extends Widget_Base {
 
                         $rgba = "rgba($r, $g, $b, $opacity)";
                         $item_classes[] = 'overlay-custom';
-                        $item_attrs = ' style="--lm-custom-overlay: ' . $rgba . '; --lm-custom-text: ' . $text_inv_hex . '; --lm-custom-text-hover: ' . $hover_inv_hex . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . ';"';
+                        
+                        if ( ! empty( $settings['overlay_hover_effect'] ) && 'none' !== $settings['overlay_hover_effect'] ) {
+                            $item_classes[] = 'overlay-hover-' . $settings['overlay_hover_effect'];
+                        }
+                        
+                        $hover_opacity = isset($settings['overlay_hover_opacity_value']['size']) ? $settings['overlay_hover_opacity_value']['size'] : 0.5;
+                        
+                        $rgb_commas = "$r, $g, $b";
+
+                        $item_attrs = ' style="--lm-custom-overlay: ' . $rgba . '; --lm-custom-overlay-rgb: ' . $rgb_commas . '; --lm-custom-text: ' . $text_inv_hex . '; --lm-custom-text-hover: ' . $hover_inv_hex . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . '; --lm-custom-hover-opacity: ' . $hover_opacity . ';"';
                     } else {
                         // Default Logic
                         $item_classes[] = $this->get_overlay_class( $index );
@@ -1795,7 +2060,21 @@ class Mosaic_Loop_Widget extends Widget_Base {
             echo '<div class="loopmosaic-no-posts">' . esc_html( $no_posts_message ) . '</div>';
         }
 
-        echo '</div>';
+        echo '</div>'; // End loopmosaic-grid
+
+        // Load More Button Output (Outside Grid)
+        if ( ! empty( $settings['enable_infinite_scroll'] ) && 'yes' === $settings['enable_infinite_scroll'] &&
+             isset( $settings['infinite_scroll_trigger'] ) && 'button' === $settings['infinite_scroll_trigger'] ) {
+
+            $btn_text = ! empty( $settings['load_more_button_text'] ) ? $settings['load_more_button_text'] : esc_html__( 'Load More', 'loop-mosaic' );
+
+            echo '<div class="loopmosaic-load-more-btn-wrapper">';
+            echo '<button class="loopmosaic-load-more-btn" data-widget-id="' . esc_attr( $this->get_id() ) . '">';
+            echo '<span class="loopmosaic-load-more-text">' . esc_html( $btn_text ) . '</span>';
+            echo '<span class="loopmosaic-load-more-spinner"></span>';
+            echo '</button>';
+            echo '</div>';
+        }
     }
 
     /**

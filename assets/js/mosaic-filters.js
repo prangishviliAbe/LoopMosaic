@@ -5,7 +5,7 @@
  * 
  * @package LoopMosaic
  * @author Abe Prangishvili
- * @version 1.10.0
+ * @version 1.12.0
  */
 
 (function ($) {
@@ -18,7 +18,7 @@
             if (this.isInitialized) return;
             this.isInitialized = true;
 
-            console.log('LoopMosaic: Filters script initialized (v1.10.0) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
+            console.log('LoopMosaic: Filters script initialized (v1.12.0) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
             this.grids = {};
             this.filterValues = {};
             this.debounceTimers = {};
@@ -590,83 +590,134 @@
             const $grids = $('.loopmosaic-grid[data-infinite-scroll="true"]');
             if (!$grids.length) return;
 
-            let ticking = false;
-            $(window).on('scroll', function () {
-                if (!ticking) {
-                    window.requestAnimationFrame(function () {
-                        self.handleScroll($grids);
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-            self.handleScroll($grids);
-            this.initLoadMoreButton();
-        },
-
-        handleScroll: function ($grids) {
-            const self = this;
-            const windowHeight = $(window).height(), scrollTop = $(window).scrollTop(), buffer = 300;
             $grids.each(function () {
                 const $grid = $(this);
-                if ($grid.hasClass('is-loading-more') || $grid.hasClass('is-finished')) return;
-                const gridBottom = $grid.offset().top + $grid.outerHeight();
-                const triggerPoint = scrollTop + windowHeight;
-                if (triggerPoint > gridBottom - buffer) {
-                    self.loadMorePosts($grid);
+                const settings = $grid.data('settings') || {};
+                const trigger = settings.infinite_scroll_trigger || 'scroll';
+
+                if (trigger === 'button') {
+                    // Button Trigger
+                    const widgetId = $grid.closest('.elementor-widget').data('id');
+                    const $btn = $('.loopmosaic-load-more-btn[data-widget-id="' + widgetId + '"]');
+
+                    if ($btn.length) {
+                        $btn.off('click').on('click', function (e) {
+                            e.preventDefault();
+                            if ($btn.hasClass('is-loading')) return;
+                            self.loadMorePosts($grid, $btn);
+                        });
+                    }
+                } else {
+                    // Scroll Trigger
+                    let ticking = false;
+                    $(window).on('scroll', function () {
+                        if (!ticking) {
+                            window.requestAnimationFrame(function () {
+                                self.handleScroll($grid);
+                                ticking = false;
+                            });
+                            ticking = true;
+                        }
+                    });
+                    self.handleScroll($grid);
                 }
             });
         },
 
-        loadMorePosts: function ($grid) {
+        handleScroll: function ($grid) {
             const self = this;
-            const maxPages = parseInt($grid.data('max-pages')) || 1, currentPage = parseInt($grid.data('paged')) || 1, nextPage = currentPage + 1;
+            if ($grid.hasClass('is-loading-more') || $grid.hasClass('is-finished')) return;
+
+            const windowHeight = $(window).height();
+            const scrollTop = $(window).scrollTop();
+            const buffer = 300;
+            const gridBottom = $grid.offset().top + $grid.outerHeight();
+            const triggerPoint = scrollTop + windowHeight;
+
+            if (triggerPoint > gridBottom - buffer) {
+                self.loadMorePosts($grid);
+            }
+        },
+
+        loadMorePosts: function ($grid, $btn = null) {
+            const self = this;
+            const maxPages = parseInt($grid.data('max-pages')) || 1;
+            const currentPage = parseInt($grid.data('paged')) || 1;
+            const nextPage = currentPage + 1;
 
             if (nextPage > maxPages) {
                 $grid.addClass('is-finished');
+                if ($btn) $btn.parent().hide(); // Hide wrapper
                 return;
             }
 
-            let $loader = $grid.next('.loopmosaic-infinite-loader');
-            if (!$loader.length) { $loader = $('<div class="loopmosaic-infinite-loader"><div class="loopmosaic-spinner"></div></div>'); $grid.after($loader); }
-            $grid.addClass('is-loading-more'); $loader.addClass('is-active');
+            let $loader;
+            if ($btn) {
+                $btn.addClass('is-loading');
+            } else {
+                $loader = $grid.next('.loopmosaic-infinite-loader');
+                if (!$loader.length) {
+                    $loader = $('<div class="loopmosaic-infinite-loader"><div class="loopmosaic-spinner"></div></div>');
+                    $grid.after($loader);
+                }
+                $loader.addClass('is-active');
+            }
+
+            $grid.addClass('is-loading-more');
 
             const settings = $grid.data('settings') || {};
-            const nonce = (typeof loopMosaicJSF !== 'undefined' && loopMosaicJSF.nonce) ? loopMosaicJSF.nonce : loopMosaicConfig.nonce;
+            // Use nonce from either JSF or Config
+            let nonce = loopMosaicConfig.nonce;
+            if (typeof loopMosaicJSF !== 'undefined' && loopMosaicJSF.nonce) {
+                nonce = loopMosaicJSF.nonce;
+            }
 
             $.ajax({
                 url: loopMosaicConfig.ajaxUrl,
                 type: 'POST',
-                data: { action: 'loopmosaic_load_more', nonce: nonce, settings: JSON.stringify(settings), paged: nextPage },
+                data: {
+                    action: 'loopmosaic_load_more',
+                    nonce: nonce,
+                    settings: JSON.stringify(settings),
+                    paged: nextPage,
+                    query_id: settings.jsf_query_id // Ensure query ID is passed for context
+                },
                 success: function (response) {
                     if (response.success && response.data.content) {
-                        // Parse new content and add the -new class for animation
                         const $newItems = $(response.data.content).addClass('loopmosaic-item-new');
-
-                        // Append to grid
                         $grid.append($newItems);
 
                         if ($grid.hasClass('loopmosaic-masonry')) {
                             $grid.imagesLoaded(function () {
                                 $grid.masonry('appended', $newItems);
-                                self.animateItems($grid, $newItems);
+                                // self.animateItems($grid, $newItems); // Masonry handles layout, animation might conflict or need delay
+                                setTimeout(() => self.animateItems($grid, $newItems), 100);
                             });
                         } else {
                             self.animateItems($grid, $newItems);
                         }
 
                         $grid.data('paged', nextPage);
-                        if (nextPage >= maxPages) $grid.addClass('is-finished');
+                        if (nextPage >= maxPages) {
+                            $grid.addClass('is-finished');
+                            if ($btn) $btn.parent().hide();
+                        }
 
                         $(window).trigger('resize');
                     }
                     else {
                         $grid.addClass('is-finished');
+                        if ($btn) $btn.parent().hide();
                     }
-                    $grid.removeClass('is-loading-more'); $loader.removeClass('is-active');
+
+                    $grid.removeClass('is-loading-more');
+                    if ($btn) $btn.removeClass('is-loading');
+                    else if ($loader) $loader.removeClass('is-active');
                 },
                 error: function () {
-                    $grid.removeClass('is-loading-more'); $loader.removeClass('is-active');
+                    $grid.removeClass('is-loading-more');
+                    if ($btn) $btn.removeClass('is-loading');
+                    else if ($loader) $loader.removeClass('is-active');
                 }
             });
         },

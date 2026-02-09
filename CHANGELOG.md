@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.12.0] - 2026-02-09
+### Added
+- **Load More Button**: 
+    - Added "Load More" button as a pagination trigger option (replacing the need for Item-level Read More).
+    - New `infinite_scroll_trigger` control in Pagination settings (Scroll vs Button).
+    - Full styling controls for the Load More button (Typography, Colors, Borders, Spacing).
+- **Infinite Scroll Enhancements**:
+    - Clean separation of "Scroll" and "Button" trigger logic.
+    - Added loading spinner and states to the button.
+
+### Fixed
+- **Overlay Styles in AJAX**:
+    - Fixed issue where custom overlay styling (colors, opacity) was lost on items loaded via AJAX (Infinite Scroll/Load More).
+- **Layout Issues**:
+    - Moved the "Load More" button outside the grid container to ensure logical DOM order and correct visual placement below all items.
+    - Resolved z-index stacking context issues for buttons.
+
+## [1.11.1] - 2026-02-09
+### Changed
+- Removed Item-level "Read More" button in favor of the new global "Load More" pagination approach.
+- Refactored rendering logic to support conditional pagination triggers.
+
 ## [1.10.0] - 2026-02-09
 ### Added
 - **True Masonry Layout**:

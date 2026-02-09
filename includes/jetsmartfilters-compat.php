@@ -660,7 +660,20 @@ wp_send_json_error( [ 'message' => 'Settings not found' ] );
                         $rgba_color = "rgba($r, $g, $b, $opacity)";
                         
                         $item_classes[] = 'overlay-custom';
-                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_inv_hex ) . '; --lm-custom-text-hover: ' . esc_attr( $hover_inv_hex ) . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . ';"';
+
+                        if ( ! empty( $settings['overlay_hover_effect'] ) && 'none' !== $settings['overlay_hover_effect'] ) {
+                             $item_classes[] = 'overlay-hover-' . $settings['overlay_hover_effect'];
+                        }
+                        
+                        $hover_opacity = isset($settings['overlay_hover_opacity_value']['size']) ? $settings['overlay_hover_opacity_value']['size'] : 0.5;
+                        // Handle legacy float/int structure in JSF if needed, usually passed as array from widget settings but here we read from parsed settings
+                        if ( isset($settings['overlay_hover_opacity_value']) && !is_array($settings['overlay_hover_opacity_value']) ) {
+                             $hover_opacity = $settings['overlay_hover_opacity_value'];
+                        }
+
+                        $rgb_commas = "$r, $g, $b";
+
+                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-overlay-rgb: ' . $rgb_commas . '; --lm-custom-text: ' . esc_attr( $text_inv_hex ) . '; --lm-custom-text-hover: ' . esc_attr( $hover_inv_hex ) . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . '; --lm-custom-hover-opacity: ' . $hover_opacity . ';"';
                     } else {
                         // Default Logic
                         $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
@@ -749,12 +762,12 @@ wp_send_json_error( [ 'message' => 'Settings not found' ] );
             <?php endif; ?>
 
             <?php if ( ! empty( $settings['show_excerpt'] ) && 'yes' === $settings['show_excerpt'] ) : ?>
-                <p class="loopmosaic-item__excerpt">
+                <div class="loopmosaic-item__excerpt">
                     <?php 
                     $length = isset( $settings['excerpt_length'] ) ? intval( $settings['excerpt_length'] ) : 20;
                     echo esc_html( wp_trim_words( get_the_excerpt(), $length, '...' ) ); 
                     ?>
-                </p>
+                </div>
             <?php endif; ?>
         </div>
         <?php

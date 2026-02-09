@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.10.0
+ * Version: 1.12.0
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-define( 'LOOPMOSAIC_VERSION', '1.10.0' );
+define( 'LOOPMOSAIC_VERSION', '1.12.0' );
 define( 'LOOPMOSAIC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOOPMOSAIC_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOOPMOSAIC_BASENAME', plugin_basename( __FILE__ ) );
@@ -416,9 +416,24 @@ final class LoopMosaic {
                             'flex-end'   => 'right',
                         ];
                         $text_align = isset( $text_align_map[ $h_align ] ) ? $text_align_map[ $h_align ] : 'left';
+                        if ( ! empty( $settings['overlay_hover_effect'] ) && 'none' !== $settings['overlay_hover_effect'] ) {
+                            $item_classes[] = 'overlay-hover-' . $settings['overlay_hover_effect'];
+                        }
                         
-                        $item_classes[] = 'overlay-custom';
-                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_inv_hex ) . '; --lm-custom-text-hover: ' . esc_attr( $hover_inv_hex ) . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . ';"';
+                        $hover_opacity = 0.5;
+                        if ( isset( $settings['overlay_hover_opacity_value'] ) ) {
+                             if ( is_array( $settings['overlay_hover_opacity_value'] ) ) {
+                                  $hover_opacity = isset( $settings['overlay_hover_opacity_value']['size'] ) ? $settings['overlay_hover_opacity_value']['size'] : 0.5;
+                             } else {
+                                  $hover_opacity = $settings['overlay_hover_opacity_value'];
+                             }
+                        }
+                        
+                        $rgb_commas = "$r, $g, $b";
+                        
+                        $item_classes[] = 'overlay-custom'; // Added missing class
+
+                        $item_attrs = ' style="--lm-custom-overlay: ' . $rgba_color . '; --lm-custom-overlay-rgb: ' . $rgb_commas . '; --lm-custom-text: ' . $text_inv_hex . '; --lm-custom-text-hover: ' . $hover_inv_hex . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . '; --lm-custom-hover-opacity: ' . $hover_opacity . ';"';
                     } else {
                         // Helper for overlay color
                         $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
