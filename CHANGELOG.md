@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.9.15] - 2026-02-09
+### Added
+- **No Posts Found Customization**:
+    - Add Content control (Textarea) for custom "No posts found" message.
+    - Add Style controls (Color, Typography, Alignment, Padding) for message.
+- **Custom Overlay Colors**:
+    - Add `overlay_opacity` slider control.
+    - Add `overlay_text_color` control to repeater.
+    - Add `overlay_text_hover_color` control to repeater.
+
+### Changed
+- Refactored `render` methods in widget and JSF compatibility to support new overlay features.
+- Updated CSS to use CSS variables for custom colors and text colors.
+- Bumped version to `1.9.15`.
+
+## [1.9.14] - 2026-02-09
+- Internal fix: Register No Posts Found style controls properly.
+
+## [1.9.13] - 2026-02-09
+- Major update for "No posts found" customization features.
+
+## [1.9.12] - 2026-02-09
+- Added Hover Text Color control.
+
+## [1.9.11] - 2026-02-09
+- Fixed Text Color CSS specificity issue.
+
+
 All notable changes to LoopMosaic will be documented in this file.
 
 ## [1.9.6] - 2026-02-09

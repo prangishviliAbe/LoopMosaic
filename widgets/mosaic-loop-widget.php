@@ -483,16 +483,114 @@ class Mosaic_Loop_Widget extends Widget_Base {
             ]
         );
 
+        // Overlay Color Toggles
         $this->add_control(
             'color_overlay',
             [
-                'label'        => esc_html__( 'Color Overlay', 'loop-mosaic' ),
+                'label'        => esc_html__( 'Enable Gradient Overlay', 'loop-mosaic' ),
                 'type'         => Controls_Manager::SWITCHER,
                 'label_on'     => esc_html__( 'Yes', 'loop-mosaic' ),
                 'label_off'    => esc_html__( 'No', 'loop-mosaic' ),
                 'return_value' => 'yes',
                 'default'      => 'yes',
-                'description'  => esc_html__( 'Apply colorful overlays to cards', 'loop-mosaic' ),
+                'condition'    => [
+                    'template_source' => 'default',
+                ],
+            ]
+        );
+
+        // Custom Colors Toggle
+        $this->add_control(
+            'use_custom_overlay_colors',
+            [
+                'label'        => esc_html__( 'Use Custom Overlay Colors', 'loop-mosaic' ),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => esc_html__( 'Yes', 'loop-mosaic' ),
+                'label_off'    => esc_html__( 'No', 'loop-mosaic' ),
+                'return_value' => 'yes',
+                'default'      => '',
+                'condition'    => [
+                    'template_source' => 'default',
+                    'color_overlay'   => 'yes',
+                ],
+            ]
+        );
+
+        // Custom Colors Repeater
+        $repeater = new \Elementor\Repeater();
+
+        $repeater->add_control(
+            'overlay_color',
+            [
+                'label' => esc_html__( 'Color', 'loop-mosaic' ),
+                'type' => Controls_Manager::COLOR,
+                'default' => '#8a2be2',
+            ]
+        );
+
+        $repeater->add_control(
+            'overlay_text_color',
+            [
+                'label' => esc_html__( 'Text Color', 'loop-mosaic' ),
+                'type' => Controls_Manager::COLOR,
+                'default' => '#ffffff',
+            ]
+        );
+
+        $repeater->add_control(
+            'overlay_text_hover_color',
+            [
+                'label' => esc_html__( 'Text Hover Color', 'loop-mosaic' ),
+                'type' => Controls_Manager::COLOR,
+                'default' => '#ffffff',
+            ]
+        );
+
+        $this->add_control(
+            'overlay_opacity',
+            [
+                'label' => esc_html__( 'Overlay Opacity', 'loop-mosaic' ),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => [ 'px' ],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 1,
+                        'step' => 0.05,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 0.85,
+                ],
+                'condition' => [
+                    'template_source' => 'default',
+                    'color_overlay'   => 'yes',
+                    'use_custom_overlay_colors' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'custom_overlay_colors',
+            [
+                'label' => esc_html__( 'Custom Colors', 'loop-mosaic' ),
+                'type' => Controls_Manager::REPEATER,
+                'fields' => $repeater->get_controls(),
+                'default' => [
+                    [ 'overlay_color' => '#8a2be2' ], // Purple
+                    [ 'overlay_color' => '#008080' ], // Teal
+                    [ 'overlay_color' => '#DAA520' ], // Gold
+                    [ 'overlay_color' => '#FF7F50' ], // Coral
+                    [ 'overlay_color' => '#00CED1' ], // Cyan
+                    [ 'overlay_color' => '#3CB371' ], // Green
+                ],
+                'title_field' => '{{{ overlay_color }}}',
+                'condition' => [
+                    'template_source' => 'default',
+                    'color_overlay'   => 'yes',
+                    'use_custom_overlay_colors' => 'yes',
+                ],
             ]
         );
 
@@ -604,10 +702,33 @@ class Mosaic_Loop_Widget extends Widget_Base {
                 'type'        => \Elementor\Controls_Manager::SELECT2,
                 'options'     => $this->get_elementor_loop_templates(),
                 'default'     => '',
-                'condition'   => [
+                'condition' => [
                     'click_action'              => 'modal',
                     'modal_use_custom_template' => 'yes',
                     'modal_auto_template'       => '',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // No Posts Found Section
+        $this->start_controls_section(
+            'section_no_posts',
+            [
+                'label' => esc_html__( 'No Posts Found', 'loop-mosaic' ),
+                'tab'   => Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'no_posts_message',
+            [
+                'label'   => esc_html__( 'Message', 'loop-mosaic' ),
+                'type'    => Controls_Manager::TEXTAREA,
+                'default' => esc_html__( 'No posts found.', 'loop-mosaic' ),
+                'dynamic' => [
+                    'active' => true,
                 ],
             ]
         );
@@ -1041,6 +1162,8 @@ class Mosaic_Loop_Widget extends Widget_Base {
         );
 
         $this->end_controls_section();
+
+        $this->register_no_posts_style_controls();
     }
 
     /**
@@ -1215,6 +1338,78 @@ class Mosaic_Loop_Widget extends Widget_Base {
     }
 
     /**
+     * Register No Posts Found Style Controls
+     */
+    private function register_no_posts_style_controls() {
+        $this->start_controls_section(
+            'section_no_posts_style',
+            [
+                'label' => esc_html__( 'No Posts Found Message', 'loop-mosaic' ),
+                'tab'   => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'no_posts_color',
+            [
+                'label'     => esc_html__( 'Color', 'loop-mosaic' ),
+                'type'      => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-no-posts' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name'     => 'no_posts_typography',
+                'selector' => '{{WRAPPER}} .loopmosaic-no-posts',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'no_posts_align',
+            [
+                'label'     => esc_html__( 'Alignment', 'loop-mosaic' ),
+                'type'      => Controls_Manager::CHOOSE,
+                'options'   => [
+                    'left'   => [
+                        'title' => esc_html__( 'Left', 'loop-mosaic' ),
+                        'icon'  => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => esc_html__( 'Center', 'loop-mosaic' ),
+                        'icon'  => 'eicon-text-align-center',
+                    ],
+                    'right'  => [
+                        'title' => esc_html__( 'Right', 'loop-mosaic' ),
+                        'icon'  => 'eicon-text-align-right',
+                    ],
+                ],
+                'default'   => 'center',
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-no-posts' => 'text-align: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'no_posts_padding',
+            [
+                'label'      => esc_html__( 'Padding', 'loop-mosaic' ),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%', 'em' ],
+                'selectors'  => [
+                    '{{WRAPPER}} .loopmosaic-no-posts' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    /**
      * Get color overlay class
      */
     private function get_overlay_class( $index ) {
@@ -1299,6 +1494,9 @@ class Mosaic_Loop_Widget extends Widget_Base {
                 'show_category'   => $settings['show_category'] ?? 'yes',
                 'excerpt_length'  => $settings['excerpt_length'] ?? 20,
                 'color_overlay'   => $settings['color_overlay'] ?? '',
+                'use_custom_overlay_colors' => $settings['use_custom_overlay_colors'] ?? '',
+                'custom_overlay_colors' => $settings['custom_overlay_colors'] ?? [],
+                'overlay_opacity' => $settings['overlay_opacity']['size'] ?? 0.85,
                 'image_size'      => $settings['image_size'] ?? 'large',
                 'card_content_v_align' => $settings['card_content_v_align'] ?? 'flex-end',
                 'card_content_h_align' => $settings['card_content_h_align'] ?? 'flex-start',
@@ -1349,16 +1547,47 @@ class Mosaic_Loop_Widget extends Widget_Base {
 
                 // Item classes
                 $item_classes = [ 'loopmosaic-item' ];
+                $item_attrs = '';
 
                 // Add color overlay class for default template
                 if ( 'default' === $template_source && ! empty( $settings['color_overlay'] ) && 'yes' === $settings['color_overlay'] ) {
-                    $item_classes[] = $this->get_overlay_class( $index );
+                    // Custom Colors Logic
+                    if ( ! empty( $settings['use_custom_overlay_colors'] ) && 'yes' === $settings['use_custom_overlay_colors'] && ! empty( $settings['custom_overlay_colors'] ) ) {
+                        $custom_colors = $settings['custom_overlay_colors'];
+                        $color_data = $custom_colors[ $index % count( $custom_colors ) ];
+                        $color_hex = $color_data['overlay_color'];
+                        
+                        // Handle Opacity
+                        $opacity = isset( $settings['overlay_opacity']['size'] ) ? $settings['overlay_opacity']['size'] : 0.85;
+                        
+                        // Convert Hex to RGBA
+                        $color_hex = str_replace('#', '', $color_hex);
+                        if ( strlen( $color_hex ) == 3 ) {
+                            $r = hexdec( substr( $color_hex, 0, 1 ) . substr( $color_hex, 0, 1 ) );
+                            $g = hexdec( substr( $color_hex, 1, 1 ) . substr( $color_hex, 1, 1 ) );
+                            $b = hexdec( substr( $color_hex, 2, 1 ) . substr( $color_hex, 2, 1 ) );
+                        } else {
+                            $r = hexdec( substr( $color_hex, 0, 2 ) );
+                            $g = hexdec( substr( $color_hex, 2, 2 ) );
+                            $b = hexdec( substr( $color_hex, 4, 2 ) );
+                        }
+                        $rgba_color = "rgba($r, $g, $b, $opacity)";
+                        
+                        // Text Color
+                        $text_color = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
+                        $text_hover_color = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
+
+                        $item_classes[] = 'overlay-custom';
+                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_color ) . '; --lm-custom-text-hover: ' . esc_attr( $text_hover_color ) . ';"';
+                    } else {
+                        // Default Logic
+                        $item_classes[] = $this->get_overlay_class( $index );
+                    }
                 }
 
                 // Prepare item attributes
-                $item_attrs = '';
                 if ( 'default' === $template_source && 'popup' === ( $settings['click_action'] ?? 'permalink' ) && ! empty( $settings['click_popup_id'] ) ) {
-                    $item_attrs = ' data-popup-id="' . esc_attr( $settings['click_popup_id'] ) . '"';
+                    $item_attrs .= ' data-popup-id="' . esc_attr( $settings['click_popup_id'] ) . '"';
                 }
 
                 echo '<div class="' . esc_attr( implode( ' ', $item_classes ) ) . '"' . $item_attrs . '>';
@@ -1392,7 +1621,8 @@ class Mosaic_Loop_Widget extends Widget_Base {
 
             wp_reset_postdata();
         } else {
-            echo '<div class="loopmosaic-no-posts">' . esc_html__( 'No posts found.', 'loop-mosaic' ) . '</div>';
+            $no_posts_message = ! empty( $settings['no_posts_message'] ) ? $settings['no_posts_message'] : esc_html__( 'No posts found.', 'loop-mosaic' );
+            echo '<div class="loopmosaic-no-posts">' . esc_html( $no_posts_message ) . '</div>';
         }
 
         echo '</div>';

@@ -621,14 +621,49 @@ wp_send_json_error( [ 'message' => 'Settings not found' ] );
                 $query->the_post();
 
                 $item_classes = [ 'loopmosaic-item' ];
+                $item_attrs = '';
 
                 // Add overlay for default template
                 if ( 'default' === $template_source && ! empty( $settings['color_overlay'] ) && 'yes' === $settings['color_overlay'] ) {
-                    $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
-                    $item_classes[] = 'overlay-' . $colors[ $index % count( $colors ) ];
+                    // Custom Colors Logic
+                    if ( ! empty( $settings['use_custom_overlay_colors'] ) && 'yes' === $settings['use_custom_overlay_colors'] && ! empty( $settings['custom_overlay_colors'] ) ) {
+                        $custom_colors = $settings['custom_overlay_colors'];
+                        $color_data = $custom_colors[ $index % count( $custom_colors ) ];
+                        $color_hex = $color_data['overlay_color'];
+                        
+                        // Handle Opacity
+                        $opacity = isset( $settings['overlay_opacity'] ) ? $settings['overlay_opacity'] : 0.85; // JSF passes it as simple value from array
+                        if ( is_array( $opacity ) ) {
+                             $opacity = isset( $opacity['size'] ) ? $opacity['size'] : 0.85;
+                        }
+
+                        // Convert Hex to RGBA
+                        $color_hex = str_replace('#', '', $color_hex);
+                        if ( strlen( $color_hex ) == 3 ) {
+                            $r = hexdec( substr( $color_hex, 0, 1 ) . substr( $color_hex, 0, 1 ) );
+                            $g = hexdec( substr( $color_hex, 1, 1 ) . substr( $color_hex, 1, 1 ) );
+                            $b = hexdec( substr( $color_hex, 2, 1 ) . substr( $color_hex, 2, 1 ) );
+                        } else {
+                            $r = hexdec( substr( $color_hex, 0, 2 ) );
+                            $g = hexdec( substr( $color_hex, 2, 2 ) );
+                            $b = hexdec( substr( $color_hex, 4, 2 ) );
+                        }
+                        $rgba_color = "rgba($r, $g, $b, $opacity)";
+                        
+                        // Text Color
+                        $text_color = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
+                        $text_hover_color = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
+
+                        $item_classes[] = 'overlay-custom';
+                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_color ) . '; --lm-custom-text-hover: ' . esc_attr( $text_hover_color ) . ';"';
+                    } else {
+                        // Default Logic
+                        $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
+                        $item_classes[] = 'overlay-' . $colors[ $index % count( $colors ) ];
+                    }
                 }
 
-                echo '<div class="' . esc_attr( implode( ' ', $item_classes ) ) . '">';
+                echo '<div class="' . esc_attr( implode( ' ', $item_classes ) ) . '"' . $item_attrs . '>';
                 
                 switch ( $template_source ) {
                     case 'elementor_loop':
@@ -649,7 +684,8 @@ wp_send_json_error( [ 'message' => 'Settings not found' ] );
 
             wp_reset_postdata();
         } else {
-            echo '<div class="loopmosaic-no-posts">' . esc_html__( 'No posts found.', 'loop-mosaic' ) . '</div>';
+            $no_posts_message = ! empty( $settings['no_posts_message'] ) ? $settings['no_posts_message'] : esc_html__( 'No posts found.', 'loop-mosaic' );
+            echo '<div class="loopmosaic-no-posts">' . esc_html( $no_posts_message ) . '</div>';
         }
     }
 

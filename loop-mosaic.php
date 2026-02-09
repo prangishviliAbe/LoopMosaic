@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.9.6
+ * Version: 1.9.15
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-define( 'LOOPMOSAIC_VERSION', '1.9.6' );
+define( 'LOOPMOSAIC_VERSION', '1.9.15' );
 define( 'LOOPMOSAIC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOOPMOSAIC_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOOPMOSAIC_BASENAME', plugin_basename( __FILE__ ) );
@@ -370,18 +370,55 @@ final class LoopMosaic {
             while ( $query->have_posts() ) {
                 $query->the_post();
                 
-                // Item Wrapper
                 $item_classes = [ 'loopmosaic-item', 'loopmosaic-item-new' ]; // Added new class for animation
+                $item_attrs = '';
+
                 if ( 'default' === $template_source && ! empty( $settings['color_overlay'] ) && 'yes' === $settings['color_overlay'] ) {
-                    // Helper for overlay color
-                    $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
-                    $color_class = 'overlay-' . $colors[ $index % count( $colors ) ];
-                    $item_classes[] = $color_class;
+                    // Custom Colors Logic
+                    if ( ! empty( $settings['use_custom_overlay_colors'] ) && 'yes' === $settings['use_custom_overlay_colors'] && ! empty( $settings['custom_overlay_colors'] ) ) {
+                        $custom_colors = $settings['custom_overlay_colors'];
+                        $color_data = $custom_colors[ $index % count( $custom_colors ) ];
+                        $color_hex = $color_data['overlay_color'];
+                        
+                        // Handle Opacity
+                        $opacity = 0.85;
+                        if ( isset( $settings['overlay_opacity'] ) ) {
+                             if ( is_array( $settings['overlay_opacity'] ) ) {
+                                  $opacity = isset( $settings['overlay_opacity']['size'] ) ? $settings['overlay_opacity']['size'] : 0.85;
+                             } else {
+                                  $opacity = $settings['overlay_opacity'];
+                             }
+                        }
+                        
+                        // Convert Hex to RGBA
+                        $color_hex = str_replace('#', '', $color_hex);
+                        if ( strlen( $color_hex ) == 3 ) {
+                            $r = hexdec( substr( $color_hex, 0, 1 ) . substr( $color_hex, 0, 1 ) );
+                            $g = hexdec( substr( $color_hex, 1, 1 ) . substr( $color_hex, 1, 1 ) );
+                            $b = hexdec( substr( $color_hex, 2, 1 ) . substr( $color_hex, 2, 1 ) );
+                        } else {
+                            $r = hexdec( substr( $color_hex, 0, 2 ) );
+                            $g = hexdec( substr( $color_hex, 2, 2 ) );
+                            $b = hexdec( substr( $color_hex, 4, 2 ) );
+                        }
+                        $rgba_color = "rgba($r, $g, $b, $opacity)";
+                        
+                        // Text Color
+                        $text_color = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
+                        $text_hover_color = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
+                        
+                        $item_classes[] = 'overlay-custom';
+                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_color ) . '; --lm-custom-text-hover: ' . esc_attr( $text_hover_color ) . ';"';
+                    } else {
+                        // Helper for overlay color
+                        $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
+                        $color_class = 'overlay-' . $colors[ $index % count( $colors ) ];
+                        $item_classes[] = $color_class;
+                    }
                 }
 
-                $item_attrs = '';
-                 if ( 'default' === $template_source && 'popup' === ( $settings['click_action'] ?? 'permalink' ) && ! empty( $settings['click_popup_id'] ) ) {
-                    $item_attrs = ' data-popup-id="' . esc_attr( $settings['click_popup_id'] ) . '"';
+                if ( 'default' === $template_source && 'popup' === ( $settings['click_action'] ?? 'permalink' ) && ! empty( $settings['click_popup_id'] ) ) {
+                    $item_attrs .= ' data-popup-id="' . esc_attr( $settings['click_popup_id'] ) . '"';
                 }
 
                 $html .= '<div class="' . esc_attr( implode( ' ', $item_classes ) ) . '"' . $item_attrs . '>';
