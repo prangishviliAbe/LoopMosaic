@@ -631,11 +631,20 @@ wp_send_json_error( [ 'message' => 'Settings not found' ] );
                         $color_data = $custom_colors[ $index % count( $custom_colors ) ];
                         $color_hex = $color_data['overlay_color'];
                         
-                        // Handle Opacity
-                        $opacity = isset( $settings['overlay_opacity'] ) ? $settings['overlay_opacity'] : 0.85; // JSF passes it as simple value from array
-                        if ( is_array( $opacity ) ) {
-                             $opacity = isset( $opacity['size'] ) ? $opacity['size'] : 0.85;
-                        }
+                        $text_inv_hex = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
+                        $hover_inv_hex = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
+                        $v_align = ! empty( $color_data['text_v_align'] ) ? $color_data['text_v_align'] : 'flex-end';
+                        $h_align = ! empty( $color_data['text_h_align'] ) ? $color_data['text_h_align'] : 'flex-start';
+
+                        // Map flex values to text-align values
+                        $text_align_map = [
+                            'flex-start' => 'left',
+                            'center'     => 'center',
+                            'flex-end'   => 'right',
+                        ];
+                        $text_align = isset( $text_align_map[ $h_align ] ) ? $text_align_map[ $h_align ] : 'left';
+
+                        $opacity = isset( $settings['overlay_opacity']['size'] ) ? $settings['overlay_opacity']['size'] : 0.85;
 
                         // Convert Hex to RGBA
                         $color_hex = str_replace('#', '', $color_hex);
@@ -650,12 +659,8 @@ wp_send_json_error( [ 'message' => 'Settings not found' ] );
                         }
                         $rgba_color = "rgba($r, $g, $b, $opacity)";
                         
-                        // Text Color
-                        $text_color = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
-                        $text_hover_color = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
-
                         $item_classes[] = 'overlay-custom';
-                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_color ) . '; --lm-custom-text-hover: ' . esc_attr( $text_hover_color ) . ';"';
+                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_inv_hex ) . '; --lm-custom-text-hover: ' . esc_attr( $hover_inv_hex ) . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . ';"';
                     } else {
                         // Default Logic
                         $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];

@@ -5,7 +5,7 @@
  * 
  * @package LoopMosaic
  * @author Abe Prangishvili
- * @version 1.9.15
+ * @version 1.10.0
  */
 
 (function ($) {
@@ -18,7 +18,7 @@
             if (this.isInitialized) return;
             this.isInitialized = true;
 
-            console.log('LoopMosaic: Filters script initialized (v1.9.15) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
+            console.log('LoopMosaic: Filters script initialized (v1.10.0) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
             this.grids = {};
             this.filterValues = {};
             this.debounceTimers = {};
@@ -38,6 +38,7 @@
             this.initInfiniteScroll();
             this.disableNativeLinks();
             this.bindAllJSFFilters();
+            this.initMasonry();
         },
 
         disableNativeLinks: function () {
@@ -526,6 +527,14 @@
                     if ($grid.length) {
                         $grid.removeClass('jet-filters-loading');
                         if (response && response.content) $grid.html(response.content);
+
+                        if ($grid.hasClass('loopmosaic-masonry')) {
+                            $grid.imagesLoaded(function () {
+                                $grid.masonry('reloadItems');
+                                $grid.masonry('layout');
+                            });
+                        }
+
                         self.animateItems($grid);
                         self.disableNativeLinks();
                     }
@@ -636,11 +645,19 @@
 
                         // Append to grid
                         $grid.append($newItems);
+
+                        if ($grid.hasClass('loopmosaic-masonry')) {
+                            $grid.imagesLoaded(function () {
+                                $grid.masonry('appended', $newItems);
+                                self.animateItems($grid, $newItems);
+                            });
+                        } else {
+                            self.animateItems($grid, $newItems);
+                        }
+
                         $grid.data('paged', nextPage);
                         if (nextPage >= maxPages) $grid.addClass('is-finished');
 
-                        // Animate only the new items
-                        self.animateItems($grid, $newItems);
                         $(window).trigger('resize');
                     }
                     else {
@@ -650,6 +667,24 @@
                 },
                 error: function () {
                     $grid.removeClass('is-loading-more'); $loader.removeClass('is-active');
+                }
+            });
+        },
+
+        initMasonry: function ($context) {
+            const $grids = $context ? $context.find('.loopmosaic-masonry') : $('.loopmosaic-masonry');
+            $grids.each(function () {
+                const $grid = $(this);
+                if ($grid.data('masonry')) {
+                    $grid.masonry('layout');
+                } else {
+                    $grid.imagesLoaded(function () {
+                        $grid.masonry({
+                            itemSelector: '.loopmosaic-item',
+                            percentPosition: true,
+                            columnWidth: '.loopmosaic-item'
+                        });
+                    });
                 }
             });
         },
@@ -671,9 +706,10 @@
     $(window).on('elementor/frontend/init', function () {
         LoopMosaicFilters.init(); // Redundant init check handles safety
         if (window.elementorFrontend && elementorFrontend.hooks) {
-            elementorFrontend.hooks.addAction('frontend/element_ready/loopmosaic-grid.default', function () {
+            elementorFrontend.hooks.addAction('frontend/element_ready/loopmosaic-grid.default', function ($scope) {
                 LoopMosaicFilters.storeGridSettings();
                 LoopMosaicFilters.bindAllJSFFilters();
+                LoopMosaicFilters.initMasonry($scope);
             });
         }
     });

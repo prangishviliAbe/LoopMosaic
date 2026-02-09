@@ -250,6 +250,68 @@ class Mosaic_Loop_Widget extends Widget_Base {
         );
 
         $this->add_control(
+            'layout_mode',
+            [
+                'label'   => esc_html__( 'Layout Mode', 'loop-mosaic' ),
+                'type'    => Controls_Manager::SELECT,
+                'options' => [
+                    'css_grid'   => esc_html__( 'CSS Grid (Mosaic)', 'loop-mosaic' ),
+                    'masonry_js' => esc_html__( 'True Masonry (JS)', 'loop-mosaic' ),
+                ],
+                'default' => 'css_grid',
+            ]
+        );
+
+        $repeater = new \Elementor\Repeater();
+
+        $repeater->add_control(
+            'column_target',
+            [
+                'label'   => esc_html__( 'Target Column', 'loop-mosaic' ),
+                'type'    => Controls_Manager::NUMBER,
+                'min'     => 1,
+                'max'     => 6,
+                'step'    => 1,
+                'default' => 1,
+            ]
+        );
+
+        $repeater->add_control(
+            'column_height',
+            [
+                'label'      => esc_html__( 'Item Height', 'loop-mosaic' ),
+                'type'       => Controls_Manager::SLIDER,
+                'size_units' => [ 'px', 'vh' ],
+                'range'      => [
+                    'px' => [
+                        'min' => 100,
+                        'max' => 1000,
+                    ],
+                ],
+                'default'    => [
+                    'size' => 300,
+                    'unit' => 'px',
+                ],
+                'selectors'  => [
+                    // Selector is handled dynamically in render
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'column_rules',
+            [
+                'label'       => esc_html__( 'Masonry Column Rules', 'loop-mosaic' ),
+                'type'        => Controls_Manager::REPEATER,
+                'fields'      => $repeater->get_controls(),
+                'title_field' => 'Column {{{ column_target }}} : {{{ column_height.size }}}{{{ column_height.unit }}}',
+                'condition'   => [
+                    'layout_mode' => 'masonry_js',
+                ],
+            ]
+        );
+
+        $this->add_control(
             'pattern',
             [
                 'label'   => esc_html__( 'Mosaic Pattern', 'loop-mosaic' ),
@@ -262,6 +324,26 @@ class Mosaic_Loop_Widget extends Widget_Base {
                     'uniform'   => esc_html__( 'Uniform Grid', 'loop-mosaic' ),
                 ],
                 'default' => 'classic',
+                'condition' => [
+                    'layout_mode' => 'css_grid',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'highlight_item_height',
+            [
+                'label'   => esc_html__( 'Highlight Item Height', 'loop-mosaic' ),
+                'type'    => Controls_Manager::SELECT,
+                'options' => [
+                    'full' => esc_html__( 'Full (2 Rows)', 'loop-mosaic' ),
+                    'half' => esc_html__( 'Half (1 Row)', 'loop-mosaic' ),
+                ],
+                'default' => 'full',
+                'condition' => [
+                    'pattern' => [ 'metro', 'highlight', 'classic' ],
+                    'layout_mode' => 'css_grid',
+                ],
             ]
         );
 
@@ -309,6 +391,28 @@ class Mosaic_Loop_Widget extends Widget_Base {
                 ],
                 'selectors'  => [
                     '{{WRAPPER}} .loopmosaic-item' => '--lm-min-height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'max_height',
+            [
+                'label'      => esc_html__( 'Card Max Height', 'loop-mosaic' ),
+                'type'       => Controls_Manager::SLIDER,
+                'size_units' => [ 'px', 'vh' ],
+                'range'      => [
+                    'px' => [
+                        'min' => 200,
+                        'max' => 1000,
+                    ],
+                    'vh' => [
+                        'min' => 20,
+                        'max' => 100,
+                    ],
+                ],
+                'selectors'  => [
+                    '{{WRAPPER}} .loopmosaic-item' => '--lm-max-height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -543,6 +647,34 @@ class Mosaic_Loop_Widget extends Widget_Base {
                 'label' => esc_html__( 'Text Hover Color', 'loop-mosaic' ),
                 'type' => Controls_Manager::COLOR,
                 'default' => '#ffffff',
+            ]
+        );
+
+        $repeater->add_control(
+            'text_v_align',
+            [
+                'label'   => esc_html__( 'Vertical Align', 'loop-mosaic' ),
+                'type'    => Controls_Manager::SELECT,
+                'options' => [
+                    'flex-start' => esc_html__( 'Top', 'loop-mosaic' ),
+                    'center'     => esc_html__( 'Middle', 'loop-mosaic' ),
+                    'flex-end'   => esc_html__( 'Bottom', 'loop-mosaic' ),
+                ],
+                'default' => 'flex-end',
+            ]
+        );
+
+        $repeater->add_control(
+            'text_h_align',
+            [
+                'label'   => esc_html__( 'Horizontal Align', 'loop-mosaic' ),
+                'type'    => Controls_Manager::SELECT,
+                'options' => [
+                    'flex-start' => esc_html__( 'Left', 'loop-mosaic' ),
+                    'center'     => esc_html__( 'Center', 'loop-mosaic' ),
+                    'flex-end'   => esc_html__( 'Right', 'loop-mosaic' ),
+                ],
+                'default' => 'flex-start',
             ]
         );
 
@@ -1462,6 +1594,36 @@ class Mosaic_Loop_Widget extends Widget_Base {
             'pattern-' . $settings['pattern'],
         ];
 
+        if ( in_array( $settings['pattern'], [ 'metro', 'highlight', 'classic' ] ) && ! empty( $settings['highlight_item_height'] ) && 'half' === $settings['highlight_item_height'] ) {
+            $grid_classes[] = 'highlight-height-half';
+        }
+
+        // Masonry Logic
+        if ( ! empty( $settings['layout_mode'] ) && 'masonry_js' === $settings['layout_mode'] ) {
+            $grid_classes[] = 'loopmosaic-masonry';
+            $this->add_render_attribute( 'jsf_grid_container', 'data-layout-mode', 'masonry' );
+
+            // Dynamic CSS for Column Rules
+            if ( ! empty( $settings['column_rules'] ) ) {
+                $css = '';
+                $cols = intval( $settings['columns'] );
+                $widget_id = $this->get_id();
+
+                foreach ( $settings['column_rules'] as $rule ) {
+                    $target = intval( $rule['column_target'] );
+                    $height = $rule['column_height']['size'] . $rule['column_height']['unit'];
+                    
+                    // nth-of-type logic: An+B where A=cols, B=target
+                    $nth = "{$cols}n+{$target}";
+                    $css .= ".elementor-element-{$widget_id} .loopmosaic-masonry .loopmosaic-item:nth-of-type({$nth}) { height: {$height} !important; } ";
+                }
+
+                if ( ! empty( $css ) ) {
+                    echo '<style>' . $css . '</style>';
+                }
+            }
+        }
+
         // Image height mode class
         $image_height_mode = ! empty( $settings['image_height_mode'] ) ? $settings['image_height_mode'] : 'fill';
         $grid_classes[] = 'img-mode-' . $image_height_mode;
@@ -1571,14 +1733,22 @@ class Mosaic_Loop_Widget extends Widget_Base {
                             $g = hexdec( substr( $color_hex, 2, 2 ) );
                             $b = hexdec( substr( $color_hex, 4, 2 ) );
                         }
-                        $rgba_color = "rgba($r, $g, $b, $opacity)";
-                        
-                        // Text Color
-                        $text_color = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
-                        $text_hover_color = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
+                        $text_inv_hex = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
+                        $hover_inv_hex = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
+                        $v_align = ! empty( $color_data['text_v_align'] ) ? $color_data['text_v_align'] : 'flex-end';
+                        $h_align = ! empty( $color_data['text_h_align'] ) ? $color_data['text_h_align'] : 'flex-start';
 
+                        // Map flex values to text-align values
+                        $text_align_map = [
+                            'flex-start' => 'left',
+                            'center'     => 'center',
+                            'flex-end'   => 'right',
+                        ];
+                        $text_align = isset( $text_align_map[ $h_align ] ) ? $text_align_map[ $h_align ] : 'left';
+
+                        $rgba = "rgba($r, $g, $b, $opacity)";
                         $item_classes[] = 'overlay-custom';
-                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_color ) . '; --lm-custom-text-hover: ' . esc_attr( $text_hover_color ) . ';"';
+                        $item_attrs = ' style="--lm-custom-overlay: ' . $rgba . '; --lm-custom-text: ' . $text_inv_hex . '; --lm-custom-text-hover: ' . $hover_inv_hex . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . ';"';
                     } else {
                         // Default Logic
                         $item_classes[] = $this->get_overlay_class( $index );

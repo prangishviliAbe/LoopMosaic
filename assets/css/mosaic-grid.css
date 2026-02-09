@@ -34,6 +34,7 @@
     overflow: hidden;
     border-radius: var(--lm-border-radius, 8px);
     min-height: var(--lm-min-height, 200px);
+    max-height: var(--lm-max-height, none);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -164,6 +165,14 @@
     grid-row: span 1;
 }
 
+/* === Height Modifiers (Highlight/Metro) === */
+.loopmosaic-grid.pattern-highlight.highlight-height-half .loopmosaic-item:first-child,
+.loopmosaic-grid.pattern-metro.highlight-height-half .loopmosaic-item:nth-child(6n+1),
+.loopmosaic-grid.pattern-classic.highlight-height-half .loopmosaic-item:nth-child(13n+1),
+.loopmosaic-grid.pattern-classic.highlight-height-half .loopmosaic-item:nth-child(13n+6) {
+    grid-row: span 1 !important;
+}
+
 /* === Card Content Styling === */
 .loopmosaic-item__inner {
     position: absolute;
@@ -258,23 +267,22 @@
     background: linear-gradient(135deg, rgba(60, 179, 113, 0.85) 0%, rgba(46, 139, 87, 0.9) 100%);
 }
 
-/* === Custom Overlay === */
+/* === Custom Overlay (Variable-Based) === */
 .loopmosaic-item.overlay-custom .loopmosaic-item__inner {
-    background: var(--lm-custom-overlay);
+    background: var(--lm-custom-overlay, rgba(138, 43, 226, 0.85)) !important;
+    justify-content: var(--lm-custom-v-align, flex-end) !important;
+    align-items: var(--lm-custom-h-align, flex-start) !important;
+    text-align: var(--lm-custom-text-align, left) !important;
 }
 
 .loopmosaic-item.overlay-custom .loopmosaic-item__title,
-.loopmosaic-item.overlay-custom h3.loopmosaic-item__title,
 .loopmosaic-item.overlay-custom .loopmosaic-item__excerpt,
 .loopmosaic-item.overlay-custom .loopmosaic-item__meta,
-.loopmosaic-item.overlay-custom .loopmosaic-item__meta span,
 .loopmosaic-item.overlay-custom .loopmosaic-item__category {
     color: var(--lm-custom-text, #ffffff) !important;
-    transition: color 0.3s ease;
 }
 
 .loopmosaic-item.overlay-custom:hover .loopmosaic-item__title,
-.loopmosaic-item.overlay-custom:hover h3.loopmosaic-item__title,
 .loopmosaic-item.overlay-custom:hover .loopmosaic-item__excerpt,
 .loopmosaic-item.overlay-custom:hover .loopmosaic-item__meta,
 .loopmosaic-item.overlay-custom:hover .loopmosaic-item__meta span,

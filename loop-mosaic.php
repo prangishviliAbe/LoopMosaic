@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.9.15
+ * Version: 1.10.0
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-define( 'LOOPMOSAIC_VERSION', '1.9.15' );
+define( 'LOOPMOSAIC_VERSION', '1.10.0' );
 define( 'LOOPMOSAIC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOOPMOSAIC_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOOPMOSAIC_BASENAME', plugin_basename( __FILE__ ) );
@@ -140,7 +140,7 @@ final class LoopMosaic {
         // Dependencies - jQuery is essential.
         // We do NOT depend on 'jet-smart-filters' here because it might not be loaded on the page
         // if no filter widget is present. We handle its absence in JS.
-        $deps = [ 'jquery' ]; 
+        $deps = [ 'jquery', 'masonry', 'imagesloaded' ]; 
 
 
         wp_enqueue_script(
@@ -403,12 +403,22 @@ final class LoopMosaic {
                         }
                         $rgba_color = "rgba($r, $g, $b, $opacity)";
                         
-                        // Text Color
-                        $text_color = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
-                        $text_hover_color = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
+                        // Text Color & Alignment
+                        $text_inv_hex = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
+                        $hover_inv_hex = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
+                        $v_align = ! empty( $color_data['text_v_align'] ) ? $color_data['text_v_align'] : 'flex-end';
+                        $h_align = ! empty( $color_data['text_h_align'] ) ? $color_data['text_h_align'] : 'flex-start';
+
+                        // Map flex values to text-align values
+                        $text_align_map = [
+                            'flex-start' => 'left',
+                            'center'     => 'center',
+                            'flex-end'   => 'right',
+                        ];
+                        $text_align = isset( $text_align_map[ $h_align ] ) ? $text_align_map[ $h_align ] : 'left';
                         
                         $item_classes[] = 'overlay-custom';
-                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_color ) . '; --lm-custom-text-hover: ' . esc_attr( $text_hover_color ) . ';"';
+                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-text: ' . esc_attr( $text_inv_hex ) . '; --lm-custom-text-hover: ' . esc_attr( $hover_inv_hex ) . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . ';"';
                     } else {
                         // Helper for overlay color
                         $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
