@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.10.0] - 2026-02-09
+### Added
+- **True Masonry Layout**:
+    - New `layout_mode` control to switch between 'CSS Grid' and 'True Masonry (JS)'.
+    - **Masonry Column Rules**: Repeater control to set specific heights for cards in specific columns.
+    - Automatic gap filling using `masonry.js`.
+
+### Fixed
+- **Half Height Highlight Item**:
+    - Resolved issue where 'Half Height' setting for Classic/Metro patterns was not applying correctly after save.
+    - Restored missing CSS for `pattern-classic`.
+- **Clickability Regression**:
+    - Fixed issue where links and popups were not clickable due to structural CSS changes.
+    - Restored `z-index` and positioning for link elements.
+- **Initial Load Styles**:
+    - Fixed missing `overlay-custom` class on initial widget render, ensuring custom styles appear immediately.
+
 ## [1.9.15] - 2026-02-09
 ### Added
 - **No Posts Found Customization**:
