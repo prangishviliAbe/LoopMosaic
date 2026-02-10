@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.12.1] - 2026-02-10
+### Fixed
+- **Missing Styles**: Restored CSS for "Load More" button and spinner animation which were missing in the previous build.
+
 ## [1.12.0] - 2026-02-09
 ### Added
 - **Load More Button**: 

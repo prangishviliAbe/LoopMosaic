@@ -574,68 +574,65 @@
     }
 }
 
-/* === Read More Button === */
-.loopmosaic-read-more-wrapper {
-    margin-top: 10px;
+
+/* === Load More Button === */
+.loopmosaic-load-more-btn-wrapper {
+    text-align: center;
+    margin-top: 30px;
+    clear: both;
+    width: 100%;
 }
 
-.loopmosaic-read-more {
-    display: inline-block;
-    padding: 8px 16px;
+.loopmosaic-load-more-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
     background-color: #8a2be2;
     color: #ffffff;
+    border: none;
     border-radius: 4px;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
-    text-decoration: none;
-    pointer-events: auto;
-    /* Ensure clickable inside overlay */
+    transition: all 0.3s ease;
+    overflow: hidden;
+    line-height: normal;
 }
 
-/* Ensure link covers it but if we want button to be clickable separately?
-   Actually the whole item is a link via .loopmosaic-item__link. 
-   If user wants button to do something else, z-index would matter. 
-   But usually, the button just implies "click here" and triggers the parent link. 
-   If the parent link is absolute covering everything, the button styles are just visual. 
-   Verify z-index of link vs content.
-*/
-.loopmosaic-item__content {
-    /* Ensure content is above link if we want text selection, but usually link covers all. */
-    /* If we want button specific hover, the link usually covers it. */
-    /* If the button has hover effects, the parent :hover triggers them or the link :hover? */
-    /* Actually since the link covers everything with z-index 2 (usually), the button (inside content) might be below. */
-    position: relative;
-    z-index: 3;
-    /* Content above link for text selection and button interaction if needed */
+.loopmosaic-load-more-btn:hover {
+    opacity: 0.9;
+}
+
+.loopmosaic-load-more-btn:disabled,
+.loopmosaic-load-more-btn.is-loading {
+    cursor: not-allowed;
     pointer-events: none;
-    /* Let clicks pass through to link by default */
 }
 
-.loopmosaic-read-more {
-    pointer-events: auto;
-    /* Re-enable pointer events for button if it needs specific interaction, but if it just goes to same place, it doesn't matter. */
-    /* If button has different link, we need it. If it's just visual, pointer-events: none on wrapper is fine. */
-    /* But for hover effects on button itself to work, it needs to receive mouse events IF it's above the link. */
-    /* If .loopmosaic-item__link is z-index 2, and content is z-index 3, then content blocks link. */
-    /* We want the WHOLE card to be clickable. */
-    /* So usually, link is on top. But then button hover styles (background change) won't trigger on button hover specifically, only on card hover. */
-    /* UNLESS we use pointer-events: none on content and let the link handle the click. */
-    /* BUT Elementor buttons usually want their own hover state. */
-    /* COMPROMISE: If link covers all, individual button hover (e.g. bg color change) won't work on mouseover OF BUTTON. */
-    /* It would only work if we target card:hover .button. */
-    /* User set up :hover controls for the button. */
-    /* If I want accurate button hover, button must be on top. But then clicking outside button but on image works? Yes. */
-    /* So detailed plan: Link is z-index 1. Content is z-index 2. Button is part of content. */
-    /* Clicking button works. Clicking image works (if link covers image). */
+.loopmosaic-load-more-btn.is-loading .loopmosaic-load-more-text {
+    opacity: 0;
 }
 
-/* Adjusting z-index for clickable areas */
-.loopmosaic-item__link {
-    z-index: 10;
-    /* High z-index to cover everything */
+.loopmosaic-load-more-btn .loopmosaic-load-more-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: loopmosaic-spin 0.8s linear infinite;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loopmosaic-load-more-btn.is-loading .loopmosaic-load-more-spinner {
+    opacity: 1;
+    visibility: visible;
 }
 
 .loopmosaic-item__content {
