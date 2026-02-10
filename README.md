@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.12.2-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.12.3-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -172,6 +172,10 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.12.3 (2026-02-10)
+- **Fix:** "LoopMosaic Grid" now correctly appears in the "Filter for" dropdown for **JetSmartFilters Checkbox, Radio, Select, and Range** widgets.
+- **Improved:** Robust provider injection into Elementor controls for better compatibility.
 
 ### Version 1.12.2 (2026-02-10)
 - **New:** Added "Under Image" Card Style option for alternative layouts.

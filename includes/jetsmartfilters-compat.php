@@ -97,6 +97,29 @@ class LoopMosaic_JetSmartFilters_Compat {
         // Enqueue scripts
         add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_filter_scripts' ] );
         
+        // Brute Force Injection for Elementor Editor
+        $jsf_widgets = [
+            'jet-smart-filters-checkboxes',
+            'jet-smart-filters-radio',
+            'jet-smart-filters-select',
+            'jet-smart-filters-range',
+            'jet-smart-filters-check-range',
+            'jet-smart-filters-date-range',
+            'jet-smart-filters-date-period',
+            'jet-smart-filters-rating',
+            'jet-smart-filters-alphabet',
+            'jet-smart-filters-search',
+            'jet-smart-filters-color-image',
+        ];
+        
+        foreach ( $jsf_widgets as $widget ) {
+            add_action( "elementor/element/$widget/section_general/before_section_end", [ $this, 'inject_provider_into_elementor' ], 10, 2 );
+            // Some widgets might use 'section_filter_settings' or similar, so let's be broad if needed
+            // But 'section_general' is usually where 'content_provider' lives in JSF widgets.
+            // Let's also try generic element update if specific one fails? No, specific is better for performance.
+            // Checkboxes widget usually puts it in 'section_general'.
+        }
+        
         // Apply filters query
         add_action( 'pre_get_posts', [ $this, 'apply_filters_to_query' ] );
 
