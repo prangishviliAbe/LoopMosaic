@@ -269,6 +269,8 @@ class Mosaic_Loop_Widget extends Widget_Base {
                 'label'   => esc_html__( 'Columns', 'loop-mosaic' ),
                 'type'    => Controls_Manager::SELECT,
                 'options' => [
+                    '1' => '1',
+                    '2' => '2',
                     '3' => '3',
                     '4' => '4',
                     '5' => '5',

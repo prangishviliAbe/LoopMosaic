@@ -12,6 +12,14 @@
 }
 
 /* === Column Configurations === */
+.loopmosaic-grid.columns-1 {
+    grid-template-columns: 1fr;
+}
+
+.loopmosaic-grid.columns-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
 .loopmosaic-grid.columns-3 {
     grid-template-columns: repeat(3, 1fr);
 }
@@ -422,6 +430,41 @@
     }
 }
 
+/* === Modal Specific Styles === */
+/* Force visibility and color for Post Info Widget - Broad Selectors */
+.loopmosaic-elementor-content .elementor-post-info,
+.loopmosaic-elementor-content ul.elementor-post-info,
+.loopmosaic-elementor-content .elementor-post-info .elementor-icon-list-item,
+.loopmosaic-elementor-content .elementor-post-info .elementor-icon-list-text,
+.loopmosaic-elementor-content .elementor-post-info .elementor-icon-list-icon,
+.loopmosaic-elementor-content .elementor-post-info a,
+.loopmosaic-elementor-content .elementor-post-info span {
+    color: var(--lm-modal-text-color, #333333) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 14px !important;
+    /* Force readable size */
+    line-height: 1.5 !important;
+}
+
+.loopmosaic-elementor-content .elementor-post-info__terms-list-item {
+    display: inline-block !important;
+    background-color: #f0f0f0;
+    /* Fallback background */
+    padding: 2px 8px;
+    /* Fallback padding */
+    border-radius: 4px;
+    /* Fallback radius */
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* Specific fix for links to ensure they don't inherit transparent/white colors */
+.loopmosaic-elementor-content .elementor-widget-post-info a {
+    color: var(--lm-modal-link-color, #333) !important;
+    /* Darker link color */
+}
+
 /* === Editor Preview Styles === */
 .elementor-editor-active .loopmosaic-grid {
     min-height: 300px;
@@ -622,7 +665,7 @@
     transform: translate(-50%, -50%);
     width: 20px;
     height: 20px;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: currentColor;
     border-radius: 50%;
     animation: loopmosaic-spin 0.8s linear infinite;

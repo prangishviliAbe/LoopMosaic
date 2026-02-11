@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.12.3
+ * Version: 1.12.4
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe/LoopMosaic
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-define( 'LOOPMOSAIC_VERSION', '1.12.3' );
+define( 'LOOPMOSAIC_VERSION', '1.12.4' );
 define( 'LOOPMOSAIC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LOOPMOSAIC_URL', plugin_dir_url( __FILE__ ) );
 define( 'LOOPMOSAIC_BASENAME', plugin_basename( __FILE__ ) );
@@ -197,6 +197,8 @@ final class LoopMosaic {
                 
                 // Force singular state
                 $mock_query->is_singular = true;
+                $mock_query->is_single = true; // Added explicit single check
+                $mock_query->is_page = false;
                 $mock_query->is_home = false;
                 $mock_query->is_archive = false;
                 $mock_query->is_admin = false;
@@ -243,8 +245,19 @@ final class LoopMosaic {
                 }
 
                 if ( $template_id && class_exists( '\Elementor\Plugin' ) ) {
+                    // FIX: Switch Elementor's Global Post Context for Dynamic Tags
+                    $elementor_db_switched = false;
+                    if ( \Elementor\Plugin::$instance->db->switch_to_post( $post_id ) ) {
+                        $elementor_db_switched = true;
+                    }
+
                     // Attempt 1: Standard API
                     $html = \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $template_id, true );
+                    
+                    // FIX: Restore Elementor Context
+                    if ( $elementor_db_switched ) {
+                        \Elementor\Plugin::$instance->db->switch_to_post( 0 ); // Restore
+                    }
                     
                     // FIX: Force Load CSS for this Template
                     if ( class_exists( '\Elementor\Core\Files\CSS\Post' ) ) {
