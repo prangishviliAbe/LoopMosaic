@@ -164,23 +164,123 @@
     }
 }
 
+/* Tablet Styles */
+@media (max-width: 1024px) {
+    .loopmosaic-modal-container {
+        width: 92%;
+        max-width: 800px;
+    }
+
+    .loopmosaic-modal-image {
+        height: 350px;
+    }
+
+    .loopmosaic-modal-body {
+        padding: 30px;
+    }
+}
+
 /* Mobile Styles */
 @media (max-width: 767px) {
     .loopmosaic-modal-container {
         width: 95%;
         max-height: 95vh;
+        border-radius: 12px;
     }
 
     .loopmosaic-modal-image {
-        height: 250px;
+        height: 220px;
+        border-radius: 12px 12px 0 0;
     }
 
     .loopmosaic-modal-body {
-        padding: 25px;
+        padding: 20px;
     }
 
     .loopmosaic-modal-title {
-        font-size: 22px;
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    .loopmosaic-modal-text {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    /* Larger close button for touch */
+    .loopmosaic-modal-close {
+        top: 12px;
+        right: 12px;
+        width: 44px;
+        height: 44px;
+    }
+
+    .loopmosaic-modal-close svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Gallery responsive */
+    #loopmosaic-modal .gallery-columns-4 .gallery-item,
+    #loopmosaic-modal .gallery-columns-5 .gallery-item,
+    #loopmosaic-modal .gallery-columns-6 .gallery-item,
+    #loopmosaic-modal .gallery-columns-7 .gallery-item,
+    #loopmosaic-modal .gallery-columns-8 .gallery-item,
+    #loopmosaic-modal .gallery-columns-9 .gallery-item {
+        width: 33.333%;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .loopmosaic-modal-overlay {
+        align-items: flex-end;
+    }
+
+    .loopmosaic-modal-container {
+        width: 100%;
+        max-height: 90vh;
+        border-radius: 16px 16px 0 0;
+        margin: 0;
+    }
+
+    .loopmosaic-modal-image {
+        height: 180px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .loopmosaic-modal-body {
+        padding: 16px;
+    }
+
+    .loopmosaic-modal-title {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .loopmosaic-modal-text {
+        font-size: 13px;
+    }
+
+    /* Gallery 2-column on small mobile */
+    #loopmosaic-modal .gallery-columns-3 .gallery-item,
+    #loopmosaic-modal .gallery-columns-4 .gallery-item,
+    #loopmosaic-modal .gallery-columns-5 .gallery-item,
+    #loopmosaic-modal .gallery-columns-6 .gallery-item,
+    #loopmosaic-modal .gallery-columns-7 .gallery-item,
+    #loopmosaic-modal .gallery-columns-8 .gallery-item,
+    #loopmosaic-modal .gallery-columns-9 .gallery-item {
+        width: 50%;
+    }
+
+    .loopmosaic-modal-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .loopmosaic-modal-gallery img {
+        height: 100px;
     }
 }
 

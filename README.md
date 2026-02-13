@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.12.5-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.12.6-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -172,6 +172,14 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.12.6 (2026-02-13)
+- **Improvement:** Comprehensive **responsive design overhaul** for mobile and tablet devices.
+- **Improvement:** 5 breakpoints (1024px, 768px, 600px, 480px, 360px) for grid layout.
+- **Improvement:** Touch device optimizations — hover effects removed, 44px touch targets.
+- **Improvement:** Mobile modal uses **bottom-sheet UX** pattern on small screens.
+- **Improvement:** Gallery columns reduce automatically on smaller screens.
+- **Improvement:** Load More button full-width on mobile.
 
 ### Version 1.12.5 (2026-02-11)
 - **Fix:** Resolved **Z-Index conflict** where Elementor Lightbox would open behind the LoopMosaic Modal.
