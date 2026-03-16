@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.13.1] - 2026-03-16
+### Fixed
+- **Scroll Animations**: Fixed an issue where the animation settings panel did not render in the Elementor editor properly.
+
 ## [1.13.0] - 2026-03-16
 ### Added
 - **Scroll Animations**: A high-performance, scroll-triggered animation system for post cards.

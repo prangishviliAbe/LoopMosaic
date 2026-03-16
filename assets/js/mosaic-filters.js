@@ -5,7 +5,7 @@
  * 
  * @package LoopMosaic
  * @author Abe Prangishvili
- * @version 1.13.0
+ * @version 1.13.1
  */
 
 (function ($) {
@@ -17,8 +17,7 @@
         init: function () {
             if (this.isInitialized) return;
             this.isInitialized = true;
-
-            console.log('LoopMosaic: Filters script initialized (v1.13.0) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
+            console.log('LoopMosaic: Filters script initialized (v1.13.1) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
             this.grids = {};
             this.filterValues = {};
             this.debounceTimers = {};
