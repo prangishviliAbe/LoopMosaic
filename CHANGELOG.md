@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.12.7] - 2026-03-16
+### Added
+- **Exclude Posts**: New multi-select dropdown in Query settings to exclude specific posts from the grid.
+- Posts are listed by title with post type label for easy identification.
+- Works with all post types and compatible with Infinite Scroll / Load More.
+
 ## [1.12.1] - 2026-02-10
 ### Fixed
 - **Missing Styles**: Restored CSS for "Load More" button and spinner animation which were missing in the previous build.
