@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.12.8] - 2026-03-16
+### Added
+- **Featured Grid (2+3)**: New layout pattern with 2 large cards on top and 3 equal cards below, repeating cyclically.
+- **Hero Grid (1+3)**: New layout pattern with 1 full-width hero card on top and 3 equal cards below, repeating cyclically.
+- Responsive support: both new patterns collapse to uniform grid on tablet and mobile.
+
 ## [1.12.7] - 2026-03-16
 ### Added
 - **Exclude Posts**: New multi-select dropdown in Query settings to exclude specific posts from the grid.

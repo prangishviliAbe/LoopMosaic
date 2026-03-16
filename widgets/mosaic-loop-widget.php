@@ -384,6 +384,8 @@ class Mosaic_Loop_Widget extends Widget_Base
                 'masonry' => esc_html__('Masonry', 'loop-mosaic'),
                 'highlight' => esc_html__('Highlight First', 'loop-mosaic'),
                 'uniform' => esc_html__('Uniform Grid', 'loop-mosaic'),
+                'featured_grid' => esc_html__('Featured Grid (2+3)', 'loop-mosaic'),
+                'hero_grid' => esc_html__('Hero Grid (1+3)', 'loop-mosaic'),
             ],
             'default' => 'classic',
             'condition' => [
