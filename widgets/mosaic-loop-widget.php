@@ -1411,6 +1411,7 @@ class Mosaic_Loop_Widget extends Widget_Base
 
         $this->register_load_more_style_controls();
         $this->register_no_posts_style_controls();
+        $this->register_animation_controls();
     }
 
     /**
