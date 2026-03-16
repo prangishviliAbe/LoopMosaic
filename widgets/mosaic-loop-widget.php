@@ -1537,7 +1537,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'section_style_animations',
             [
                 'label' => esc_html__('Scroll Animations', 'loop-mosaic'),
-                'tab' => Controls_Manager::TAB_STYLE,
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
 
