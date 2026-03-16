@@ -204,6 +204,7 @@
     grid-column: span 1;
 }
 
+
 /* === Height Modifiers (Highlight/Metro) === */
 .loopmosaic-grid.pattern-highlight.highlight-height-half .loopmosaic-item:first-child,
 .loopmosaic-grid.pattern-metro.highlight-height-half .loopmosaic-item:nth-child(6n+1),
@@ -237,6 +238,56 @@
 
 .loopmosaic-item:hover .loopmosaic-item__image {
     transform: scale(1.08);
+}
+
+/* === Animations === */
+/* Base state for items that will be animated */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-ready {
+    opacity: 0;
+    will-change: transform, opacity;
+    /* The transition is handled by the JS adding the visible class, but we set a default easing here */
+    transition: opacity var(--lm-anim-duration, 0.6s) cubic-bezier(0.25, 1, 0.33, 1),
+                transform var(--lm-anim-duration, 0.6s) cubic-bezier(0.25, 1, 0.33, 1);
+}
+
+/* Ensure images don't transition while the parent is animating to avoid compounding effects */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-ready:not(.lm-anim-visible) .loopmosaic-item__image {
+    transition: none;
+}
+
+/* Visible State */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-visible {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+}
+
+/* specific animation types initial states */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-fade-up.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateY(40px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-fade-down.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateY(-40px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-fade-left.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateX(40px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-fade-right.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateX(-40px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-slide-up.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateY(100px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-scale-in.lm-anim-ready:not(.lm-anim-visible) {
+    transform: scale(0.8);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-zoom-in.lm-anim-ready:not(.lm-anim-visible) {
+    transform: scale(0.95);
 }
 
 /* === Card Content Elements === */

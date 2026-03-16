@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0] - 2026-03-16
+### Added
+- **Scroll Animations**: A high-performance, scroll-triggered animation system for post cards.
+- Support for multiple animation types: Fade In, Fade Up, Fade Down, Fade Left, Fade Right, Slide Up, Scale In, Subtle Zoom.
+- Widget controls for animation duration, stagger delay, and disabling on mobile devices.
+- Uses vanilla JS IntersectionObserver and hardware-accelerated CSS for smooth, jank-free performance.
+
 ## [1.12.8] - 2026-03-16
 ### Added
 - **Featured Grid (2+3)**: New layout pattern with 2 large cards on top and 3 equal cards below, repeating cyclically.

@@ -5,7 +5,7 @@
  * 
  * @package LoopMosaic
  * @author Abe Prangishvili
- * @version 1.12.0
+ * @version 1.13.0
  */
 
 (function ($) {
@@ -18,7 +18,7 @@
             if (this.isInitialized) return;
             this.isInitialized = true;
 
-            console.log('LoopMosaic: Filters script initialized (v1.12.0) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
+            console.log('LoopMosaic: Filters script initialized (v1.13.0) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
             this.grids = {};
             this.filterValues = {};
             this.debounceTimers = {};
@@ -39,6 +39,7 @@
             this.disableNativeLinks();
             this.bindAllJSFFilters();
             this.initMasonry();
+            this.initAnimations();
         },
 
         disableNativeLinks: function () {
@@ -532,7 +533,10 @@
                             $grid.imagesLoaded(function () {
                                 $grid.masonry('reloadItems');
                                 $grid.masonry('layout');
+                                self.initAnimations($grid);
                             });
+                        } else {
+                            self.initAnimations($grid);
                         }
 
                         self.animateItems($grid);
@@ -691,10 +695,14 @@
                             $grid.imagesLoaded(function () {
                                 $grid.masonry('appended', $newItems);
                                 // self.animateItems($grid, $newItems); // Masonry handles layout, animation might conflict or need delay
-                                setTimeout(() => self.animateItems($grid, $newItems), 100);
+                                setTimeout(() => {
+                                    self.animateItems($grid, $newItems);
+                                    self.initAnimations($grid);
+                                }, 100);
                             });
                         } else {
                             self.animateItems($grid, $newItems);
+                            self.initAnimations($grid);
                         }
 
                         $grid.data('paged', nextPage);
@@ -740,6 +748,89 @@
             });
         },
 
+        initAnimations: function ($context) {
+            const self = this;
+            const $grids = $context ? $context.filter('[data-lm-animations]').add($context.find('[data-lm-animations]')) : $('.loopmosaic-grid[data-lm-animations]');
+            
+            if (!$grids.length) return;
+
+            // Check if IntersectionObserver is supported
+            if (!('IntersectionObserver' in window)) {
+                $grids.find('.loopmosaic-item').addClass('lm-anim-visible');
+                return;
+            }
+
+            const isMobile = window.innerWidth <= 768;
+
+            $grids.each(function () {
+                const $grid = $(this);
+                const settings = $grid.data('lm-animations');
+                
+                if (!settings) return;
+                if (settings.disableMobile && isMobile) {
+                    $grid.find('.loopmosaic-item').addClass('lm-anim-visible');
+                    return;
+                }
+
+                const animType = 'lm-anim-' + settings.type;
+                const duration = settings.duration + 'ms';
+                const stagger = parseInt(settings.stagger) || 50;
+                
+                // Set CSS variables for duration on the grid
+                $grid[0].style.setProperty('--lm-anim-duration', duration);
+
+                const $items = $grid.find('.loopmosaic-item:not(.lm-anim-ready)');
+                
+                if (!$items.length) return;
+
+                // Prepare items
+                $items.addClass('lm-anim-ready ' + animType);
+
+                let visibleCount = 0;
+                let lastTime = Date.now();
+
+                const observer = new IntersectionObserver((entries, obs) => {
+                    const now = Date.now();
+                    // Reset stagger count if there's a pause in new elements appearing
+                    if (now - lastTime > 100) {
+                        visibleCount = 0;
+                    }
+                    lastTime = now;
+
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const $item = $(entry.target);
+                            
+                            // Apply staggered delay
+                            const delay = visibleCount * stagger;
+                            $item[0].style.transitionDelay = delay + 'ms';
+                            
+                            // Force reflow and add visible class
+                            requestAnimationFrame(() => {
+                                $item.addClass('lm-anim-visible');
+                            });
+
+                            // Cleanup after animation completes to prevent transition bugs on resize/hover
+                            setTimeout(() => {
+                                $item.removeClass('lm-anim-ready ' + animType).css('transition-delay', '');
+                            }, settings.duration + delay);
+
+                            obs.unobserve(entry.target);
+                            visibleCount++;
+                        }
+                    });
+                }, {
+                    root: null,
+                    rootMargin: '0px 0px -50px 0px', // Trigger slightly before it enters fully
+                    threshold: 0
+                });
+
+                $items.each(function () {
+                    observer.observe(this);
+                });
+            });
+        },
+
         initLoadMoreButton: function () {
             const self = this;
             $('.loopmosaic-load-more-button').on('click', function () {
@@ -761,6 +852,7 @@
                 LoopMosaicFilters.storeGridSettings();
                 LoopMosaicFilters.bindAllJSFFilters();
                 LoopMosaicFilters.initMasonry($scope);
+                LoopMosaicFilters.initAnimations($scope);
             });
         }
     });

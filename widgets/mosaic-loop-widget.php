@@ -1527,6 +1527,120 @@ class Mosaic_Loop_Widget extends Widget_Base
         return $popups;
     }
 
+    /**
+     * Register Animation Controls
+     */
+    protected function register_animation_controls()
+    {
+        $this->start_controls_section(
+            'section_style_animations',
+            [
+                'label' => esc_html__('Scroll Animations', 'loop-mosaic'),
+                'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'enable_animations',
+            [
+                'label' => esc_html__('Enable Animations', 'loop-mosaic'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Yes', 'loop-mosaic'),
+                'label_off' => esc_html__('No', 'loop-mosaic'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => esc_html__('Animate cards as they scroll into view.', 'loop-mosaic'),
+            ]
+        );
+
+        $this->add_control(
+            'animation_type',
+            [
+                'label' => esc_html__('Animation Type', 'loop-mosaic'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'fade-up',
+                'options' => [
+                    'fade-in' => esc_html__('Fade In', 'loop-mosaic'),
+                    'fade-up' => esc_html__('Fade Up', 'loop-mosaic'),
+                    'fade-down' => esc_html__('Fade Down', 'loop-mosaic'),
+                    'fade-left' => esc_html__('Fade Left', 'loop-mosaic'),
+                    'fade-right' => esc_html__('Fade Right', 'loop-mosaic'),
+                    'slide-up' => esc_html__('Slide Up', 'loop-mosaic'),
+                    'scale-in' => esc_html__('Scale In', 'loop-mosaic'),
+                    'zoom-in' => esc_html__('Subtle Zoom', 'loop-mosaic'),
+                ],
+                'condition' => [
+                    'enable_animations' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'animation_duration',
+            [
+                'label' => esc_html__('Animation Duration (ms)', 'loop-mosaic'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 200,
+                        'max' => 2000,
+                        'step' => 50,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 600,
+                ],
+                'condition' => [
+                    'enable_animations' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'animation_stagger',
+            [
+                'label' => esc_html__('Stagger Delay (ms)', 'loop-mosaic'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 500,
+                        'step' => 10,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 50,
+                ],
+                'description' => esc_html__('Delay between each card animating when multiple cards appear at once.', 'loop-mosaic'),
+                'condition' => [
+                    'enable_animations' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'disable_mobile_animations',
+            [
+                'label' => esc_html__('Disable on Mobile', 'loop-mosaic'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Yes', 'loop-mosaic'),
+                'label_off' => esc_html__('No', 'loop-mosaic'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'description' => esc_html__('Disable animations on devices under 768px for better performance.', 'loop-mosaic'),
+                'condition' => [
+                    'enable_animations' => 'yes',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
     protected function register_load_more_style_controls()
     {
         $this->start_controls_section(
@@ -1970,6 +2084,17 @@ class Mosaic_Loop_Widget extends Widget_Base
         // Prepare Render Attributes for the Grid Container
         // We use a specific key 'jsf_grid_container' so our Compat class can target it!
         $this->add_render_attribute('jsf_grid_container', 'class', $grid_classes);
+
+        // Animation attributes
+        if (!empty($settings['enable_animations']) && 'yes' === $settings['enable_animations']) {
+            $anim_settings = [
+                'type' => $settings['animation_type'] ?? 'fade-up',
+                'duration' => $settings['animation_duration']['size'] ?? 600,
+                'stagger' => $settings['animation_stagger']['size'] ?? 50,
+                'disableMobile' => !empty($settings['disable_mobile_animations']) && 'yes' === $settings['disable_mobile_animations'],
+            ];
+            $this->add_render_attribute('jsf_grid_container', 'data-lm-animations', wp_json_encode($anim_settings));
+        }
 
         // JetSmartFilters data attributes
         $jsf_settings = []; // Define it here to use for infinite scroll too
