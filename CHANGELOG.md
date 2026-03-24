@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.14.0] - 2026-03-24
+### Fixed
+- **Taxonomy Filter**: Taxonomy dropdown now shows only taxonomies relevant to the selected Post Type instead of all system taxonomies.
+- **Terms Selection**: Replaced manual slug text input with a multi-select dropdown that auto-populates available terms for the selected taxonomy.
+
 ## [1.13.1] - 2026-03-16
 ### Fixed
 - **Scroll Animations**: Fixed an issue where the animation settings panel did not render in the Elementor editor properly.
