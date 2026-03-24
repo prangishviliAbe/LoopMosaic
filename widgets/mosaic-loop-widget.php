@@ -197,27 +197,60 @@ class Mosaic_Loop_Widget extends Widget_Base
         ]
         );
 
-        $this->add_control(
-            'taxonomy',
-        [
-            'label' => esc_html__('Taxonomy', 'loop-mosaic'),
-            'type' => Controls_Manager::SELECT,
-            'options' => $this->get_taxonomies(),
-            'default' => '',
-        ]
-        );
+        // Dynamic taxonomy selects per post type
+        $post_types = $this->get_post_types();
+        foreach ($post_types as $pt_slug => $pt_label) {
+            $pt_taxonomies = get_object_taxonomies($pt_slug, 'objects');
+            $tax_options = ['' => esc_html__('None', 'loop-mosaic')];
+            foreach ($pt_taxonomies as $tax) {
+                if ($tax->public) {
+                    $tax_options[$tax->name] = $tax->label;
+                }
+            }
 
-        $this->add_control(
-            'taxonomy_terms',
-        [
-            'label' => esc_html__('Terms', 'loop-mosaic'),
-            'type' => Controls_Manager::TEXT,
-            'placeholder' => esc_html__('Enter term slugs, comma separated', 'loop-mosaic'),
-            'condition' => [
-                'taxonomy!' => '',
-            ],
-        ]
-        );
+            $this->add_control(
+                'taxonomy_' . $pt_slug,
+                [
+                    'label' => esc_html__('Taxonomy', 'loop-mosaic'),
+                    'type' => Controls_Manager::SELECT,
+                    'options' => $tax_options,
+                    'default' => '',
+                    'condition' => [
+                        'post_type' => $pt_slug,
+                    ],
+                ]
+            );
+
+            // Term multi-selects per taxonomy
+            foreach ($pt_taxonomies as $tax) {
+                if (!$tax->public) continue;
+                $terms = get_terms([
+                    'taxonomy' => $tax->name,
+                    'hide_empty' => false,
+                ]);
+                $term_options = [];
+                if (!is_wp_error($terms)) {
+                    foreach ($terms as $term) {
+                        $term_options[$term->slug] = $term->name;
+                    }
+                }
+
+                $this->add_control(
+                    'taxonomy_terms_' . $pt_slug . '_' . $tax->name,
+                    [
+                        'label' => sprintf(esc_html__('%s Terms', 'loop-mosaic'), $tax->label),
+                        'type' => Controls_Manager::SELECT2,
+                        'options' => $term_options,
+                        'multiple' => true,
+                        'label_block' => true,
+                        'condition' => [
+                            'post_type' => $pt_slug,
+                            'taxonomy_' . $pt_slug => $tax->name,
+                        ],
+                    ]
+                );
+            }
+        }
 
         // Exclude Posts
         $this->add_control(
@@ -2006,16 +2039,25 @@ class Mosaic_Loop_Widget extends Widget_Base
             'post_status' => 'publish',
         ];
 
-        // Taxonomy filter
-        if (!empty($settings['taxonomy']) && !empty($settings['taxonomy_terms'])) {
-            $terms = array_map('trim', explode(',', $settings['taxonomy_terms']));
-            $args['tax_query'] = [
-                [
-                    'taxonomy' => $settings['taxonomy'],
-                    'field' => 'slug',
-                    'terms' => $terms,
-                ],
-            ];
+        // Taxonomy filter (dynamic per post type)
+        $post_type = $settings['post_type'];
+        $taxonomy_key = 'taxonomy_' . $post_type;
+        $selected_taxonomy = !empty($settings[$taxonomy_key]) ? $settings[$taxonomy_key] : '';
+        $selected_terms = [];
+
+        if (!empty($selected_taxonomy)) {
+            $terms_key = 'taxonomy_terms_' . $post_type . '_' . $selected_taxonomy;
+            $selected_terms = !empty($settings[$terms_key]) ? (array) $settings[$terms_key] : [];
+
+            if (!empty($selected_terms)) {
+                $args['tax_query'] = [
+                    [
+                        'taxonomy' => $selected_taxonomy,
+                        'field' => 'slug',
+                        'terms' => $selected_terms,
+                    ],
+                ];
+            }
         }
 
         // Exclude Posts
@@ -2110,8 +2152,8 @@ class Mosaic_Loop_Widget extends Widget_Base
                 'posts_per_page' => $settings['posts_per_page'],
                 'orderby' => $settings['orderby'],
                 'order' => $settings['order'],
-                'taxonomy' => $settings['taxonomy'] ?? '',
-                'taxonomy_terms' => $settings['taxonomy_terms'] ?? '',
+                'taxonomy' => $selected_taxonomy,
+                'taxonomy_terms' => !empty($selected_terms) ? implode(',', $selected_terms) : '',
                 'template_source' => $template_source,
                 'show_title' => $settings['show_title'] ?? 'yes',
                 'show_excerpt' => $settings['show_excerpt'] ?? 'yes',
