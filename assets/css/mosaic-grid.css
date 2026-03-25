@@ -1,0 +1,1073 @@
+/**
+ * LoopMosaic - CSS Grid Mosaic Layout
+ * Author: Abe Prangishvili
+ * Version: 1.0.0
+ */
+
+/* === Base Grid Container === */
+.loopmosaic-grid {
+    display: grid;
+    column-gap: var(--lm-column-gap, 15px);
+    row-gap: var(--lm-row-gap, 15px);
+    width: 100%;
+}
+
+/* === Column Configurations === */
+.loopmosaic-grid.columns-1 {
+    grid-template-columns: 1fr;
+}
+
+.loopmosaic-grid.columns-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.loopmosaic-grid.columns-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.loopmosaic-grid.columns-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.loopmosaic-grid.columns-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.loopmosaic-grid.columns-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+/* === Mosaic Card Base === */
+.loopmosaic-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--lm-border-radius, 8px);
+    min-height: var(--lm-min-height, 200px);
+    max-height: var(--lm-max-height, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* === Pattern 1: Classic Mosaic (Based on Screenshot) === */
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+1) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+2) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+3) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+4) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+5) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+6) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+7) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+8) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+9) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+10) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+11) {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+12) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+13) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 2: Metro Style === */
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+1) {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+2),
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+3) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+4) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+5),
+.loopmosaic-grid.pattern-metro .loopmosaic-item:nth-child(6n+6) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 3: Masonry Alternating === */
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+1) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+2) {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+3),
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+4),
+.loopmosaic-grid.pattern-masonry .loopmosaic-item:nth-child(5n+5) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 4: Highlight First === */
+.loopmosaic-grid.pattern-highlight .loopmosaic-item:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-highlight .loopmosaic-item:not(:first-child) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 5: Uniform Grid === */
+.loopmosaic-grid.pattern-uniform .loopmosaic-item {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 6: Featured Grid (2+3) === */
+.loopmosaic-grid.pattern-featured_grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-item:nth-child(5n+1),
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-item:nth-child(5n+2) {
+    grid-column: span 3;
+}
+
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-item:nth-child(5n+3),
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-item:nth-child(5n+4),
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-item:nth-child(5n+5) {
+    grid-column: span 2;
+}
+
+/* === Pattern 6.5: Featured Grid (2+4) === */
+.loopmosaic-grid.pattern-featured_grid_2_4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-item:nth-child(6n+1),
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-item:nth-child(6n+2) {
+    grid-column: span 2;
+}
+
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-item:nth-child(6n+3),
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-item:nth-child(6n+4),
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-item:nth-child(6n+5),
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-item:nth-child(6n+6) {
+    grid-column: span 1;
+}
+
+/* === Pattern 7: Hero Grid (1+3) === */
+.loopmosaic-grid.pattern-hero_grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-hero_grid .loopmosaic-item:nth-child(4n+1) {
+    grid-column: span 3;
+}
+
+.loopmosaic-grid.pattern-hero_grid .loopmosaic-item:nth-child(4n+2),
+.loopmosaic-grid.pattern-hero_grid .loopmosaic-item:nth-child(4n+3),
+.loopmosaic-grid.pattern-hero_grid .loopmosaic-item:nth-child(4n+4) {
+    grid-column: span 1;
+}
+
+
+/* === Height Modifiers (Highlight/Metro) === */
+.loopmosaic-grid.pattern-highlight.highlight-height-half .loopmosaic-item:first-child,
+.loopmosaic-grid.pattern-metro.highlight-height-half .loopmosaic-item:nth-child(6n+1),
+.loopmosaic-grid.pattern-classic.highlight-height-half .loopmosaic-item:nth-child(13n+1),
+.loopmosaic-grid.pattern-classic.highlight-height-half .loopmosaic-item:nth-child(13n+6) {
+    grid-row: span 1 !important;
+}
+
+/* === Card Content Styling === */
+.loopmosaic-item__inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: var(--lm-v-align, flex-end);
+    align-items: var(--lm-h-align, flex-start);
+    text-align: var(--lm-text-align, left);
+    padding: var(--lm-padding, 20px);
+    background: var(--lm-overlay-gradient, linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 60%));
+    transition: background 0.3s ease;
+}
+
+.loopmosaic-item__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.loopmosaic-item:hover .loopmosaic-item__image {
+    transform: scale(1.08);
+}
+
+/* === Animations === */
+/* Base state for items that will be animated */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-ready {
+    opacity: 0;
+    will-change: transform, opacity, filter, clip-path;
+    /* Upgraded to Apple-style premium easing curve */
+    transition: opacity var(--lm-anim-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1),
+                transform var(--lm-anim-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1),
+                filter var(--lm-anim-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1),
+                clip-path var(--lm-anim-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Ensure images don't transition while the parent is animating to avoid compounding effects */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-ready:not(.lm-anim-visible) .loopmosaic-item__image {
+    transition: none;
+}
+
+/* Visible State */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-visible {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotateX(0deg) skewY(0deg);
+    filter: blur(0px);
+    clip-path: inset(0 0 0 0);
+}
+
+/* specific animation types initial states */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-fade-up.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateY(40px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-fade-down.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateY(-40px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-fade-left.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateX(40px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-fade-right.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateX(-40px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-slide-up.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateY(100px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-scale-in.lm-anim-ready:not(.lm-anim-visible) {
+    transform: scale(0.8);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-zoom-in.lm-anim-ready:not(.lm-anim-visible) {
+    transform: scale(0.95);
+}
+
+/* Premium Animations initial states */
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-blur-in.lm-anim-ready:not(.lm-anim-visible) {
+    transform: scale(0.95);
+    filter: blur(20px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-blur-up.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateY(60px) scale(0.98);
+    filter: blur(15px);
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-3d-flip-up.lm-anim-ready:not(.lm-anim-visible) {
+    transform: perspective(1000px) rotateX(-20deg) translateY(40px);
+    transform-origin: bottom center;
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-skew-up.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateY(60px) skewY(3deg);
+    transform-origin: top left;
+}
+
+.loopmosaic-grid[data-lm-animations] .loopmosaic-item.lm-anim-reveal-left.lm-anim-ready:not(.lm-anim-visible) {
+    transform: translateX(30px);
+    clip-path: inset(0 100% 0 0);
+}
+
+/* === Card Content Elements === */
+.loopmosaic-item__title {
+    margin: 0 0 8px;
+    font-size: var(--lm-title-size, 18px);
+    font-weight: 600;
+    color: var(--lm-title-color, #ffffff);
+    line-height: 1.3;
+}
+
+.loopmosaic-item__excerpt {
+    margin: 0;
+    font-size: var(--lm-excerpt-size, 14px);
+    color: var(--lm-excerpt-color, rgba(255, 255, 255, 0.85));
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.loopmosaic-item__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    font-size: var(--lm-meta-size, 12px);
+    color: var(--lm-meta-color, rgba(255, 255, 255, 0.7));
+}
+
+.loopmosaic-item__category {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--lm-category-bg, rgba(255, 255, 255, 0.2));
+    border-radius: 4px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--lm-category-color, #ffffff);
+    backdrop-filter: blur(4px);
+}
+
+/* === Color Overlays (Based on Screenshot) === */
+.loopmosaic-item.overlay-purple .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.85) 0%, rgba(75, 0, 130, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-teal .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(0, 128, 128, 0.85) 0%, rgba(32, 178, 170, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-gold .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(218, 165, 32, 0.85) 0%, rgba(184, 134, 11, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-coral .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(255, 127, 80, 0.85) 0%, rgba(205, 92, 92, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-cyan .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(0, 206, 209, 0.85) 0%, rgba(64, 224, 208, 0.9) 100%);
+}
+
+.loopmosaic-item.overlay-green .loopmosaic-item__inner {
+    background: linear-gradient(135deg, rgba(60, 179, 113, 0.85) 0%, rgba(46, 139, 87, 0.9) 100%);
+}
+
+/* === Custom Overlay (Variable-Based) === */
+.loopmosaic-item.overlay-custom .loopmosaic-item__inner {
+    background: var(--lm-custom-overlay, rgba(138, 43, 226, 0.85)) !important;
+    justify-content: var(--lm-custom-v-align, flex-end) !important;
+    align-items: var(--lm-custom-h-align, flex-start) !important;
+    text-align: var(--lm-custom-text-align, left) !important;
+}
+
+/* === Hover Effects === */
+
+/* Fade In (Show on Hover) */
+.loopmosaic-item.overlay-custom.overlay-hover-fade_in .loopmosaic-item__inner {
+    background: transparent !important;
+}
+
+.loopmosaic-item.overlay-custom.overlay-hover-fade_in:hover .loopmosaic-item__inner {
+    background: var(--lm-custom-overlay, rgba(138, 43, 226, 0.85)) !important;
+}
+
+/* Fade Out (Hide on Hover) */
+.loopmosaic-item.overlay-custom.overlay-hover-fade_out:hover .loopmosaic-item__inner {
+    background: transparent !important;
+}
+
+/* Custom Opacity (Hover) */
+.loopmosaic-item.overlay-custom.overlay-hover-custom_opacity:hover .loopmosaic-item__inner {
+    background: rgba(var(--lm-custom-overlay-rgb), var(--lm-custom-hover-opacity)) !important;
+}
+
+
+.loopmosaic-item.overlay-custom .loopmosaic-item__title,
+.loopmosaic-item.overlay-custom .loopmosaic-item__excerpt,
+.loopmosaic-item.overlay-custom .loopmosaic-item__meta,
+.loopmosaic-item.overlay-custom .loopmosaic-item__category {
+    color: var(--lm-custom-text, #ffffff) !important;
+}
+
+.loopmosaic-item.overlay-custom:hover .loopmosaic-item__title,
+.loopmosaic-item.overlay-custom:hover .loopmosaic-item__excerpt,
+.loopmosaic-item.overlay-custom:hover .loopmosaic-item__meta,
+.loopmosaic-item.overlay-custom:hover .loopmosaic-item__meta span,
+.loopmosaic-item.overlay-custom:hover .loopmosaic-item__category {
+    color: var(--lm-custom-text-hover, #ffffff) !important;
+}
+
+/* === Link Styling === */
+.loopmosaic-item__link {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    text-decoration: none;
+}
+
+/* === Hover Effects === */
+.loopmosaic-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.loopmosaic-item:hover .loopmosaic-item__inner {
+    background: var(--lm-overlay-hover, linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.1) 70%));
+}
+
+/* === JetEngine Listing Template Support === */
+.loopmosaic-item .jet-listing-grid__item {
+    position: static;
+}
+
+.loopmosaic-item .jet-listing-dynamic-link {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+}
+
+/* === JetSmartFilters Loading State === */
+.loopmosaic-grid.jet-filters-loading {
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.loopmosaic-grid.jet-filters-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--lm-loader-color, #6366f1);
+    border-radius: 50%;
+    animation: loopmosaic-spin 0.8s linear infinite;
+}
+
+@keyframes loopmosaic-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* === Responsive Design === */
+
+/* Tablet Landscape (1024px) */
+@media screen and (max-width: 1024px) {
+    .loopmosaic-grid.columns-6 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .loopmosaic-grid.columns-5 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .loopmosaic-grid {
+        column-gap: var(--lm-column-gap-tablet, var(--lm-column-gap, 12px));
+        row-gap: var(--lm-row-gap-tablet, var(--lm-row-gap, 12px));
+    }
+
+    .loopmosaic-item__title {
+        font-size: var(--lm-title-size-tablet, 16px);
+    }
+
+    .loopmosaic-item__excerpt {
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+}
+
+/* Tablet Portrait (768px) */
+@media screen and (max-width: 768px) {
+    .loopmosaic-grid.columns-6,
+    .loopmosaic-grid.columns-5,
+    .loopmosaic-grid.columns-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .loopmosaic-grid.columns-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Flatten all mosaic patterns to uniform grid on tablet */
+    .loopmosaic-grid.pattern-classic .loopmosaic-item,
+    .loopmosaic-grid.pattern-metro .loopmosaic-item,
+    .loopmosaic-grid.pattern-masonry .loopmosaic-item,
+    .loopmosaic-grid.pattern-featured_grid .loopmosaic-item,
+    .loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-item,
+    .loopmosaic-grid.pattern-hero_grid .loopmosaic-item {
+        grid-column: span 1 !important;
+        grid-row: span 1 !important;
+    }
+
+    .loopmosaic-grid.pattern-featured_grid,
+    .loopmosaic-grid.pattern-featured_grid_2_4,
+    .loopmosaic-grid.pattern-hero_grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    .loopmosaic-grid.pattern-highlight .loopmosaic-item:first-child {
+        grid-column: span 2 !important;
+        grid-row: span 1 !important;
+    }
+
+    .loopmosaic-grid {
+        column-gap: var(--lm-column-gap, 10px);
+        row-gap: var(--lm-row-gap, 10px);
+    }
+
+    .loopmosaic-item {
+        min-height: 180px;
+    }
+
+    .loopmosaic-item__inner {
+        padding: var(--lm-padding-tablet, 15px);
+    }
+
+    .loopmosaic-item__title {
+        font-size: var(--lm-title-size-tablet, 15px);
+    }
+
+    .loopmosaic-item__excerpt {
+        font-size: 13px;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+
+    .loopmosaic-item__meta {
+        font-size: 11px;
+        gap: 8px;
+    }
+
+    .loopmosaic-item__category {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .loopmosaic-item:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .loopmosaic-item:hover .loopmosaic-item__image {
+        transform: none;
+    }
+}
+
+/* Small Tablet / Large Phone (600px) */
+@media screen and (max-width: 600px) {
+    .loopmosaic-grid.columns-6,
+    .loopmosaic-grid.columns-5,
+    .loopmosaic-grid.columns-4,
+    .loopmosaic-grid.columns-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .loopmosaic-grid.pattern-highlight .loopmosaic-item:first-child {
+        grid-column: span 2 !important;
+    }
+
+    .loopmosaic-item {
+        min-height: 160px;
+    }
+
+    .loopmosaic-item__inner {
+        padding: 12px;
+    }
+
+    .loopmosaic-item__title {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .loopmosaic-item__excerpt {
+        font-size: 12px;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+    }
+
+    .loopmosaic-item__meta {
+        margin-top: 6px;
+    }
+
+    /* Load More Button */
+    .loopmosaic-load-more-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* Mobile (480px) */
+@media screen and (max-width: 480px) {
+    .loopmosaic-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .loopmosaic-grid.columns-1 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .loopmosaic-grid.pattern-highlight .loopmosaic-item:first-child {
+        grid-column: span 2 !important;
+    }
+
+    .loopmosaic-item {
+        min-height: 140px;
+        border-radius: var(--lm-border-radius-mobile, 6px);
+    }
+
+    .loopmosaic-item__inner {
+        padding: 10px;
+    }
+
+    .loopmosaic-item__title {
+        font-size: 13px;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+
+    .loopmosaic-item__excerpt {
+        display: none;
+    }
+
+    .loopmosaic-item__meta {
+        font-size: 10px;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+    .loopmosaic-item__category {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+
+    /* Load More Button */
+    .loopmosaic-load-more-btn {
+        width: 100%;
+        max-width: 100%;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .loopmosaic-load-more-btn-wrapper {
+        margin-top: 20px;
+        padding: 0 10px;
+    }
+}
+
+/* Small Mobile (360px) */
+@media screen and (max-width: 360px) {
+    .loopmosaic-grid {
+        grid-template-columns: 1fr !important;
+        gap: 6px !important;
+    }
+
+    .loopmosaic-item {
+        min-height: 200px;
+    }
+
+    .loopmosaic-item__inner {
+        padding: 12px;
+    }
+
+    .loopmosaic-item__title {
+        font-size: 15px;
+    }
+
+    .loopmosaic-item__excerpt {
+        display: block;
+        font-size: 13px;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+
+    .loopmosaic-item__category {
+        font-size: 10px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .loopmosaic-item:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .loopmosaic-item:hover .loopmosaic-item__image {
+        transform: none;
+    }
+
+    .loopmosaic-item:hover .loopmosaic-item__inner {
+        background: var(--lm-overlay-gradient, linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 60%));
+    }
+
+    /* Increase touch target sizes */
+    .loopmosaic-item__link {
+        min-height: 44px;
+    }
+
+    .loopmosaic-item__category {
+        min-height: 32px;
+        display: inline-flex;
+        align-items: center;
+    }
+}
+
+/* === Modal Specific Styles === */
+/* Force visibility and color for Post Info Widget - Broad Selectors */
+.loopmosaic-elementor-content .elementor-post-info,
+.loopmosaic-elementor-content ul.elementor-post-info,
+.loopmosaic-elementor-content .elementor-post-info .elementor-icon-list-item,
+.loopmosaic-elementor-content .elementor-post-info .elementor-icon-list-text,
+.loopmosaic-elementor-content .elementor-post-info .elementor-icon-list-icon,
+.loopmosaic-elementor-content .elementor-post-info a,
+.loopmosaic-elementor-content .elementor-post-info span {
+    color: var(--lm-modal-text-color, #333333) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 14px !important;
+    /* Force readable size */
+    line-height: 1.5 !important;
+}
+
+.loopmosaic-elementor-content .elementor-post-info__terms-list-item {
+    display: inline-block !important;
+    background-color: #f0f0f0;
+    /* Fallback background */
+    padding: 2px 8px;
+    /* Fallback padding */
+    border-radius: 4px;
+    /* Fallback radius */
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* Specific fix for links to ensure they don't inherit transparent/white colors */
+.loopmosaic-elementor-content .elementor-widget-post-info a {
+    color: var(--lm-modal-link-color, #333) !important;
+    /* Darker link color */
+}
+
+/* === Editor Preview Styles === */
+.elementor-editor-active .loopmosaic-grid {
+    min-height: 300px;
+}
+
+.elementor-editor-active .loopmosaic-item {
+    cursor: pointer;
+}
+
+/* === No Posts Message === */
+.loopmosaic-no-posts {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+/* === Image Height Modes === */
+.loopmosaic-grid.img-mode-fill .loopmosaic-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.loopmosaic-grid.img-mode-auto .loopmosaic-item__image {
+    position: relative;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.loopmosaic-grid.img-mode-auto .loopmosaic-item {
+    min-height: auto;
+}
+
+.loopmosaic-grid.img-mode-auto .loopmosaic-item__inner {
+    position: relative;
+    background: var(--lm-overlay-gradient, linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 60%));
+}
+
+.loopmosaic-grid.img-mode-fixed .loopmosaic-item__image {
+    position: relative;
+    width: 100%;
+}
+
+/* === Elementor Loop Template Support === */
+.loopmosaic-item .elementor-loop-container,
+.loopmosaic-item .e-loop-item,
+.loopmosaic-item .elementor-widget-container {
+    height: 100%;
+}
+
+.loopmosaic-item .elementor-section,
+.loopmosaic-item .elementor-container,
+.loopmosaic-item .e-con {
+    height: 100%;
+}
+
+.loopmosaic-item .elementor-section-wrap {
+    height: 100%;
+}
+
+/* Template content stretching */
+.loopmosaic-item>.elementor {
+    height: 100%;
+}
+
+.loopmosaic-item>.elementor>.elementor-inner {
+    height: 100%;
+}
+
+/* Template Placeholder */
+.loopmosaic-template-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 200px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    color: #6c757d;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+}
+
+/* === Elementor Container/Flex support === */
+.loopmosaic-item .e-con {
+    height: 100%;
+    min-height: inherit;
+}
+
+.loopmosaic-item .e-con-inner {
+    height: 100%;
+}
+
+/* Dynamic image in template */
+.loopmosaic-item .elementor-widget-image img,
+.loopmosaic-item .jet-listing-dynamic-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Infinite Scroll Loader */
+.loopmosaic-infinite-loader {
+    display: none;
+    width: 100%;
+    padding: 40px 0;
+    text-align: center;
+    clear: both;
+}
+
+.loopmosaic-infinite-loader.is-active {
+    display: block;
+}
+
+.loopmosaic-spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--e-global-color-accent, #61ce70);
+    animation: loopmosaic-spin 1s ease-in-out infinite;
+}
+
+@keyframes loopmosaic-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loopmosaic-grid.is-loading-more .loopmosaic-item-new {
+    animation: loopmosaic-fade-up 0.5s ease forwards;
+}
+
+@keyframes loopmosaic-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* === Load More Button === */
+.loopmosaic-load-more-btn-wrapper {
+    text-align: center;
+    margin-top: 30px;
+    clear: both;
+    width: 100%;
+}
+
+.loopmosaic-load-more-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    background-color: #8a2be2;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    line-height: normal;
+}
+
+.loopmosaic-load-more-btn:hover {
+    opacity: 0.9;
+}
+
+.loopmosaic-load-more-btn:disabled,
+.loopmosaic-load-more-btn.is-loading {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.loopmosaic-load-more-btn.is-loading .loopmosaic-load-more-text {
+    opacity: 0;
+}
+
+.loopmosaic-load-more-btn .loopmosaic-load-more-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: loopmosaic-spin 0.8s linear infinite;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loopmosaic-load-more-btn.is-loading .loopmosaic-load-more-spinner {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loopmosaic-item__content {
+    pointer-events: none;
+    /* Text not selectable, clicks pass to link */
+    z-index: 11;
+    /* Visible above link */
+}
+
+/* If we want text selection, we need pointer-events: auto on content. But then we lose the "click anywhere" on text. */
+/* Standard practice for these cards: "Click anywhere" implies link covers all. */
+/* Then button hover is fake? No, we can't hover button if link is on top. */
+/* SOLUTION: Make link z-index 1. Content z-index 2. 
+   But then clicking content (text) won't trigger link unless content is wrapped in <a> or JS handles it. */
+/* OR: Link covers all. Button hover is just card hover. */
+/* WAITING: User asked for "button styling". If they want specific button hover (like button turns red when mouse is OVER BUTTON), button must be on top. */
+/* If button is on top, clicking it must go to post. */
+/* We can wrap button in <a> tag? */
+/* Current implementation: Button is <span> inside <div>. */
+/* If I change span to <a>, nested links are illegal. .loopmosaic-item__link is <a>. */
+/* SO: I will keep it visual. */
+/* CSS targeting: .loopmosaic-item:hover .loopmosaic-read-more vs .loopmosaic-read-more:hover */
+/* If link covers all, .loopmosaic-read-more:hover NEVER fires. */
+/* I will assume user is okay with card hover effects, OR I need to move link to be siblings or z-index magic. */
+/* For now, I'll stick to standard overlay link behavior where link is absolute and covers everything. item:hover triggers effects. */
+/* BUT user added "Hover" tab for button. They expect button to change when hovered? */
+/* If so, I need to make button clickable/hoverable. */
+/* I will make .loopmosaic-read-more pointer-events: auto and z-index higher than link. */
+/* And add onclick="location.href='...'"? No, that's messy. */
+/* BETTER: Link covers image. Content (text) is above link (z-index). Pointer events on text are 'none' (clicks pass through). */
+/* Pointer events on Button are 'auto'. */
+/* BUT button is NOT an <a> tag. So clicking it does nothing if it blocks the link! */
+/* So I MUST wrap button in <a> anchor if I want it to be actionable on top. */
+/* But nested <a> is invalid HTML5 if the parent container is <a>? No, the container is <div>. The link is valid sibling or absolute overlay. */
+/* Structure:
+   <div item>
+      <img />
+      <div content> ... <span button> ... </div>
+      <a link full-cover />
+   </div>
+*/
+/* If content is above link, and button has pointer-events: auto, clicking button BLOCKS link click. */
+/* So button MUST be a link itself OR have JS to bubble click? */
+/* JS bubble: Click on button -> bubbles to item -> item has click listener? */
+/* The main link is `a.loopmosaic-item__link`. */
+/* I can add a click handler to the button that simulates clicking the link. */
+/* OR simpler: `.loopmosaic-read-more` is just styled text. Link covers it. */
+/* AND: Hover effects on button only trigger when hovering the CARD? */
+/* NO, users hate that. They want button to react when mouse is ON BUTTON. */
+/* So Button MUST be above link. And thus Button MUST be a link. */
+/* I will change <span> to <a> for the button. */
+/* And ensure z-index is correct. */

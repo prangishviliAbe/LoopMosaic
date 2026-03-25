@@ -1,0 +1,371 @@
+/**
+ * LoopMosaic - Built-in Modal Styles
+ */
+
+/* Modal Overlay */
+.loopmosaic-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9900;
+    /* Lowered from maxint to allow Elementor Lightbox (9999) to overlap */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.loopmosaic-modal-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Container */
+.loopmosaic-modal-container {
+    position: relative;
+    background-color: #fff;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.loopmosaic-modal-overlay.is-active .loopmosaic-modal-container {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Close Button */
+.loopmosaic-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    z-index: 10;
+}
+
+.loopmosaic-modal-close:hover {
+    background-color: #e0e0e0;
+}
+
+.loopmosaic-modal-close svg {
+    width: 14px;
+    height: 14px;
+    color: #333;
+}
+
+/* Content */
+.loopmosaic-modal-content {
+    padding: 0;
+}
+
+.loopmosaic-modal-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 20px 20px 0 0;
+    display: block;
+}
+
+.loopmosaic-modal-body {
+    padding: 40px;
+}
+
+.loopmosaic-modal-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+.loopmosaic-elementor-content {
+    width: 100%;
+}
+
+.loopmosaic-modal-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.loopmosaic-modal-text p {
+    margin-bottom: 1em;
+}
+
+/* Gallery - Simple Grid */
+.loopmosaic-modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.loopmosaic-modal-gallery img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: zoom-in;
+    transition: transform 0.2s;
+}
+
+.loopmosaic-modal-gallery img:hover {
+    transform: scale(1.05);
+}
+
+/* Loading State */
+.loopmosaic-modal-loader {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.loopmosaic-modal-overlay.is-loading .loopmosaic-modal-loader {
+    display: block;
+}
+
+.loopmosaic-modal-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+    .loopmosaic-modal-container {
+        width: 92%;
+        max-width: 800px;
+    }
+
+    .loopmosaic-modal-image {
+        height: 350px;
+    }
+
+    .loopmosaic-modal-body {
+        padding: 30px;
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+    .loopmosaic-modal-container {
+        width: 95%;
+        max-height: 95vh;
+        border-radius: 12px;
+    }
+
+    .loopmosaic-modal-image {
+        height: 220px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .loopmosaic-modal-body {
+        padding: 20px;
+    }
+
+    .loopmosaic-modal-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    .loopmosaic-modal-text {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    /* Larger close button for touch */
+    .loopmosaic-modal-close {
+        top: 12px;
+        right: 12px;
+        width: 44px;
+        height: 44px;
+    }
+
+    .loopmosaic-modal-close svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Gallery responsive */
+    #loopmosaic-modal .gallery-columns-4 .gallery-item,
+    #loopmosaic-modal .gallery-columns-5 .gallery-item,
+    #loopmosaic-modal .gallery-columns-6 .gallery-item,
+    #loopmosaic-modal .gallery-columns-7 .gallery-item,
+    #loopmosaic-modal .gallery-columns-8 .gallery-item,
+    #loopmosaic-modal .gallery-columns-9 .gallery-item {
+        width: 33.333%;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .loopmosaic-modal-overlay {
+        align-items: flex-end;
+    }
+
+    .loopmosaic-modal-container {
+        width: 100%;
+        max-height: 90vh;
+        border-radius: 16px 16px 0 0;
+        margin: 0;
+    }
+
+    .loopmosaic-modal-image {
+        height: 180px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .loopmosaic-modal-body {
+        padding: 16px;
+    }
+
+    .loopmosaic-modal-title {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .loopmosaic-modal-text {
+        font-size: 13px;
+    }
+
+    /* Gallery 2-column on small mobile */
+    #loopmosaic-modal .gallery-columns-3 .gallery-item,
+    #loopmosaic-modal .gallery-columns-4 .gallery-item,
+    #loopmosaic-modal .gallery-columns-5 .gallery-item,
+    #loopmosaic-modal .gallery-columns-6 .gallery-item,
+    #loopmosaic-modal .gallery-columns-7 .gallery-item,
+    #loopmosaic-modal .gallery-columns-8 .gallery-item,
+    #loopmosaic-modal .gallery-columns-9 .gallery-item {
+        width: 50%;
+    }
+
+    .loopmosaic-modal-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .loopmosaic-modal-gallery img {
+        height: 100px;
+    }
+}
+
+/* =========================================
+   WordPress Standard Gallery Fallback
+   (Fixes missing columns in AJAX Modal)
+   ========================================= */
+#loopmosaic-modal .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -1.5% 1.5em;
+    width: auto;
+}
+
+#loopmosaic-modal .gallery-item {
+    margin: 0;
+    padding: 0 0.5% 0.5%;
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#loopmosaic-modal .gallery-item img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    /* Force Square */
+    object-fit: cover;
+    /* Crop to fit */
+    display: block;
+    border: none;
+    box-shadow: none;
+    border-radius: 4px;
+    /* Optional: slight rounding */
+}
+
+#loopmosaic-modal .gallery-caption {
+    display: block;
+    font-size: 0.85em;
+    line-height: 1.4;
+    padding: 0.5em 0;
+}
+
+/* Columns Support */
+#loopmosaic-modal .gallery-columns-1 .gallery-item {
+    width: 100%;
+}
+
+#loopmosaic-modal .gallery-columns-2 .gallery-item {
+    width: 50%;
+}
+
+#loopmosaic-modal .gallery-columns-3 .gallery-item {
+    width: 33.333%;
+}
+
+#loopmosaic-modal .gallery-columns-4 .gallery-item {
+    width: 25%;
+}
+
+#loopmosaic-modal .gallery-columns-5 .gallery-item {
+    width: 20%;
+}
+
+#loopmosaic-modal .gallery-columns-6 .gallery-item {
+    width: 16.666%;
+}
+
+#loopmosaic-modal .gallery-columns-7 .gallery-item {
+    width: 14.28%;
+}
+
+#loopmosaic-modal .gallery-columns-8 .gallery-item {
+    width: 12.5%;
+}
+
+#loopmosaic-modal .gallery-columns-9 .gallery-item {
+    width: 11.11%;
+}
+
+/* Fix Elementor Lightbox Z-Index */
+.elementor-lightbox {
+    z-index: 99999 !important;
+    /* Ensure it is above our modal (9900) */
+}
