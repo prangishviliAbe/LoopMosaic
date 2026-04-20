@@ -338,6 +338,69 @@
     clip-path: inset(0 100% 0 0);
 }
 
+/* === Card Media Wrapper === */
+.loopmosaic-item__media {
+    position: relative;
+    overflow: hidden;
+}
+
+/* In fill mode, the media wrapper is absolute like the image */
+.loopmosaic-grid:not(.img-mode-auto) .loopmosaic-item__media {
+    position: absolute;
+    inset: 0;
+}
+
+/* In auto mode, the media wrapper flows naturally */
+.loopmosaic-grid.img-mode-auto .loopmosaic-item__media {
+    position: relative;
+    width: 100%;
+}
+
+/* === Card Hover Overlay === */
+.loopmosaic-item__hover-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+
+.loopmosaic-item:hover .loopmosaic-item__hover-overlay {
+    opacity: 1;
+}
+
+.loopmosaic-item__hover-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transform: translateY(15px) scale(0.9);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.05s,
+                opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
+}
+
+.loopmosaic-item:hover .loopmosaic-item__hover-content {
+    transform: translate(var(--lm-hover-offset-x, 0), var(--lm-hover-offset-y, 0)) scale(1);
+    opacity: 1;
+}
+
+.loopmosaic-item__hover-icon {
+    line-height: 1;
+}
+
+.loopmosaic-item__hover-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
 /* === Card Content Elements === */
 .loopmosaic-item__title {
     margin: 0 0 8px;

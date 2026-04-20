@@ -153,7 +153,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'label' => esc_html__('Posts Per Page', 'loop-mosaic'),
             'type' => Controls_Manager::NUMBER,
             'min' => 1,
-            'max' => 50,
+            'max' => 150,
             'default' => 9,
         ]
         );
@@ -1240,6 +1240,119 @@ class Mosaic_Loop_Widget extends Widget_Base
         ]
         );
 
+        $this->add_control(
+            'modal_title_heading',
+            [
+                'label' => esc_html__('Title', 'loop-mosaic'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'modal_title_color',
+            [
+                'label' => esc_html__('Title Color', 'loop-mosaic'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-title, #loopmosaic-modal .loopmosaic-modal-title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'modal_title_typography',
+                'selector' => '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-title, #loopmosaic-modal .loopmosaic-modal-title',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_title_margin',
+            [
+                'label' => esc_html__('Title Margin', 'loop-mosaic'),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-title, #loopmosaic-modal .loopmosaic-modal-title' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'modal_content_heading',
+            [
+                'label' => esc_html__('Content', 'loop-mosaic'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'modal_content_color',
+            [
+                'label' => esc_html__('Content Color', 'loop-mosaic'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-text, #loopmosaic-modal .loopmosaic-modal-text' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'modal_content_typography',
+                'selector' => '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-text, #loopmosaic-modal .loopmosaic-modal-text',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_content_margin',
+            [
+                'label' => esc_html__('Content Margin', 'loop-mosaic'),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-text, #loopmosaic-modal .loopmosaic-modal-text' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'modal_image_heading',
+            [
+                'label' => esc_html__('Image', 'loop-mosaic'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_image_border_radius',
+            [
+                'label' => esc_html__('Image Border Radius', 'loop-mosaic'),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-image, #loopmosaic-modal .loopmosaic-modal-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'modal_image_margin',
+            [
+                'label' => esc_html__('Image Margin', 'loop-mosaic'),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} ~ #loopmosaic-modal .loopmosaic-modal-image, #loopmosaic-modal .loopmosaic-modal-image' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
 
         // === STYLE TAB ===
@@ -1467,6 +1580,7 @@ class Mosaic_Loop_Widget extends Widget_Base
 
         $this->register_load_more_style_controls();
         $this->register_no_posts_style_controls();
+        $this->register_hover_overlay_style_controls();
         $this->register_animation_controls();
     }
 
@@ -1582,6 +1696,375 @@ class Mosaic_Loop_Widget extends Widget_Base
         }
 
         return $popups;
+    }
+
+    /**
+     * Register Hover Overlay Controls
+     */
+    protected function register_hover_overlay_style_controls()
+    {
+        $this->start_controls_section(
+            'section_hover_overlay',
+            [
+                'label' => esc_html__('Hover Overlay', 'loop-mosaic'),
+                'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'enable_hover_overlay',
+            [
+                'label' => esc_html__('Enable Hover Overlay', 'loop-mosaic'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Yes', 'loop-mosaic'),
+                'label_off' => esc_html__('No', 'loop-mosaic'),
+                'return_value' => 'yes',
+                'default' => '',
+            ]
+        );
+
+        // --- Overlay Background ---
+        $this->add_control(
+            'hover_overlay_bg_color',
+            [
+                'label' => esc_html__('Overlay Background Color', 'loop-mosaic'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-overlay' => 'background-color: {{VALUE}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+        
+        $this->add_control(
+            'hover_overlay_backdrop_blur',
+            [
+                'label' => esc_html__('Backdrop Blur (px)', 'loop-mosaic'),
+                'type' => Controls_Manager::SLIDER,
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-overlay' => 'backdrop-filter: blur({{SIZE}}px); -webkit-backdrop-filter: blur({{SIZE}}px);',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        // --- Position Controls ---
+        $this->add_control(
+            'hover_overlay_position_heading',
+            [
+                'label' => esc_html__('Content Position', 'loop-mosaic'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'hover_overlay_h_align',
+            [
+                'label' => esc_html__('Horizontal Alignment', 'loop-mosaic'),
+                'type' => Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => esc_html__('Left', 'loop-mosaic'),
+                        'icon' => 'eicon-h-align-left',
+                    ],
+                    'center' => [
+                        'title' => esc_html__('Center', 'loop-mosaic'),
+                        'icon' => 'eicon-h-align-center',
+                    ],
+                    'flex-end' => [
+                        'title' => esc_html__('Right', 'loop-mosaic'),
+                        'icon' => 'eicon-h-align-right',
+                    ],
+                ],
+                'default' => 'center',
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-overlay' => 'justify-content: {{VALUE}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'hover_overlay_v_align',
+            [
+                'label' => esc_html__('Vertical Alignment', 'loop-mosaic'),
+                'type' => Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => esc_html__('Top', 'loop-mosaic'),
+                        'icon' => 'eicon-v-align-top',
+                    ],
+                    'center' => [
+                        'title' => esc_html__('Middle', 'loop-mosaic'),
+                        'icon' => 'eicon-v-align-middle',
+                    ],
+                    'flex-end' => [
+                        'title' => esc_html__('Bottom', 'loop-mosaic'),
+                        'icon' => 'eicon-v-align-bottom',
+                    ],
+                ],
+                'default' => 'center',
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-overlay' => 'align-items: {{VALUE}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+         $this->add_responsive_control(
+            'hover_overlay_padding',
+            [
+                'label' => esc_html__('Overlay Padding', 'loop-mosaic'),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-overlay' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'hover_overlay_offset_y',
+            [
+                'label' => esc_html__('Offset Y (↑↓)', 'loop-mosaic'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => [
+                    'px' => [
+                        'min' => -300,
+                        'max' => 300,
+                    ],
+                    '%' => [
+                        'min' => -100,
+                        'max' => 100,
+                    ],
+                ],
+                'default' => [
+                    'size' => 0,
+                    'unit' => 'px',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-content' => '--lm-hover-offset-y: {{SIZE}}{{UNIT}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'hover_overlay_offset_x',
+            [
+                'label' => esc_html__('Offset X (←→)', 'loop-mosaic'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => [
+                    'px' => [
+                        'min' => -300,
+                        'max' => 300,
+                    ],
+                    '%' => [
+                        'min' => -100,
+                        'max' => 100,
+                    ],
+                ],
+                'default' => [
+                    'size' => 0,
+                    'unit' => 'px',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-content' => '--lm-hover-offset-x: {{SIZE}}{{UNIT}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        // --- Icon Controls ---
+        $this->add_control(
+            'hover_overlay_icon_heading',
+            [
+                'label' => esc_html__('Icon', 'loop-mosaic'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'hover_overlay_icon',
+            [
+                'label' => esc_html__('Icon', 'loop-mosaic'),
+                'type' => Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'fas fa-link',
+                    'library' => 'fa-solid',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'hover_overlay_icon_color',
+            [
+                'label' => esc_html__('Icon Color', 'loop-mosaic'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-icon i' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .loopmosaic-item__hover-icon svg' => 'fill: {{VALUE}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'hover_overlay_icon_size',
+            [
+                'label' => esc_html__('Icon Size', 'loop-mosaic'),
+                'type' => Controls_Manager::SLIDER,
+                'range' => [
+                    'px' => [
+                        'min' => 6,
+                        'max' => 100,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .loopmosaic-item__hover-icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        // --- Label Text Controls ---
+        $this->add_control(
+            'hover_overlay_label_heading',
+            [
+                'label' => esc_html__('Label Text', 'loop-mosaic'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'hover_overlay_label',
+            [
+                'label' => esc_html__('Label', 'loop-mosaic'),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'placeholder' => esc_html__('e.g. View More', 'loop-mosaic'),
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'hover_overlay_label_color',
+            [
+                'label' => esc_html__('Label Color', 'loop-mosaic'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-label' => 'color: {{VALUE}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                    'hover_overlay_label!' => '',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'hover_overlay_label_typography',
+                'selector' => '{{WRAPPER}} .loopmosaic-item__hover-label',
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                    'hover_overlay_label!' => '',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'hover_overlay_gap',
+            [
+                'label' => esc_html__('Gap Between Icon & Label', 'loop-mosaic'),
+                'type' => Controls_Manager::SLIDER,
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                    ],
+                ],
+                'default' => [
+                    'size' => 8,
+                    'unit' => 'px',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-content' => 'gap: {{SIZE}}{{UNIT}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'hover_overlay_content_direction',
+            [
+                'label' => esc_html__('Layout Direction', 'loop-mosaic'),
+                'type' => Controls_Manager::SELECT,
+                'options' => [
+                    'column' => esc_html__('Vertical (Icon on top)', 'loop-mosaic'),
+                    'row' => esc_html__('Horizontal (Side by side)', 'loop-mosaic'),
+                    'column-reverse' => esc_html__('Vertical (Label on top)', 'loop-mosaic'),
+                    'row-reverse' => esc_html__('Horizontal (Label first)', 'loop-mosaic'),
+                ],
+                'default' => 'column',
+                'selectors' => [
+                    '{{WRAPPER}} .loopmosaic-item__hover-content' => 'flex-direction: {{VALUE}};',
+                ],
+                'condition' => [
+                    'enable_hover_overlay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -2367,6 +2850,23 @@ class Mosaic_Loop_Widget extends Widget_Base
                 }
                 // --- END GLOBAL OVERLAY LINK ---
 
+                // --- HOVER OVERLAY (for non-default templates only; default card renders it inside __media wrapper) ---
+                if ($template_source !== 'default' && !empty($settings['enable_hover_overlay']) && 'yes' === $settings['enable_hover_overlay']) {
+                    echo '<div class="loopmosaic-item__hover-overlay">';
+                    echo '<div class="loopmosaic-item__hover-content">';
+                    if (!empty($settings['hover_overlay_icon']['value'])) {
+                        echo '<div class="loopmosaic-item__hover-icon">';
+                        \Elementor\Icons_Manager::render_icon($settings['hover_overlay_icon'], ['aria-hidden' => 'true']);
+                        echo '</div>';
+                    }
+                    if (!empty($settings['hover_overlay_label'])) {
+                        echo '<span class="loopmosaic-item__hover-label">' . esc_html($settings['hover_overlay_label']) . '</span>';
+                    }
+                    echo '</div>';
+                    echo '</div>';
+                }
+                // --- END HOVER OVERLAY ---
+
                 // Render based on template source
                 switch ($template_source) {
                     case 'elementor_loop':
@@ -2464,7 +2964,23 @@ class Mosaic_Loop_Widget extends Widget_Base
         <a href="<?php echo esc_url($link_url); ?>" class="<?php echo esc_attr(implode(' ', $link_classes)); ?>" aria-label="<?php the_title_attribute(); ?>"<?php echo $popup_attr; ?>></a>
         
         <?php if ($thumbnail): ?>
-            <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>" class="loopmosaic-item__image">
+            <div class="loopmosaic-item__media">
+                <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>" class="loopmosaic-item__image">
+                <?php if (!empty($settings['enable_hover_overlay']) && 'yes' === $settings['enable_hover_overlay']): ?>
+                    <div class="loopmosaic-item__hover-overlay">
+                        <div class="loopmosaic-item__hover-content">
+                            <?php if (!empty($settings['hover_overlay_icon']['value'])): ?>
+                                <div class="loopmosaic-item__hover-icon">
+                                    <?php \Elementor\Icons_Manager::render_icon($settings['hover_overlay_icon'], ['aria-hidden' => 'true']); ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($settings['hover_overlay_label'])): ?>
+                                <span class="loopmosaic-item__hover-label"><?php echo esc_html($settings['hover_overlay_label']); ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
         <?php
         endif; ?>
         
