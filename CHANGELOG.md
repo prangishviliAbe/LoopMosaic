@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.16.1] - 2026-04-29
+### Fixed
+- **Redirect Script Handling**: Posts containing inline JavaScript redirects such as `window.location.replace("...")` now link directly to the target URL instead of opening the LoopMosaic modal first.
+- **Template Render Consistency**: Applied redirect URL detection across default cards, AJAX Load More, JetSmartFilters rendering, and provider-based rendering.
+- **Plugin Title**: Updated the WordPress plugin header title to "LoopMosaic for Elementor".
+
+## [1.16.0] - 2026-04-20
+### Added
+- **Modal Styling Controls**: Added Elementor controls for modal width, height, padding, border radius, overlay color, box shadow, title typography, content typography, and image spacing.
+
+### Changed
+- **Query Limit**: Increased the widget Posts Per Page control maximum to 150.
+
 ## [1.15.0] - 2026-03-25
 ### Added
 - **New Layout Pattern**: Added "Featured Grid (2+4)", a premium layout displaying 2 large items and 4 smaller ones.

@@ -758,7 +758,8 @@ wp_send_json_error( [ 'message' => 'Settings not found' ] );
         
         $click_action = isset( $settings['click_action'] ) ? $settings['click_action'] : 'permalink';
         $click_action = function_exists('loopmosaic_get_click_action') ? loopmosaic_get_click_action($post_id, $click_action) : $click_action;
-        $link_url = get_permalink();
+        $redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id) : '';
+        $link_url = $redirect_url ? $redirect_url : get_permalink();
         $link_classes = [ 'loopmosaic-item__link' ];
         $popup_attr = '';
         

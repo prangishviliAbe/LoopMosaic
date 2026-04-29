@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: LoopMosaic
+ * Plugin Name: LoopMosaic for Elementor
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.16.0
+ * Version: 1.16.1
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe/LoopMosaic
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-define('LOOPMOSAIC_VERSION', '1.16.0');
+define('LOOPMOSAIC_VERSION', '1.16.1');
 define('LOOPMOSAIC_PATH', plugin_dir_path(__FILE__));
 define('LOOPMOSAIC_URL', plugin_dir_url(__FILE__));
 define('LOOPMOSAIC_BASENAME', plugin_basename(__FILE__));
@@ -502,11 +502,17 @@ final class LoopMosaic
                 $post_id_ajax = get_the_ID(); // Default
                 $click_action = loopmosaic_get_click_action($post_id_ajax, $click_action);
 
-                if ('default' !== $template_source && ('modal' === $click_action || 'none' === $click_action) && 'permalink' !== $click_action) {
+                $post_redirect_url = '';
+                if ('default' !== $template_source) {
+                    $post_redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id_ajax) : '';
+                }
+
+                if ('default' !== $template_source && ((('modal' === $click_action || 'none' === $click_action) && 'permalink' !== $click_action) || $post_redirect_url)) {
                     // For Elementor Loop, we need to ensure we get the correct ID if it's a loop
                     // Note: post_id_ajax is already set above
 
-                    $link_url = get_the_permalink($post_id_ajax);
+                    $redirect_url = $post_redirect_url ? $post_redirect_url : (function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id_ajax) : '');
+                    $link_url = $redirect_url ? $redirect_url : get_the_permalink($post_id_ajax);
                     $link_classes = ['loopmosaic-item__link'];
                     $popup_attr = '';
 
@@ -554,7 +560,8 @@ final class LoopMosaic
                     $image_size = !empty($settings['image_size']) ? $settings['image_size'] : 'large';
                     $thumbnail = get_the_post_thumbnail_url($post_id, $image_size);
 
-                    $link_url = get_the_permalink($post_id);
+                    $redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id) : '';
+                    $link_url = $redirect_url ? $redirect_url : get_the_permalink($post_id);
                     $link_classes = ['loopmosaic-item__link'];
                     $popup_attr = '';
 
@@ -633,53 +640,90 @@ final class LoopMosaic
     }
 }
 
+// Global helper to get redirect URL from redirect plugins or inline redirect scripts.
+if (!function_exists('loopmosaic_get_redirect_url')) {
+    function loopmosaic_get_redirect_url($post_id) {
+        static $redirect_cache = [];
+
+        $post_id = intval($post_id);
+        if (!$post_id) {
+            return '';
+        }
+
+        if (array_key_exists($post_id, $redirect_cache)) {
+            return $redirect_cache[$post_id];
+        }
+
+        $redirect_meta_keys = [
+            'redirect', '_redirect', '_redirect_url', '_page_redirect', '_links_to',
+            '_pprredirect_url', '_spr_redirect_url', '_simple_post_redirect_url',
+            'spr_redirect_url', 'srx_redirect_url', '_wp_redirect_url'
+        ];
+
+        $redirect_meta_keys = apply_filters('loopmosaic/redirect_meta_keys', $redirect_meta_keys);
+
+        foreach ($redirect_meta_keys as $key) {
+            $url = get_post_meta($post_id, $key, true);
+            if (!empty($url) && (filter_var($url, FILTER_VALIDATE_URL) || strpos($url, '/') === 0)) {
+                $redirect_cache[$post_id] = $url;
+                return $redirect_cache[$post_id];
+            }
+        }
+
+        $all_meta = get_post_meta($post_id);
+        if (!empty($all_meta) && is_array($all_meta)) {
+            $ignore_keys = ['_thumbnail_id', '_edit_lock', '_edit_last', '_wp_page_template'];
+
+            foreach ($all_meta as $key => $values) {
+                if (in_array($key, $ignore_keys, true)) {
+                    continue;
+                }
+
+                if (stripos($key, 'redirect') !== false || stripos($key, '_links_to') !== false) {
+                    foreach ((array) $values as $url) {
+                        if (!empty($url) && (filter_var($url, FILTER_VALIDATE_URL) || strpos($url, '/') === 0)) {
+                            $redirect_cache[$post_id] = $url;
+                            return $redirect_cache[$post_id];
+                        }
+                    }
+                }
+            }
+        }
+
+        $content = get_post_field('post_content', $post_id);
+        if (!empty($content)) {
+            $patterns = [
+                '/window\.location\.replace\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/i',
+                '/window\.location\.href\s*=\s*[\'"]([^\'"]+)[\'"]/i',
+                '/document\.location\.href\s*=\s*[\'"]([^\'"]+)[\'"]/i',
+                '/location\.href\s*=\s*[\'"]([^\'"]+)[\'"]/i',
+            ];
+
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $content, $matches)) {
+                    $url = html_entity_decode($matches[1], ENT_QUOTES, get_bloginfo('charset'));
+                    if (!empty($url) && (filter_var($url, FILTER_VALIDATE_URL) || strpos($url, '/') === 0)) {
+                        $redirect_cache[$post_id] = $url;
+                        return $redirect_cache[$post_id];
+                    }
+                }
+            }
+        }
+
+        $redirect_cache[$post_id] = '';
+        return $redirect_cache[$post_id];
+    }
+}
+
 // Global helper to determine click action based on redirect meta keys
 if (!function_exists('loopmosaic_get_click_action')) {
     function loopmosaic_get_click_action($post_id, $default_action) {
         if ('permalink' === $default_action || 'none' === $default_action) {
             return $default_action;
         }
-        
-        // 1. Static list of common redirect meta keys
-        $redirect_meta_keys = [
-            'redirect', '_redirect', '_redirect_url', '_page_redirect', '_links_to',
-            '_pprredirect_url', '_spr_redirect_url', '_simple_post_redirect_url',
-            'spr_redirect_url', 'srx_redirect_url', '_wp_redirect_url'
-        ];
-        
-        $redirect_meta_keys = apply_filters('loopmosaic/redirect_meta_keys', $redirect_meta_keys);
-        
-        foreach ($redirect_meta_keys as $key) {
-            $url = get_post_meta($post_id, $key, true);
-            if (!empty($url) && (filter_var($url, FILTER_VALIDATE_URL) || strpos($url, '/') === 0)) {
-                return 'permalink';
-            }
-        }
-        
-        // 2. Dynamic fallback scanning all post meta for redirect plugins 
-        $all_meta = get_post_meta($post_id);
-        if (!empty($all_meta) && is_array($all_meta)) {
-            $ignore_keys = ['_thumbnail_id', '_edit_lock', '_edit_last', '_wp_page_template'];
-            
-            foreach ($all_meta as $key => $values) {
-                if (in_array($key, $ignore_keys)) continue;
-                
-                if (stripos($key, 'redirect') !== false || stripos($key, '_links_to') !== false) {
-                    foreach ((array)$values as $url) {
-                        if (!empty($url) && (filter_var($url, FILTER_VALIDATE_URL) || strpos($url, '/') === 0)) {
-                            return 'permalink';
-                        }
-                    }
-                }
-            }
-        }
-        
-        // 3. Fallback for manual script redirects injected into post content
-        $content = get_post_field('post_content', $post_id);
-        if (!empty($content)) {
-            if (stripos($content, 'window.location.replace') !== false || stripos($content, 'window.location.href') !== false || stripos($content, 'document.location.href') !== false) {
-                return 'permalink';
-            }
+
+        if (function_exists('loopmosaic_get_redirect_url') && loopmosaic_get_redirect_url($post_id)) {
+            return 'permalink';
         }
         
         return $default_action;

@@ -286,7 +286,8 @@ class Jet_Smart_Filters_Provider_LoopMosaic extends Jet_Smart_Filters_Provider_B
         $post_id = get_the_ID();
         $click_action = ! empty( $settings['click_action'] ) ? $settings['click_action'] : 'permalink';
         $click_action = function_exists('loopmosaic_get_click_action') ? loopmosaic_get_click_action($post_id, $click_action) : $click_action;
-        $link_url = get_permalink($post_id);
+        $redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id) : '';
+        $link_url = $redirect_url ? $redirect_url : get_permalink($post_id);
         $popup_attr = '';
         $link_classes = [ 'loopmosaic-item__link' ];
         

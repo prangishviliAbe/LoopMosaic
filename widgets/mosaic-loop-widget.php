@@ -2812,14 +2812,24 @@ class Mosaic_Loop_Widget extends Widget_Base
                 // Best approach: Render here for 'elementor_loop' and 'jetengine'.
                 // Default template has complex logic with thumbnail.
 
-                if ('default' !== $template_source && ('modal' === $click_action || 'none' === $click_action) && 'permalink' !== $click_action) {
+                $post_redirect_url = '';
+                if ('default' !== $template_source) {
+                    $post_id_for_action = get_the_ID();
+                    if (isset($query->posts[$index]) && $query->posts[$index] instanceof \WP_Post) {
+                        $post_id_for_action = $query->posts[$index]->ID;
+                    }
+                    $post_redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id_for_action) : '';
+                    $click_action = function_exists('loopmosaic_get_click_action') ? loopmosaic_get_click_action($post_id_for_action, $click_action) : $click_action;
+                }
+
+                if ('default' !== $template_source && ((('modal' === $click_action || 'none' === $click_action) && 'permalink' !== $click_action) || $post_redirect_url)) {
                     $post_id = get_the_ID();
                     // For Elementor Loop, we need to ensure we get the correct ID if it's a loop
                     if (isset($query->posts[$index]) && $query->posts[$index] instanceof \WP_Post) {
                         $post_id = $query->posts[$index]->ID;
                     }
 
-                    $link_url = get_the_permalink($post_id);
+                    $link_url = $post_redirect_url ? $post_redirect_url : get_the_permalink($post_id);
                     $link_classes = ['loopmosaic-item__link'];
                     $popup_attr = '';
 
@@ -2934,7 +2944,8 @@ class Mosaic_Loop_Widget extends Widget_Base
         $post_id = get_the_ID();
         $click_action = !empty($settings['click_action']) ? $settings['click_action'] : 'permalink';
         $click_action = function_exists('loopmosaic_get_click_action') ? loopmosaic_get_click_action($post_id, $click_action) : $click_action;
-        $link_url = get_the_permalink($post_id);
+        $redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id) : '';
+        $link_url = $redirect_url ? $redirect_url : get_the_permalink($post_id);
         $popup_attr = '';
         $link_classes = ['loopmosaic-item__link'];
 
