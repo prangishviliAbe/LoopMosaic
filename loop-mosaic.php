@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic for Elementor
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.16.1
+ * Version: 1.17.0
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe/LoopMosaic
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-define('LOOPMOSAIC_VERSION', '1.16.1');
+define('LOOPMOSAIC_VERSION', '1.17.0');
 define('LOOPMOSAIC_PATH', plugin_dir_path(__FILE__));
 define('LOOPMOSAIC_URL', plugin_dir_url(__FILE__));
 define('LOOPMOSAIC_BASENAME', plugin_basename(__FILE__));
@@ -417,8 +417,18 @@ final class LoopMosaic
 
                 $item_classes = ['loopmosaic-item', 'loopmosaic-item-new']; // Added new class for animation
                 $item_attrs = '';
+                $card_design_style = !empty($settings['card_design_style']) ? $settings['card_design_style'] : 'overlay';
+                $is_floating_icon_card = 'floating_icon' === $card_design_style;
 
-                if ('default' === $template_source && !empty($settings['color_overlay']) && 'yes' === $settings['color_overlay']) {
+                if ($is_floating_icon_card) {
+                    $item_classes[] = 'loopmosaic-card-floating-icon';
+
+                    if ('default' !== $template_source) {
+                        $item_classes[] = 'loopmosaic-card-floating-template';
+                    }
+                }
+
+                if ('default' === $template_source && !$is_floating_icon_card && !empty($settings['color_overlay']) && 'yes' === $settings['color_overlay']) {
                     // Custom Colors Logic
                     if (!empty($settings['use_custom_overlay_colors']) && 'yes' === $settings['use_custom_overlay_colors'] && !empty($settings['custom_overlay_colors'])) {
                         $custom_colors = $settings['custom_overlay_colors'];
@@ -545,13 +555,58 @@ final class LoopMosaic
 
                 // Inner Content
                 if ('elementor_loop' === $template_source && !empty($settings['elementor_loop_template'])) {
+                    if ($is_floating_icon_card) {
+                        $floating_card_icon = !empty($settings['floating_card_icon']) ? $settings['floating_card_icon'] : [];
+                        $floating_card_icon_bg_color = !empty($settings['floating_card_icon_bg_color']) ? $settings['floating_card_icon_bg_color'] : '#d62f67';
+                        $floating_card_icon_color = !empty($settings['floating_card_icon_color']) ? $settings['floating_card_icon_color'] : '#ffffff';
+
+                        if (!empty($settings['floating_card_icon_items']) && is_array($settings['floating_card_icon_items'])) {
+                            $icon_items = array_values(array_filter($settings['floating_card_icon_items'], function ($icon_item) {
+                                return !empty($icon_item['icon']['value']);
+                            }));
+
+                            if (!empty($icon_items)) {
+                                $icon_item = $icon_items[$index % count($icon_items)];
+                                $floating_card_icon = !empty($icon_item['icon']) ? $icon_item['icon'] : $floating_card_icon;
+                                $floating_card_icon_bg_color = !empty($icon_item['icon_bg_color']) ? $icon_item['icon_bg_color'] : $floating_card_icon_bg_color;
+                                $floating_card_icon_color = !empty($icon_item['icon_color']) ? $icon_item['icon_color'] : $floating_card_icon_color;
+                            }
+                        }
+
+                        if (!empty($settings['show_floating_card_icon']) && 'yes' === $settings['show_floating_card_icon'] && !empty($floating_card_icon['value'])) {
+                            $icon_style = '--lm-floating-icon-bg: ' . esc_attr($floating_card_icon_bg_color) . '; --lm-floating-icon-color: ' . esc_attr($floating_card_icon_color) . ';';
+                            ob_start();
+                            \Elementor\Icons_Manager::render_icon($floating_card_icon, ['aria-hidden' => 'true']);
+                            $icon_html = ob_get_clean();
+                            $html .= '<span class="loopmosaic-item__floating-icon" style="' . esc_attr($icon_style) . '" aria-hidden="true">' . $icon_html . '</span>';
+                        }
+
+                        if (!empty($settings['show_floating_card_arrow']) && 'yes' === $settings['show_floating_card_arrow']) {
+                            $html .= '<span class="loopmosaic-item__floating-arrow" aria-hidden="true">&rarr;</span>';
+                        }
+
+                        $html .= '<div class="loopmosaic-item__template-content">';
+                    }
+
                     if (class_exists('\Elementor\Plugin')) {
                         $html .= \Elementor\Plugin::$instance->frontend->get_builder_content_for_display($settings['elementor_loop_template'], true);
                     }
+
+                    if ($is_floating_icon_card) {
+                        $html .= '</div>';
+                    }
                 }
                 elseif ('jetengine' === $template_source && !empty($settings['jetengine_listing'])) {
+                    if ($is_floating_icon_card) {
+                        $html .= '<div class="loopmosaic-item__template-content">';
+                    }
+
                     if (class_exists('Jet_Engine')) {
                         $html .= jet_engine()->listings->get_listing_item_content($settings['jetengine_listing']);
+                    }
+
+                    if ($is_floating_icon_card) {
+                        $html .= '</div>';
                     }
                 }
                 else {
@@ -559,6 +614,22 @@ final class LoopMosaic
                     $post_id = get_the_ID();
                     $image_size = !empty($settings['image_size']) ? $settings['image_size'] : 'large';
                     $thumbnail = get_the_post_thumbnail_url($post_id, $image_size);
+                    $floating_card_icon = !empty($settings['floating_card_icon']) ? $settings['floating_card_icon'] : [];
+                    $floating_card_icon_bg_color = !empty($settings['floating_card_icon_bg_color']) ? $settings['floating_card_icon_bg_color'] : '#d62f67';
+                    $floating_card_icon_color = !empty($settings['floating_card_icon_color']) ? $settings['floating_card_icon_color'] : '#ffffff';
+
+                    if ($is_floating_icon_card && !empty($settings['floating_card_icon_items']) && is_array($settings['floating_card_icon_items'])) {
+                        $icon_items = array_values(array_filter($settings['floating_card_icon_items'], function ($icon_item) {
+                            return !empty($icon_item['icon']['value']);
+                        }));
+
+                        if (!empty($icon_items)) {
+                            $icon_item = $icon_items[$index % count($icon_items)];
+                            $floating_card_icon = !empty($icon_item['icon']) ? $icon_item['icon'] : $floating_card_icon;
+                            $floating_card_icon_bg_color = !empty($icon_item['icon_bg_color']) ? $icon_item['icon_bg_color'] : $floating_card_icon_bg_color;
+                            $floating_card_icon_color = !empty($icon_item['icon_color']) ? $icon_item['icon_color'] : $floating_card_icon_color;
+                        }
+                    }
 
                     $redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id) : '';
                     $link_url = $redirect_url ? $redirect_url : get_the_permalink($post_id);
@@ -589,18 +660,33 @@ final class LoopMosaic
                     $html .= '<a href="' . esc_url($link_url) . '" class="' . esc_attr(implode(' ', $link_classes)) . '" aria-label="' . the_title_attribute('echo=0') . '"' . $popup_attr . '></a>';
 
                     if ($thumbnail) {
-                        $html .= '<img src="' . esc_url($thumbnail) . '" alt="' . the_title_attribute('echo=0') . '" class="loopmosaic-item__image">';
+                        if ($is_floating_icon_card) {
+                            $html .= '<div class="loopmosaic-item__media">';
+                            $html .= '<img src="' . esc_url($thumbnail) . '" alt="' . the_title_attribute('echo=0') . '" class="loopmosaic-item__image">';
+                            $html .= '</div>';
+                        }
+                        else {
+                            $html .= '<img src="' . esc_url($thumbnail) . '" alt="' . the_title_attribute('echo=0') . '" class="loopmosaic-item__image">';
+                        }
                     }
 
                     // Styles
                     $inner_styles = [];
-                    if (!empty($settings['card_content_v_align']))
+                    if (!$is_floating_icon_card && !empty($settings['card_content_v_align']))
                         $inner_styles[] = 'justify-content: ' . $settings['card_content_v_align'];
-                    if (!empty($settings['card_content_h_align']))
+                    if (!$is_floating_icon_card && !empty($settings['card_content_h_align']))
                         $inner_styles[] = 'align-items: ' . $settings['card_content_h_align'];
                     $inner_attr = !empty($inner_styles) ? ' style="' . implode('; ', $inner_styles) . '"' : '';
 
                     $html .= '<div class="loopmosaic-item__inner"' . $inner_attr . '>';
+
+                    if ($is_floating_icon_card && !empty($settings['show_floating_card_icon']) && 'yes' === $settings['show_floating_card_icon'] && !empty($floating_card_icon['value'])) {
+                        $icon_style = '--lm-floating-icon-bg: ' . esc_attr($floating_card_icon_bg_color) . '; --lm-floating-icon-color: ' . esc_attr($floating_card_icon_color) . ';';
+                        ob_start();
+                        \Elementor\Icons_Manager::render_icon($floating_card_icon, ['aria-hidden' => 'true']);
+                        $icon_html = ob_get_clean();
+                        $html .= '<span class="loopmosaic-item__floating-icon" style="' . esc_attr($icon_style) . '" aria-hidden="true">' . $icon_html . '</span>';
+                    }
 
                     if (!empty($settings['show_category']) && 'yes' === $settings['show_category']) {
                         $cats = get_the_category();
@@ -620,6 +706,10 @@ final class LoopMosaic
                     if (!empty($settings['show_excerpt']) && 'yes' === $settings['show_excerpt']) {
                         $len = isset($settings['excerpt_length']) ? intval($settings['excerpt_length']) : 20;
                         $html .= '<p class="loopmosaic-item__excerpt">' . esc_html(wp_trim_words(get_the_excerpt(), $len, '...')) . '</p>';
+                    }
+
+                    if ($is_floating_icon_card && !empty($settings['show_floating_card_arrow']) && 'yes' === $settings['show_floating_card_arrow']) {
+                        $html .= '<span class="loopmosaic-item__floating-arrow" aria-hidden="true">&rarr;</span>';
                     }
 
                     $html .= '</div>'; // End inner

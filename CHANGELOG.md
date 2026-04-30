@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.17.0] - 2026-04-30
+### Added
+- **Floating Icon Card Design**: Added a new card design option with image-first layout, floating circular icons, arrow indicators, and polished white content panels.
+- **Elementor Loop Item Support**: Extended Floating Icon Card styling to Elementor Loop Item templates while preserving the selected loop template content.
+- **Icon Controls**: Added controls for enabling/disabling icons, selecting icons, defining icon sets, and customizing icon colors and sizes.
+- **Pattern-Aware Sizing**: Added separate featured and small card image height controls for Featured Grid (2+3), Featured Grid (2+4), and Hero Grid layouts.
+- **Floating Card Layout Controls**: Added controls for image height, content minimum height, overlap, padding, icon offsets, and arrow positioning.
+- **Classic Card Borders**: Added normal and hover border controls for the existing classic/overlay card style.
+
+### Changed
+- Floating card image and icon placement now adapts to layout patterns so 2+4 grids keep balanced proportions across large and small cards.
+- Load More and infinite scroll rendering now preserves Floating Icon Card settings for newly loaded items.
+
 ## [1.16.1] - 2026-04-29
 ### Fixed
 - **Redirect Script Handling**: Posts containing inline JavaScript redirects such as `window.location.replace("...")` now link directly to the target URL instead of opening the LoopMosaic modal first.

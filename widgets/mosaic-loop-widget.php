@@ -445,6 +445,21 @@ class Mosaic_Loop_Widget extends Widget_Base
         ]
         );
 
+        $this->add_control(
+            'card_design_style',
+        [
+            'label' => esc_html__('Card Design', 'loop-mosaic'),
+            'type' => Controls_Manager::SELECT,
+            'options' => [
+                'overlay' => esc_html__('Overlay Card', 'loop-mosaic'),
+                'floating_icon' => esc_html__('Floating Icon Card', 'loop-mosaic'),
+            ],
+            'default' => 'overlay',
+            'separator' => 'before',
+            'render_type' => 'template',
+        ]
+        );
+
         $this->add_responsive_control(
             'column_gap',
         [
@@ -652,7 +667,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'label' => esc_html__('Content Display', 'loop-mosaic'),
             'tab' => Controls_Manager::TAB_CONTENT,
             'condition' => [
-                'template_source' => 'default',
+                'template_source' => ['default', 'elementor_loop'],
             ],
         ]
         );
@@ -666,6 +681,9 @@ class Mosaic_Loop_Widget extends Widget_Base
             'label_off' => esc_html__('No', 'loop-mosaic'),
             'return_value' => 'yes',
             'default' => 'yes',
+            'condition' => [
+                'template_source' => 'default',
+            ],
         ]
         );
 
@@ -678,6 +696,9 @@ class Mosaic_Loop_Widget extends Widget_Base
             'label_off' => esc_html__('No', 'loop-mosaic'),
             'return_value' => 'yes',
             'default' => 'no',
+            'condition' => [
+                'template_source' => 'default',
+            ],
         ]
         );
 
@@ -690,6 +711,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'max' => 100,
             'default' => 20,
             'condition' => [
+                'template_source' => 'default',
                 'show_excerpt' => 'yes',
             ],
         ]
@@ -704,6 +726,150 @@ class Mosaic_Loop_Widget extends Widget_Base
             'label_off' => esc_html__('No', 'loop-mosaic'),
             'return_value' => 'yes',
             'default' => 'yes',
+            'condition' => [
+                'template_source' => 'default',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'floating_card_icon_heading',
+        [
+            'label' => esc_html__('Floating Card Icon', 'loop-mosaic'),
+            'type' => Controls_Manager::HEADING,
+            'separator' => 'before',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'show_floating_card_icon',
+        [
+            'label' => esc_html__('Show Icon', 'loop-mosaic'),
+            'type' => Controls_Manager::SWITCHER,
+            'label_on' => esc_html__('Yes', 'loop-mosaic'),
+            'label_off' => esc_html__('No', 'loop-mosaic'),
+            'return_value' => 'yes',
+            'default' => 'yes',
+            'render_type' => 'template',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'floating_card_icon',
+        [
+            'label' => esc_html__('Icon', 'loop-mosaic'),
+            'type' => Controls_Manager::ICONS,
+            'default' => [
+                'value' => 'fas fa-users',
+                'library' => 'fa-solid',
+            ],
+            'render_type' => 'template',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'floating_card_icon_bg_color',
+        [
+            'label' => esc_html__('Icon Background', 'loop-mosaic'),
+            'type' => Controls_Manager::COLOR,
+            'default' => '#d62f67',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'floating_card_icon_color',
+        [
+            'label' => esc_html__('Icon Color', 'loop-mosaic'),
+            'type' => Controls_Manager::COLOR,
+            'default' => '#ffffff',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $floating_icon_repeater = new \Elementor\Repeater();
+
+        $floating_icon_repeater->add_control(
+            'icon',
+            [
+                'label' => esc_html__('Icon', 'loop-mosaic'),
+                'type' => Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'fas fa-users',
+                    'library' => 'fa-solid',
+                ],
+            ]
+        );
+
+        $floating_icon_repeater->add_control(
+            'icon_bg_color',
+            [
+                'label' => esc_html__('Background', 'loop-mosaic'),
+                'type' => Controls_Manager::COLOR,
+                'default' => '#d62f67',
+            ]
+        );
+
+        $floating_icon_repeater->add_control(
+            'icon_color',
+            [
+                'label' => esc_html__('Color', 'loop-mosaic'),
+                'type' => Controls_Manager::COLOR,
+                'default' => '#ffffff',
+            ]
+        );
+
+        $this->add_control(
+            'floating_card_icon_items',
+        [
+            'label' => esc_html__('Icon Set', 'loop-mosaic'),
+            'type' => Controls_Manager::REPEATER,
+            'fields' => $floating_icon_repeater->get_controls(),
+            'title_field' => '{{{ icon.value }}}',
+            'render_type' => 'template',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'show_floating_card_arrow',
+        [
+            'label' => esc_html__('Show Arrow', 'loop-mosaic'),
+            'type' => Controls_Manager::SWITCHER,
+            'label_on' => esc_html__('Yes', 'loop-mosaic'),
+            'label_off' => esc_html__('No', 'loop-mosaic'),
+            'return_value' => 'yes',
+            'default' => 'yes',
+            'render_type' => 'template',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
         ]
         );
 
@@ -1404,11 +1570,490 @@ class Mosaic_Loop_Widget extends Widget_Base
         ]
         );
 
+        $this->start_controls_tabs(
+            'tabs_card_border',
+            [
+                'condition' => [
+                    'card_design_style!' => 'floating_icon',
+                ],
+            ]
+        );
+
+        $this->start_controls_tab(
+            'tab_card_border_normal',
+            [
+                'label' => esc_html__('Normal', 'loop-mosaic'),
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Border::get_type(),
+        [
+            'name' => 'card_border',
+            'selector' => '{{WRAPPER}} .loopmosaic-item',
+        ]
+        );
+
+        $this->end_controls_tab();
+
+        $this->start_controls_tab(
+            'tab_card_border_hover',
+            [
+                'label' => esc_html__('Hover', 'loop-mosaic'),
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Border::get_type(),
+        [
+            'name' => 'card_border_hover',
+            'selector' => '{{WRAPPER}} .loopmosaic-item:hover',
+        ]
+        );
+
+        $this->end_controls_tab();
+
+        $this->end_controls_tabs();
+
         $this->add_group_control(
             Group_Control_Box_Shadow::get_type(),
         [
             'name' => 'card_box_shadow',
             'selector' => '{{WRAPPER}} .loopmosaic-item',
+        ]
+        );
+
+        $this->add_control(
+            'floating_card_style_heading',
+        [
+            'label' => esc_html__('Floating Icon Card', 'loop-mosaic'),
+            'type' => Controls_Manager::HEADING,
+            'separator' => 'before',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_image_height',
+        [
+            'label' => esc_html__('Image Height', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'size_units' => ['px', 'vh'],
+            'range' => [
+                'px' => [
+                    'min' => 120,
+                    'max' => 520,
+                ],
+                'vh' => [
+                    'min' => 10,
+                    'max' => 60,
+                ],
+            ],
+            'default' => [
+                'size' => 210,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-image-height: {{SIZE}}{{UNIT}}; --lm-floating-template-image-height: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'floating_card_pattern_sizing_heading',
+        [
+            'label' => esc_html__('Pattern Sizing', 'loop-mosaic'),
+            'type' => Controls_Manager::HEADING,
+            'separator' => 'before',
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'layout_mode' => 'css_grid',
+                'pattern' => ['featured_grid', 'featured_grid_2_4', 'hero_grid'],
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_featured_image_height',
+        [
+            'label' => esc_html__('Featured Image Height', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'size_units' => ['px', 'vh'],
+            'range' => [
+                'px' => [
+                    'min' => 120,
+                    'max' => 520,
+                ],
+                'vh' => [
+                    'min' => 10,
+                    'max' => 60,
+                ],
+            ],
+            'default' => [
+                'size' => 210,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+1), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+2), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+1), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+2), {{WRAPPER}} .loopmosaic-grid.pattern-hero_grid .loopmosaic-card-floating-icon:nth-child(4n+1)' => '--lm-floating-image-height: {{SIZE}}{{UNIT}}; --lm-floating-template-image-height: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'layout_mode' => 'css_grid',
+                'pattern' => ['featured_grid', 'featured_grid_2_4', 'hero_grid'],
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_small_image_height',
+        [
+            'label' => esc_html__('Small Image Height', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'size_units' => ['px', 'vh'],
+            'range' => [
+                'px' => [
+                    'min' => 100,
+                    'max' => 420,
+                ],
+                'vh' => [
+                    'min' => 8,
+                    'max' => 50,
+                ],
+            ],
+            'default' => [
+                'size' => 185,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+3), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+4), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+5), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+6), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+3), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+4), {{WRAPPER}} .loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+5), {{WRAPPER}} .loopmosaic-grid.pattern-hero_grid .loopmosaic-card-floating-icon:nth-child(4n+2), {{WRAPPER}} .loopmosaic-grid.pattern-hero_grid .loopmosaic-card-floating-icon:nth-child(4n+3), {{WRAPPER}} .loopmosaic-grid.pattern-hero_grid .loopmosaic-card-floating-icon:nth-child(4n+4)' => '--lm-floating-image-height: {{SIZE}}{{UNIT}}; --lm-floating-template-image-height: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'layout_mode' => 'css_grid',
+                'pattern' => ['featured_grid', 'featured_grid_2_4', 'hero_grid'],
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'floating_card_content_bg',
+        [
+            'label' => esc_html__('Content Background', 'loop-mosaic'),
+            'type' => Controls_Manager::COLOR,
+            'default' => '#ffffff',
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-card-bg: {{VALUE}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_content_min_height',
+        [
+            'label' => esc_html__('Content Min Height', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 80,
+                    'max' => 360,
+                ],
+            ],
+            'default' => [
+                'size' => 140,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-content-min-height: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_content_overlap',
+        [
+            'label' => esc_html__('Content Overlap', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 0,
+                    'max' => 80,
+                ],
+            ],
+            'default' => [
+                'size' => 20,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-content-overlap: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_content_padding',
+        [
+            'label' => esc_html__('Content Padding', 'loop-mosaic'),
+            'type' => Controls_Manager::DIMENSIONS,
+            'size_units' => ['px', 'em'],
+            'default' => [
+                'top' => 46,
+                'right' => 64,
+                'bottom' => 42,
+                'left' => 24,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-content-padding-top: {{TOP}}{{UNIT}}; --lm-floating-content-padding-right: {{RIGHT}}{{UNIT}}; --lm-floating-content-padding-bottom: {{BOTTOM}}{{UNIT}}; --lm-floating-content-padding-left: {{LEFT}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_icon_size',
+        [
+            'label' => esc_html__('Icon Circle Size', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 34,
+                    'max' => 96,
+                ],
+            ],
+            'default' => [
+                'size' => 58,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-icon-size: {{SIZE}}{{UNIT}};',
+                '{{WRAPPER}} .loopmosaic-card-floating-icon .loopmosaic-item__floating-icon' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_icon_left',
+        [
+            'label' => esc_html__('Icon Left Offset', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 0,
+                    'max' => 80,
+                ],
+            ],
+            'default' => [
+                'size' => 24,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-icon-left: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_icon_top_default',
+        [
+            'label' => esc_html__('Icon Top Offset', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => -80,
+                    'max' => 40,
+                ],
+            ],
+            'default' => [
+                'size' => -29,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon:not(.loopmosaic-card-floating-template)' => '--lm-floating-icon-top: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => 'default',
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_icon_top_template',
+        [
+            'label' => esc_html__('Icon Top Position', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 40,
+                    'max' => 520,
+                ],
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-template' => '--lm-floating-template-icon-top: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => 'elementor_loop',
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_icon_font_size',
+        [
+            'label' => esc_html__('Icon Size', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 12,
+                    'max' => 56,
+                ],
+            ],
+            'default' => [
+                'size' => 25,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon .loopmosaic-item__floating-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+                '{{WRAPPER}} .loopmosaic-card-floating-icon .loopmosaic-item__floating-icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_icon' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_arrow_size',
+        [
+            'label' => esc_html__('Arrow Size', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 12,
+                    'max' => 48,
+                ],
+            ],
+            'default' => [
+                'size' => 24,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon .loopmosaic-item__floating-arrow' => 'font-size: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_arrow' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'floating_card_arrow_color',
+        [
+            'label' => esc_html__('Arrow Color', 'loop-mosaic'),
+            'type' => Controls_Manager::COLOR,
+            'default' => '#d62f67',
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon .loopmosaic-item__floating-arrow' => 'color: {{VALUE}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_arrow' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_arrow_right',
+        [
+            'label' => esc_html__('Arrow Right Offset', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 0,
+                    'max' => 80,
+                ],
+            ],
+            'default' => [
+                'size' => 24,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-arrow-right: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_arrow' => 'yes',
+            ],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'floating_card_arrow_bottom',
+        [
+            'label' => esc_html__('Arrow Bottom Offset', 'loop-mosaic'),
+            'type' => Controls_Manager::SLIDER,
+            'range' => [
+                'px' => [
+                    'min' => 0,
+                    'max' => 80,
+                ],
+            ],
+            'default' => [
+                'size' => 26,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-card-floating-icon' => '--lm-floating-arrow-bottom: {{SIZE}}{{UNIT}};',
+            ],
+            'condition' => [
+                'template_source' => ['default', 'elementor_loop'],
+                'card_design_style' => 'floating_icon',
+                'show_floating_card_arrow' => 'yes',
+            ],
         ]
         );
 
@@ -2675,10 +3320,17 @@ class Mosaic_Loop_Widget extends Widget_Base
                 'taxonomy' => $selected_taxonomy,
                 'taxonomy_terms' => !empty($selected_terms) ? implode(',', $selected_terms) : '',
                 'template_source' => $template_source,
+                'card_design_style' => $settings['card_design_style'] ?? 'overlay',
                 'show_title' => $settings['show_title'] ?? 'yes',
                 'show_excerpt' => $settings['show_excerpt'] ?? 'yes',
                 'show_category' => $settings['show_category'] ?? 'yes',
                 'excerpt_length' => $settings['excerpt_length'] ?? 20,
+                'show_floating_card_icon' => $settings['show_floating_card_icon'] ?? 'yes',
+                'floating_card_icon' => $settings['floating_card_icon'] ?? [],
+                'floating_card_icon_bg_color' => $settings['floating_card_icon_bg_color'] ?? '#d62f67',
+                'floating_card_icon_color' => $settings['floating_card_icon_color'] ?? '#ffffff',
+                'floating_card_icon_items' => $settings['floating_card_icon_items'] ?? [],
+                'show_floating_card_arrow' => $settings['show_floating_card_arrow'] ?? 'yes',
                 'color_overlay' => $settings['color_overlay'] ?? '',
                 'infinite_scroll_trigger' => $settings['infinite_scroll_trigger'] ?? 'scroll',
                 'use_custom_overlay_colors' => $settings['use_custom_overlay_colors'] ?? '',
@@ -2739,9 +3391,19 @@ class Mosaic_Loop_Widget extends Widget_Base
                 // Item classes
                 $item_classes = ['loopmosaic-item'];
                 $item_attrs = '';
+                $card_design_style = !empty($settings['card_design_style']) ? $settings['card_design_style'] : 'overlay';
+                $is_floating_card_style = 'floating_icon' === $card_design_style;
+
+                if ($is_floating_card_style) {
+                    $item_classes[] = 'loopmosaic-card-floating-icon';
+
+                    if ('default' !== $template_source) {
+                        $item_classes[] = 'loopmosaic-card-floating-template';
+                    }
+                }
 
                 // Add color overlay class for default template
-                if ('default' === $template_source && !empty($settings['color_overlay']) && 'yes' === $settings['color_overlay']) {
+                if ('default' === $template_source && !$is_floating_card_style && !empty($settings['color_overlay']) && 'yes' === $settings['color_overlay']) {
                     // Custom Colors Logic
                     if (!empty($settings['use_custom_overlay_colors']) && 'yes' === $settings['use_custom_overlay_colors'] && !empty($settings['custom_overlay_colors'])) {
                         $custom_colors = $settings['custom_overlay_colors'];
@@ -2877,16 +3539,33 @@ class Mosaic_Loop_Widget extends Widget_Base
                 }
                 // --- END HOVER OVERLAY ---
 
+                if ('default' !== $template_source && $is_floating_card_style) {
+                    $this->render_floating_card_icon($settings, $index);
+                    $this->render_floating_card_arrow($settings);
+                }
+
                 // Render based on template source
                 switch ($template_source) {
                     case 'elementor_loop':
                         $template_id = !empty($settings['elementor_loop_template']) ? $settings['elementor_loop_template'] : '';
+                        if ($is_floating_card_style) {
+                            echo '<div class="loopmosaic-item__template-content">';
+                        }
                         $this->render_elementor_loop_template($template_id);
+                        if ($is_floating_card_style) {
+                            echo '</div>';
+                        }
                         break;
 
                     case 'jetengine':
                         $listing_id = !empty($settings['jetengine_listing']) ? $settings['jetengine_listing'] : '';
+                        if ($is_floating_card_style) {
+                            echo '<div class="loopmosaic-item__template-content">';
+                        }
                         $this->render_jetengine_listing($listing_id);
+                        if ($is_floating_card_style) {
+                            echo '</div>';
+                        }
                         break;
 
                     default:
@@ -2895,7 +3574,7 @@ class Mosaic_Loop_Widget extends Widget_Base
                         if (isset($query->posts[$index]) && $query->posts[$index] instanceof \WP_Post) {
                             $current_id = $query->posts[$index]->ID;
                         }
-                        $this->render_default_card($settings, $current_id);
+                        $this->render_default_card($settings, $current_id, $index);
                         break;
                 }
 
@@ -2931,7 +3610,7 @@ class Mosaic_Loop_Widget extends Widget_Base
     /**
      * Render default card content
      */
-    private function render_default_card($settings, $post_id = null)
+    private function render_default_card($settings, $post_id = null, $item_index = 0)
     {
         if (!$post_id) {
             $post_id = get_the_ID();
@@ -2939,9 +3618,26 @@ class Mosaic_Loop_Widget extends Widget_Base
 
         $image_size = !empty($settings['image_size']) ? $settings['image_size'] : 'large';
         $thumbnail = get_the_post_thumbnail_url($post_id, $image_size);
+        $card_design_style = !empty($settings['card_design_style']) ? $settings['card_design_style'] : 'overlay';
+        $is_floating_icon_card = 'floating_icon' === $card_design_style;
+        $floating_card_icon = !empty($settings['floating_card_icon']) ? $settings['floating_card_icon'] : [];
+        $floating_card_icon_bg_color = !empty($settings['floating_card_icon_bg_color']) ? $settings['floating_card_icon_bg_color'] : '#d62f67';
+        $floating_card_icon_color = !empty($settings['floating_card_icon_color']) ? $settings['floating_card_icon_color'] : '#ffffff';
+
+        if ($is_floating_icon_card && !empty($settings['floating_card_icon_items']) && is_array($settings['floating_card_icon_items'])) {
+            $icon_items = array_values(array_filter($settings['floating_card_icon_items'], function ($icon_item) {
+                return !empty($icon_item['icon']['value']);
+            }));
+
+            if (!empty($icon_items)) {
+                $icon_item = $icon_items[$item_index % count($icon_items)];
+                $floating_card_icon = !empty($icon_item['icon']) ? $icon_item['icon'] : $floating_card_icon;
+                $floating_card_icon_bg_color = !empty($icon_item['icon_bg_color']) ? $icon_item['icon_bg_color'] : $floating_card_icon_bg_color;
+                $floating_card_icon_color = !empty($icon_item['icon_color']) ? $icon_item['icon_color'] : $floating_card_icon_color;
+            }
+        }
 
         // Determine click action link
-        $post_id = get_the_ID();
         $click_action = !empty($settings['click_action']) ? $settings['click_action'] : 'permalink';
         $click_action = function_exists('loopmosaic_get_click_action') ? loopmosaic_get_click_action($post_id, $click_action) : $click_action;
         $redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id) : '';
@@ -2997,16 +3693,25 @@ class Mosaic_Loop_Widget extends Widget_Base
         
         <?php
         $inner_styles = [];
-        if (!empty($settings['card_content_v_align'])) {
+        if (!$is_floating_icon_card && !empty($settings['card_content_v_align'])) {
             $inner_styles[] = 'justify-content: ' . esc_attr($settings['card_content_v_align']);
         }
-        if (!empty($settings['card_content_h_align'])) {
+        if (!$is_floating_icon_card && !empty($settings['card_content_h_align'])) {
             $inner_styles[] = 'align-items: ' . esc_attr($settings['card_content_h_align']);
         }
         $inner_style_attr = !empty($inner_styles) ? ' style="' . implode('; ', $inner_styles) . '"' : '';
 ?>
         
         <div class="loopmosaic-item__inner"<?php echo $inner_style_attr; ?>>
+            <?php if ($is_floating_icon_card && !empty($settings['show_floating_card_icon']) && 'yes' === $settings['show_floating_card_icon'] && !empty($floating_card_icon['value'])): ?>
+                <?php
+                $icon_style = '--lm-floating-icon-bg: ' . esc_attr($floating_card_icon_bg_color) . '; --lm-floating-icon-color: ' . esc_attr($floating_card_icon_color) . ';';
+                ?>
+                <span class="loopmosaic-item__floating-icon" style="<?php echo esc_attr($icon_style); ?>" aria-hidden="true">
+                    <?php \Elementor\Icons_Manager::render_icon($floating_card_icon, ['aria-hidden' => 'true']); ?>
+                </span>
+            <?php endif; ?>
+
             <?php if (!empty($settings['show_category']) && 'yes' === $settings['show_category']): ?>
                 <?php
             $categories = get_the_category();
@@ -3036,8 +3741,73 @@ class Mosaic_Loop_Widget extends Widget_Base
                 </p>
             <?php
         endif; ?>
+
+            <?php if ($is_floating_icon_card && !empty($settings['show_floating_card_arrow']) && 'yes' === $settings['show_floating_card_arrow']): ?>
+                <span class="loopmosaic-item__floating-arrow" aria-hidden="true">&rarr;</span>
+            <?php endif; ?>
         </div>
         <?php
+    }
+
+    /**
+     * Get the floating card icon for the current item.
+     */
+    private function get_floating_card_icon_data($settings, $item_index = 0)
+    {
+        $icon = !empty($settings['floating_card_icon']) ? $settings['floating_card_icon'] : [];
+        $bg_color = !empty($settings['floating_card_icon_bg_color']) ? $settings['floating_card_icon_bg_color'] : '#d62f67';
+        $color = !empty($settings['floating_card_icon_color']) ? $settings['floating_card_icon_color'] : '#ffffff';
+
+        if (!empty($settings['floating_card_icon_items']) && is_array($settings['floating_card_icon_items'])) {
+            $icon_items = array_values(array_filter($settings['floating_card_icon_items'], function ($icon_item) {
+                return !empty($icon_item['icon']['value']);
+            }));
+
+            if (!empty($icon_items)) {
+                $icon_item = $icon_items[$item_index % count($icon_items)];
+                $icon = !empty($icon_item['icon']) ? $icon_item['icon'] : $icon;
+                $bg_color = !empty($icon_item['icon_bg_color']) ? $icon_item['icon_bg_color'] : $bg_color;
+                $color = !empty($icon_item['icon_color']) ? $icon_item['icon_color'] : $color;
+            }
+        }
+
+        return [
+            'icon' => $icon,
+            'bg_color' => $bg_color,
+            'color' => $color,
+        ];
+    }
+
+    /**
+     * Render the floating icon decoration for template-based cards.
+     */
+    private function render_floating_card_icon($settings, $item_index = 0)
+    {
+        if (empty($settings['show_floating_card_icon']) || 'yes' !== $settings['show_floating_card_icon']) {
+            return;
+        }
+
+        $icon_data = $this->get_floating_card_icon_data($settings, $item_index);
+        if (empty($icon_data['icon']['value'])) {
+            return;
+        }
+
+        $icon_style = '--lm-floating-icon-bg: ' . esc_attr($icon_data['bg_color']) . '; --lm-floating-icon-color: ' . esc_attr($icon_data['color']) . ';';
+        echo '<span class="loopmosaic-item__floating-icon" style="' . esc_attr($icon_style) . '" aria-hidden="true">';
+        \Elementor\Icons_Manager::render_icon($icon_data['icon'], ['aria-hidden' => 'true']);
+        echo '</span>';
+    }
+
+    /**
+     * Render the floating card arrow decoration.
+     */
+    private function render_floating_card_arrow($settings)
+    {
+        if (empty($settings['show_floating_card_arrow']) || 'yes' !== $settings['show_floating_card_arrow']) {
+            return;
+        }
+
+        echo '<span class="loopmosaic-item__floating-arrow" aria-hidden="true">&rarr;</span>';
     }
 
     /**

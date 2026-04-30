@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.16.1-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.17.0-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -35,6 +35,8 @@
 - **Border Radius**: Rounded corners for modern aesthetics
 - **Color Overlays**: Gradient overlays with multiple color presets
 - **Box Shadows**: Depth and elevation effects
+- **Card Borders**: Normal and hover border controls for classic card styles
+- **Floating Icon Cards**: Modern image-first cards with icon, arrow, sizing, and pattern-aware controls
 - **Typography**: Full control over titles and category labels
 
 ### 🔗 Template Integrations

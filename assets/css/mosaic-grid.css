@@ -443,6 +443,258 @@
     backdrop-filter: blur(4px);
 }
 
+/* === Floating Icon Card Design === */
+.loopmosaic-card-floating-icon {
+    --lm-floating-image-height: 210px;
+    --lm-floating-template-image-height: var(--lm-floating-image-height);
+    --lm-floating-content-min-height: 140px;
+    --lm-floating-content-overlap: 20px;
+    --lm-floating-content-padding-top: 46px;
+    --lm-floating-content-padding-right: 64px;
+    --lm-floating-content-padding-bottom: 42px;
+    --lm-floating-content-padding-left: 24px;
+    --lm-floating-icon-size: 58px;
+    --lm-floating-icon-left: 24px;
+    --lm-floating-icon-top: -29px;
+    --lm-floating-template-icon-top: calc(var(--lm-floating-template-image-height, 210px) - (var(--lm-floating-icon-size) / 2));
+    --lm-floating-arrow-right: 24px;
+    --lm-floating-arrow-bottom: 26px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: none;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid rgba(22, 28, 45, 0.08);
+    border-radius: var(--lm-border-radius, 18px);
+    box-shadow: 0 14px 34px rgba(31, 41, 55, 0.10);
+}
+
+.loopmosaic-grid:not(.img-mode-auto) .loopmosaic-card-floating-icon .loopmosaic-item__media,
+.loopmosaic-grid.img-mode-auto .loopmosaic-card-floating-icon .loopmosaic-item__media,
+.loopmosaic-card-floating-icon .loopmosaic-item__media {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: var(--lm-floating-image-height);
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100% !important;
+    object-fit: cover;
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__inner {
+    position: relative;
+    inset: auto;
+    z-index: 2;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    min-height: var(--lm-floating-content-min-height);
+    margin-top: calc(0px - var(--lm-floating-content-overlap));
+    padding: var(--lm-floating-content-padding-top) var(--lm-floating-content-padding-right) var(--lm-floating-content-padding-bottom) var(--lm-floating-content-padding-left) !important;
+    background: var(--lm-floating-card-bg, #ffffff) !important;
+    border-radius: 20px 20px 0 0;
+    text-align: left !important;
+}
+
+.loopmosaic-card-floating-icon:hover .loopmosaic-item__inner {
+    background: var(--lm-floating-card-bg, #ffffff) !important;
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__floating-icon {
+    position: absolute;
+    top: var(--lm-floating-icon-top);
+    left: var(--lm-floating-icon-left);
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--lm-floating-icon-size);
+    height: var(--lm-floating-icon-size);
+    border-radius: 999px;
+    color: var(--lm-floating-icon-color, #ffffff);
+    background: var(--lm-floating-icon-bg, #d62f67);
+    box-shadow: 0 10px 24px rgba(17, 24, 39, 0.18), 0 0 0 5px rgba(255, 255, 255, 0.94);
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__floating-icon i {
+    font-size: 25px;
+    line-height: 1;
+    color: currentColor;
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__floating-icon svg {
+    width: 25px;
+    height: 25px;
+    fill: currentColor;
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__category {
+    margin-bottom: 10px;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    color: #8a93a3;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    backdrop-filter: none;
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__title {
+    max-width: calc(100% - var(--lm-floating-arrow-right) - 34px);
+    margin-bottom: 10px;
+    color: #303642 !important;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__excerpt {
+    max-width: calc(100% - var(--lm-floating-arrow-right) - 34px);
+    color: #737b88 !important;
+    line-height: 1.55;
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__floating-arrow {
+    position: absolute;
+    right: var(--lm-floating-arrow-right);
+    bottom: var(--lm-floating-arrow-bottom);
+    z-index: 3;
+    color: #d62f67;
+    font-size: 24px;
+    line-height: 1;
+    transition: transform 0.25s ease;
+}
+
+.loopmosaic-card-floating-icon:hover .loopmosaic-item__floating-arrow {
+    transform: translateX(4px);
+}
+
+.loopmosaic-card-floating-icon .loopmosaic-item__link {
+    z-index: 20;
+}
+
+.loopmosaic-card-floating-icon:hover .loopmosaic-item__image {
+    transform: scale(1.04);
+}
+
+.loopmosaic-card-floating-template {
+    min-height: auto;
+}
+
+.loopmosaic-card-floating-template .loopmosaic-item__template-content {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    min-height: calc(var(--lm-floating-template-image-height, 210px) + var(--lm-floating-content-min-height));
+    background: var(--lm-floating-card-bg, #ffffff);
+}
+
+.loopmosaic-card-floating-template .loopmosaic-item__template-content > .elementor,
+.loopmosaic-card-floating-template .loopmosaic-item__template-content > .elementor > .elementor-element {
+    width: 100%;
+}
+
+.loopmosaic-card-floating-template .elementor-widget-theme-post-featured-image,
+.loopmosaic-card-floating-template .elementor-widget-image:first-of-type {
+    margin: 0 !important;
+}
+
+.loopmosaic-card-floating-template .elementor-widget-theme-post-featured-image img,
+.loopmosaic-card-floating-template .elementor-widget-image:first-of-type img {
+    display: block;
+    width: 100%;
+    height: var(--lm-floating-template-image-height, 210px) !important;
+    object-fit: cover;
+    border-radius: 0 !important;
+}
+
+.loopmosaic-card-floating-template .loopmosaic-item__template-content > .elementor img {
+    width: 100%;
+    max-height: var(--lm-floating-template-image-height, 210px);
+    object-fit: cover;
+}
+
+.loopmosaic-card-floating-template .elementor-widget-theme-post-title,
+.loopmosaic-card-floating-template .elementor-widget-heading,
+.loopmosaic-card-floating-template .elementor-widget-theme-post-excerpt,
+.loopmosaic-card-floating-template .elementor-widget-text-editor {
+    padding-right: var(--lm-floating-content-padding-right);
+    padding-left: var(--lm-floating-content-padding-left);
+}
+
+.loopmosaic-card-floating-template .elementor-widget-theme-post-featured-image + .elementor-widget-theme-post-title,
+.loopmosaic-card-floating-template .elementor-widget-image:first-of-type + .elementor-widget-heading {
+    position: relative;
+    min-height: var(--lm-floating-content-min-height);
+    margin-top: calc(0px - var(--lm-floating-content-overlap)) !important;
+    padding-top: var(--lm-floating-content-padding-top);
+    background: var(--lm-floating-card-bg, #ffffff);
+    border-radius: 20px 20px 0 0;
+}
+
+.loopmosaic-card-floating-template .elementor-widget-theme-post-excerpt:last-child,
+.loopmosaic-card-floating-template .elementor-widget-text-editor:last-child {
+    padding-bottom: var(--lm-floating-content-padding-bottom);
+}
+
+.loopmosaic-card-floating-template .elementor-widget-theme-post-title .elementor-heading-title,
+.loopmosaic-card-floating-template .elementor-widget-heading .elementor-heading-title {
+    color: #303642;
+    line-height: 1.35;
+}
+
+.loopmosaic-card-floating-template .elementor-widget-theme-post-excerpt,
+.loopmosaic-card-floating-template .elementor-widget-theme-post-excerpt p,
+.loopmosaic-card-floating-template .elementor-widget-text-editor,
+.loopmosaic-card-floating-template .elementor-widget-text-editor p {
+    color: #737b88;
+    line-height: 1.55;
+}
+
+.loopmosaic-card-floating-template .loopmosaic-item__floating-icon {
+    top: var(--lm-floating-template-icon-top);
+    pointer-events: none;
+}
+
+.loopmosaic-card-floating-template .loopmosaic-item__floating-arrow {
+    pointer-events: none;
+}
+
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+1),
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+2),
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+1),
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+2),
+.loopmosaic-grid.pattern-hero_grid .loopmosaic-card-floating-icon:nth-child(4n+1) {
+    --lm-floating-image-height: 210px;
+    --lm-floating-template-image-height: 210px;
+}
+
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+3),
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+4),
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+5),
+.loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-card-floating-icon:nth-child(6n+6),
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+3),
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+4),
+.loopmosaic-grid.pattern-featured_grid .loopmosaic-card-floating-icon:nth-child(5n+5),
+.loopmosaic-grid.pattern-hero_grid .loopmosaic-card-floating-icon:nth-child(4n+2),
+.loopmosaic-grid.pattern-hero_grid .loopmosaic-card-floating-icon:nth-child(4n+3),
+.loopmosaic-grid.pattern-hero_grid .loopmosaic-card-floating-icon:nth-child(4n+4) {
+    --lm-floating-image-height: 185px;
+    --lm-floating-template-image-height: 185px;
+    --lm-floating-content-min-height: 128px;
+}
+
 /* === Color Overlays (Based on Screenshot) === */
 .loopmosaic-item.overlay-purple .loopmosaic-item__inner {
     background: linear-gradient(135deg, rgba(138, 43, 226, 0.85) 0%, rgba(75, 0, 130, 0.9) 100%);
