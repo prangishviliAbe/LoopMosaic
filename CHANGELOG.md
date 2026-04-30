@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.17.1] - 2026-04-30
+### Fixed
+- **Install Package Slug**: Rebuilt the release ZIP with the canonical lowercase `loop-mosaic` plugin folder to avoid invalid plugin name warnings during upload/install.
+- **Package Contents**: Removed the debug `test.php` file from the plugin codebase and release package.
+
 ## [1.17.0] - 2026-04-30
 ### Added
 - **Floating Icon Card Design**: Added a new card design option with image-first layout, floating circular icons, arrow indicators, and polished white content panels.
