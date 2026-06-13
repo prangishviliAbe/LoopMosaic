@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.18.0-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.18.1-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -181,6 +181,9 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.18.1 (2026-06-13)
+- **Performance:** `loopmosaic_get_redirect_url()` now skips four regex scans when post content doesn't contain `"location"`, eliminating unnecessary work for the vast majority of posts.
 
 ### Version 1.18.0 (2026-06-13)
 - **Security:** AJAX query inputs (Load More / JetSmartFilters) are now sanitized before reaching `WP_Query` — post type must be publicly queryable, taxonomy must be registered, order/orderby are whitelisted, and posts-per-page is clamped.

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.18.1] - 2026-06-13
+### Performance
+- **Redirect scan guard**: `loopmosaic_get_redirect_url()` now skips four regex patterns when post content does not contain the substring `"location"`. Posts without JS redirects (the vast majority) pay only a fast `stripos` check instead of four full regex passes.
+
 ## [1.18.0] - 2026-06-13
 ### Security
 - **AJAX query hardening**: Settings arriving from the client (Load More / JetSmartFilters) are now sanitized before reaching `WP_Query` — `post_type` must be publicly queryable, `taxonomy` must be registered, `orderby` is whitelisted, `order` is normalized, and `posts_per_page` is clamped (no unbounded queries).
