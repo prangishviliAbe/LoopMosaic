@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic for Elementor
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.17.1
+ * Version: 1.18.0
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe/LoopMosaic
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-define('LOOPMOSAIC_VERSION', '1.17.1');
+define('LOOPMOSAIC_VERSION', '1.18.0');
 define('LOOPMOSAIC_PATH', plugin_dir_path(__FILE__));
 define('LOOPMOSAIC_URL', plugin_dir_url(__FILE__));
 define('LOOPMOSAIC_BASENAME', plugin_basename(__FILE__));
@@ -65,6 +65,9 @@ final class LoopMosaic
 
         // Load translations
         load_plugin_textdomain('loop-mosaic', false, dirname(LOOPMOSAIC_BASENAME) . '/languages');
+
+        // Shared item renderer (single source of truth for all render paths)
+        require_once LOOPMOSAIC_PATH . 'includes/class-renderer.php';
 
         // Register widgets
         add_action('elementor/widgets/register', [$this, 'register_widgets']);
@@ -137,8 +140,10 @@ final class LoopMosaic
      */
     public function enqueue_styles()
     {
-        wp_enqueue_style('loop-mosaic-grid', LOOPMOSAIC_URL . 'assets/css/mosaic-grid.css', [], filemtime(LOOPMOSAIC_PATH . 'assets/css/mosaic-grid.css'));
-        wp_enqueue_style('loop-mosaic-modal', LOOPMOSAIC_URL . 'assets/css/mosaic-modal.css', [], LOOPMOSAIC_VERSION);
+        $grid_css = LOOPMOSAIC_PATH . 'assets/css/mosaic-grid.css';
+        $modal_css = LOOPMOSAIC_PATH . 'assets/css/mosaic-modal.css';
+        wp_enqueue_style('loop-mosaic-grid', LOOPMOSAIC_URL . 'assets/css/mosaic-grid.css', [], file_exists($grid_css) ? filemtime($grid_css) : LOOPMOSAIC_VERSION);
+        wp_enqueue_style('loop-mosaic-modal', LOOPMOSAIC_URL . 'assets/css/mosaic-modal.css', [], file_exists($modal_css) ? filemtime($modal_css) : LOOPMOSAIC_VERSION);
     }
 
     /**
@@ -175,7 +180,7 @@ final class LoopMosaic
 
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-        $auto_template = isset($_POST['auto_template']) ? $_POST['auto_template'] : false;
+        $auto_template = !empty($_POST['auto_template']) && 'false' !== $_POST['auto_template'];
 
         if (!$post_id) {
             wp_send_json_error('Invalid Post ID');
@@ -185,6 +190,18 @@ final class LoopMosaic
         $post = get_post($post_id);
         if (!$post) {
             wp_send_json_error('Post not found');
+        }
+
+        // Only expose publicly viewable content. This prevents enumerating
+        // private/draft/password-protected posts via the modal endpoint (IDOR).
+        if ('publish' !== $post->post_status || !empty($post->post_password)) {
+            wp_send_json_error('Post not available');
+        }
+
+        // A manually supplied template id must be an actual Elementor template,
+        // not an arbitrary post id, so the endpoint can't render private content.
+        if ($template_id && 'elementor_library' !== get_post_type($template_id)) {
+            $template_id = 0;
         }
 
         setup_postdata($post);
@@ -361,6 +378,8 @@ final class LoopMosaic
             wp_send_json_error('Invalid Settings');
         }
 
+        $settings = loopmosaic_sanitize_query_settings($settings);
+
         // Build Query Args
         $orderby = isset($settings['orderby']) ? $settings['orderby'] : 'date';
         $order   = isset($settings['order']) ? $settings['order'] : 'DESC';
@@ -409,313 +428,18 @@ final class LoopMosaic
         $html = '';
 
         if ($query->have_posts()) {
-            $template_source = isset($settings['template_source']) ? $settings['template_source'] : 'default';
             $index = 0;
 
             while ($query->have_posts()) {
                 $query->the_post();
 
-                $item_classes = ['loopmosaic-item', 'loopmosaic-item-new']; // Added new class for animation
-                $item_attrs = '';
-                $card_design_style = !empty($settings['card_design_style']) ? $settings['card_design_style'] : 'overlay';
-                $is_floating_icon_card = 'floating_icon' === $card_design_style;
+                // Single source of truth for item markup (see class-renderer.php).
+                $item_html = LoopMosaic_Renderer::render_item($settings, get_the_ID(), $index);
 
-                if ($is_floating_icon_card) {
-                    $item_classes[] = 'loopmosaic-card-floating-icon';
+                // Tag the wrapper as "new" so the JS can play the entry animation.
+                $item_html = preg_replace('/class="loopmosaic-item/', 'class="loopmosaic-item loopmosaic-item-new', $item_html, 1);
 
-                    if ('default' !== $template_source) {
-                        $item_classes[] = 'loopmosaic-card-floating-template';
-                    }
-                }
-
-                if ('default' === $template_source && !$is_floating_icon_card && !empty($settings['color_overlay']) && 'yes' === $settings['color_overlay']) {
-                    // Custom Colors Logic
-                    if (!empty($settings['use_custom_overlay_colors']) && 'yes' === $settings['use_custom_overlay_colors'] && !empty($settings['custom_overlay_colors'])) {
-                        $custom_colors = $settings['custom_overlay_colors'];
-                        $color_data = $custom_colors[$index % count($custom_colors)];
-                        $color_hex = $color_data['overlay_color'];
-
-                        // Handle Opacity
-                        $opacity = 0.85;
-                        if (isset($settings['overlay_opacity'])) {
-                            if (is_array($settings['overlay_opacity'])) {
-                                $opacity = isset($settings['overlay_opacity']['size']) ? $settings['overlay_opacity']['size'] : 0.85;
-                            }
-                            else {
-                                $opacity = $settings['overlay_opacity'];
-                            }
-                        }
-
-                        // Convert Hex to RGBA
-                        $color_hex = str_replace('#', '', $color_hex);
-                        if (strlen($color_hex) == 3) {
-                            $r = hexdec(substr($color_hex, 0, 1) . substr($color_hex, 0, 1));
-                            $g = hexdec(substr($color_hex, 1, 1) . substr($color_hex, 1, 1));
-                            $b = hexdec(substr($color_hex, 2, 1) . substr($color_hex, 2, 1));
-                        }
-                        else {
-                            $r = hexdec(substr($color_hex, 0, 2));
-                            $g = hexdec(substr($color_hex, 2, 2));
-                            $b = hexdec(substr($color_hex, 4, 2));
-                        }
-                        $rgba_color = "rgba($r, $g, $b, $opacity)";
-
-                        // Text Color & Alignment
-                        $text_inv_hex = !empty($color_data['overlay_text_color']) ? $color_data['overlay_text_color'] : '#ffffff';
-                        $hover_inv_hex = !empty($color_data['overlay_text_hover_color']) ? $color_data['overlay_text_hover_color'] : '#ffffff';
-                        $v_align = !empty($color_data['text_v_align']) ? $color_data['text_v_align'] : 'flex-end';
-                        $h_align = !empty($color_data['text_h_align']) ? $color_data['text_h_align'] : 'flex-start';
-
-                        // Map flex values to text-align values
-                        $text_align_map = [
-                            'flex-start' => 'left',
-                            'center' => 'center',
-                            'flex-end' => 'right',
-                        ];
-                        $text_align = isset($text_align_map[$h_align]) ? $text_align_map[$h_align] : 'left';
-                        if (!empty($settings['overlay_hover_effect']) && 'none' !== $settings['overlay_hover_effect']) {
-                            $item_classes[] = 'overlay-hover-' . $settings['overlay_hover_effect'];
-                        }
-
-                        $hover_opacity = 0.5;
-                        if (isset($settings['overlay_hover_opacity_value'])) {
-                            if (is_array($settings['overlay_hover_opacity_value'])) {
-                                $hover_opacity = isset($settings['overlay_hover_opacity_value']['size']) ? $settings['overlay_hover_opacity_value']['size'] : 0.5;
-                            }
-                            else {
-                                $hover_opacity = $settings['overlay_hover_opacity_value'];
-                            }
-                        }
-
-                        $rgb_commas = "$r, $g, $b";
-
-                        $item_classes[] = 'overlay-custom'; // Added missing class
-
-                        $item_attrs = ' style="--lm-custom-overlay: ' . $rgba_color . '; --lm-custom-overlay-rgb: ' . $rgb_commas . '; --lm-custom-text: ' . $text_inv_hex . '; --lm-custom-text-hover: ' . $hover_inv_hex . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . '; --lm-custom-hover-opacity: ' . $hover_opacity . ';"';
-                    }
-                    else {
-                        // Helper for overlay color
-                        $colors = ['purple', 'teal', 'gold', 'coral', 'cyan', 'green'];
-                        $color_class = 'overlay-' . $colors[$index % count($colors)];
-                        $item_classes[] = $color_class;
-                    }
-                }
-
-                if ('default' === $template_source && 'popup' === ($settings['click_action'] ?? 'permalink') && !empty($settings['click_popup_id'])) {
-                    $item_attrs .= ' data-popup-id="' . esc_attr($settings['click_popup_id']) . '"';
-                }
-
-                $html .= '<div class="' . esc_attr(implode(' ', $item_classes)) . '"' . $item_attrs . '>';
-
-                // --- GLOBAL OVERLAY LINK (AJAX) ---
-                $click_action = isset($settings['click_action']) ? $settings['click_action'] : 'permalink';
-                $post_id_ajax = get_the_ID(); // Default
-                $click_action = loopmosaic_get_click_action($post_id_ajax, $click_action);
-
-                $post_redirect_url = '';
-                if ('default' !== $template_source) {
-                    $post_redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id_ajax) : '';
-                }
-
-                if ('default' !== $template_source && ((('modal' === $click_action || 'none' === $click_action) && 'permalink' !== $click_action) || $post_redirect_url)) {
-                    // For Elementor Loop, we need to ensure we get the correct ID if it's a loop
-                    // Note: post_id_ajax is already set above
-
-                    $redirect_url = $post_redirect_url ? $post_redirect_url : (function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id_ajax) : '');
-                    $link_url = $redirect_url ? $redirect_url : get_the_permalink($post_id_ajax);
-                    $link_classes = ['loopmosaic-item__link'];
-                    $popup_attr = '';
-
-                    if ('modal' === $click_action) {
-                        $link_url = '#';
-                        $link_classes[] = 'loopmosaic-modal-trigger';
-                        $popup_attr = ' data-post-id="' . $post_id_ajax . '"';
-
-                        // Custom Template Logic (AJAX)
-                        if (!empty($settings['modal_use_custom_template']) && 'yes' === $settings['modal_use_custom_template']) {
-                            if (!empty($settings['modal_auto_template']) && 'yes' === $settings['modal_auto_template']) {
-                                $popup_attr .= ' data-auto-template="1"';
-                            }
-                            elseif (!empty($settings['modal_template_id'])) {
-                                $popup_attr .= ' data-modal-template-id="' . esc_attr($settings['modal_template_id']) . '"';
-                            }
-                        }
-
-                        if (empty($settings['show_gallery_in_modal']) || 'yes' !== $settings['show_gallery_in_modal']) {
-                            $popup_attr .= ' data-no-gallery="true"';
-                        }
-                    }
-                    elseif ('none' === $click_action) {
-                        $link_url = 'javascript:void(0);';
-                    }
-
-                    $html .= '<a href="' . esc_url($link_url) . '" class="' . esc_attr(implode(' ', $link_classes)) . '" aria-label="' . the_title_attribute('echo=0') . '"' . $popup_attr . '></a>';
-                }
-                // --- END GLOBAL OVERLAY LINK ---
-
-                // Inner Content
-                if ('elementor_loop' === $template_source && !empty($settings['elementor_loop_template'])) {
-                    if ($is_floating_icon_card) {
-                        $floating_card_icon = !empty($settings['floating_card_icon']) ? $settings['floating_card_icon'] : [];
-                        $floating_card_icon_bg_color = !empty($settings['floating_card_icon_bg_color']) ? $settings['floating_card_icon_bg_color'] : '#d62f67';
-                        $floating_card_icon_color = !empty($settings['floating_card_icon_color']) ? $settings['floating_card_icon_color'] : '#ffffff';
-
-                        if (!empty($settings['floating_card_icon_items']) && is_array($settings['floating_card_icon_items'])) {
-                            $icon_items = array_values(array_filter($settings['floating_card_icon_items'], function ($icon_item) {
-                                return !empty($icon_item['icon']['value']);
-                            }));
-
-                            if (!empty($icon_items)) {
-                                $icon_item = $icon_items[$index % count($icon_items)];
-                                $floating_card_icon = !empty($icon_item['icon']) ? $icon_item['icon'] : $floating_card_icon;
-                                $floating_card_icon_bg_color = !empty($icon_item['icon_bg_color']) ? $icon_item['icon_bg_color'] : $floating_card_icon_bg_color;
-                                $floating_card_icon_color = !empty($icon_item['icon_color']) ? $icon_item['icon_color'] : $floating_card_icon_color;
-                            }
-                        }
-
-                        if (!empty($settings['show_floating_card_icon']) && 'yes' === $settings['show_floating_card_icon'] && !empty($floating_card_icon['value'])) {
-                            $icon_style = '--lm-floating-icon-bg: ' . esc_attr($floating_card_icon_bg_color) . '; --lm-floating-icon-color: ' . esc_attr($floating_card_icon_color) . ';';
-                            ob_start();
-                            \Elementor\Icons_Manager::render_icon($floating_card_icon, ['aria-hidden' => 'true']);
-                            $icon_html = ob_get_clean();
-                            $html .= '<span class="loopmosaic-item__floating-icon" style="' . esc_attr($icon_style) . '" aria-hidden="true">' . $icon_html . '</span>';
-                        }
-
-                        if (!empty($settings['show_floating_card_arrow']) && 'yes' === $settings['show_floating_card_arrow']) {
-                            $html .= '<span class="loopmosaic-item__floating-arrow" aria-hidden="true">&rarr;</span>';
-                        }
-
-                        $html .= '<div class="loopmosaic-item__template-content">';
-                    }
-
-                    if (class_exists('\Elementor\Plugin')) {
-                        $html .= \Elementor\Plugin::$instance->frontend->get_builder_content_for_display($settings['elementor_loop_template'], true);
-                    }
-
-                    if ($is_floating_icon_card) {
-                        $html .= '</div>';
-                    }
-                }
-                elseif ('jetengine' === $template_source && !empty($settings['jetengine_listing'])) {
-                    if ($is_floating_icon_card) {
-                        $html .= '<div class="loopmosaic-item__template-content">';
-                    }
-
-                    if (class_exists('Jet_Engine')) {
-                        $html .= jet_engine()->listings->get_listing_item_content($settings['jetengine_listing']);
-                    }
-
-                    if ($is_floating_icon_card) {
-                        $html .= '</div>';
-                    }
-                }
-                else {
-                    // Default Card
-                    $post_id = get_the_ID();
-                    $image_size = !empty($settings['image_size']) ? $settings['image_size'] : 'large';
-                    $thumbnail = get_the_post_thumbnail_url($post_id, $image_size);
-                    $floating_card_icon = !empty($settings['floating_card_icon']) ? $settings['floating_card_icon'] : [];
-                    $floating_card_icon_bg_color = !empty($settings['floating_card_icon_bg_color']) ? $settings['floating_card_icon_bg_color'] : '#d62f67';
-                    $floating_card_icon_color = !empty($settings['floating_card_icon_color']) ? $settings['floating_card_icon_color'] : '#ffffff';
-
-                    if ($is_floating_icon_card && !empty($settings['floating_card_icon_items']) && is_array($settings['floating_card_icon_items'])) {
-                        $icon_items = array_values(array_filter($settings['floating_card_icon_items'], function ($icon_item) {
-                            return !empty($icon_item['icon']['value']);
-                        }));
-
-                        if (!empty($icon_items)) {
-                            $icon_item = $icon_items[$index % count($icon_items)];
-                            $floating_card_icon = !empty($icon_item['icon']) ? $icon_item['icon'] : $floating_card_icon;
-                            $floating_card_icon_bg_color = !empty($icon_item['icon_bg_color']) ? $icon_item['icon_bg_color'] : $floating_card_icon_bg_color;
-                            $floating_card_icon_color = !empty($icon_item['icon_color']) ? $icon_item['icon_color'] : $floating_card_icon_color;
-                        }
-                    }
-
-                    $redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id) : '';
-                    $link_url = $redirect_url ? $redirect_url : get_the_permalink($post_id);
-                    $link_classes = ['loopmosaic-item__link'];
-                    $popup_attr = '';
-
-                    $click_action = isset($settings['click_action']) ? $settings['click_action'] : 'permalink';
-                    $click_action = loopmosaic_get_click_action($post_id, $click_action);
-                    if ('modal' === $click_action) {
-                        $link_url = '#';
-                        $link_classes[] = 'loopmosaic-modal-trigger';
-                        $popup_attr = ' data-post-id="' . $post_id . '"';
-
-                        // Pass modal template settings
-                        if (!empty($settings['modal_use_custom_template']) && 'yes' === $settings['modal_use_custom_template']) {
-                            if (!empty($settings['modal_auto_template']) && 'yes' === $settings['modal_auto_template']) {
-                                $popup_attr .= ' data-auto-template="1"';
-                            }
-                            elseif (!empty($settings['modal_template_id'])) {
-                                $popup_attr .= ' data-modal-template-id="' . esc_attr($settings['modal_template_id']) . '"';
-                            }
-                        }
-                    }
-                    elseif ('none' === $click_action) {
-                        $link_url = '#';
-                    }
-
-                    $html .= '<a href="' . esc_url($link_url) . '" class="' . esc_attr(implode(' ', $link_classes)) . '" aria-label="' . the_title_attribute('echo=0') . '"' . $popup_attr . '></a>';
-
-                    if ($thumbnail) {
-                        if ($is_floating_icon_card) {
-                            $html .= '<div class="loopmosaic-item__media">';
-                            $html .= '<img src="' . esc_url($thumbnail) . '" alt="' . the_title_attribute('echo=0') . '" class="loopmosaic-item__image">';
-                            $html .= '</div>';
-                        }
-                        else {
-                            $html .= '<img src="' . esc_url($thumbnail) . '" alt="' . the_title_attribute('echo=0') . '" class="loopmosaic-item__image">';
-                        }
-                    }
-
-                    // Styles
-                    $inner_styles = [];
-                    if (!$is_floating_icon_card && !empty($settings['card_content_v_align']))
-                        $inner_styles[] = 'justify-content: ' . $settings['card_content_v_align'];
-                    if (!$is_floating_icon_card && !empty($settings['card_content_h_align']))
-                        $inner_styles[] = 'align-items: ' . $settings['card_content_h_align'];
-                    $inner_attr = !empty($inner_styles) ? ' style="' . implode('; ', $inner_styles) . '"' : '';
-
-                    $html .= '<div class="loopmosaic-item__inner"' . $inner_attr . '>';
-
-                    if ($is_floating_icon_card && !empty($settings['show_floating_card_icon']) && 'yes' === $settings['show_floating_card_icon'] && !empty($floating_card_icon['value'])) {
-                        $icon_style = '--lm-floating-icon-bg: ' . esc_attr($floating_card_icon_bg_color) . '; --lm-floating-icon-color: ' . esc_attr($floating_card_icon_color) . ';';
-                        ob_start();
-                        \Elementor\Icons_Manager::render_icon($floating_card_icon, ['aria-hidden' => 'true']);
-                        $icon_html = ob_get_clean();
-                        $html .= '<span class="loopmosaic-item__floating-icon" style="' . esc_attr($icon_style) . '" aria-hidden="true">' . $icon_html . '</span>';
-                    }
-
-                    if (!empty($settings['show_category']) && 'yes' === $settings['show_category']) {
-                        $cats = get_the_category();
-                        if (!empty($cats)) {
-                            $html .= '<span class="loopmosaic-item__category">' . esc_html($cats[0]->name) . '</span>';
-                        }
-                    }
-
-                    if (!empty($settings['show_title']) && 'yes' === $settings['show_title']) {
-                        $t_styles = [];
-                        if (!empty($settings['title_align']))
-                            $t_styles[] = 'text-align: ' . $settings['title_align'];
-                        $t_attr = !empty($t_styles) ? ' style="' . implode('; ', $t_styles) . '"' : '';
-                        $html .= '<h3 class="loopmosaic-item__title"' . $t_attr . '>' . get_the_title() . '</h3>';
-                    }
-
-                    if (!empty($settings['show_excerpt']) && 'yes' === $settings['show_excerpt']) {
-                        $len = isset($settings['excerpt_length']) ? intval($settings['excerpt_length']) : 20;
-                        $html .= '<p class="loopmosaic-item__excerpt">' . esc_html(wp_trim_words(get_the_excerpt(), $len, '...')) . '</p>';
-                    }
-
-                    if ($is_floating_icon_card && !empty($settings['show_floating_card_arrow']) && 'yes' === $settings['show_floating_card_arrow']) {
-                        $html .= '<span class="loopmosaic-item__floating-arrow" aria-hidden="true">&rarr;</span>';
-                    }
-
-                    $html .= '</div>'; // End inner
-                }
-
-                $html .= '</div>'; // End item
+                $html .= $item_html;
                 $index++;
             }
         }
@@ -727,6 +451,72 @@ final class LoopMosaic
             'max_pages' => $query->max_num_pages,
             'found_posts' => $query->found_posts
         ]);
+    }
+}
+
+// Global helper to sanitize query-affecting settings that arrive from the client
+// via AJAX (Load More / JetSmartFilters). Display-only settings are escaped at
+// render time, so this focuses on values that reach WP_Query.
+if (!function_exists('loopmosaic_sanitize_query_settings')) {
+    function loopmosaic_sanitize_query_settings($settings) {
+        if (!is_array($settings)) {
+            return [];
+        }
+
+        // post_type: must exist and be publicly queryable.
+        if (isset($settings['post_type'])) {
+            $post_type = is_array($settings['post_type'])
+                ? array_map('sanitize_key', $settings['post_type'])
+                : sanitize_key($settings['post_type']);
+
+            $valid = function ($type) {
+                $obj = get_post_type_object($type);
+                return $obj && (!empty($obj->public) || !empty($obj->publicly_queryable));
+            };
+
+            if (is_array($post_type)) {
+                $post_type = array_values(array_filter($post_type, $valid));
+                $settings['post_type'] = !empty($post_type) ? $post_type : 'post';
+            } else {
+                $settings['post_type'] = $valid($post_type) ? $post_type : 'post';
+            }
+        }
+
+        // taxonomy: must be a registered taxonomy.
+        if (!empty($settings['taxonomy'])) {
+            $taxonomy = sanitize_key($settings['taxonomy']);
+            $settings['taxonomy'] = taxonomy_exists($taxonomy) ? $taxonomy : '';
+        }
+
+        // taxonomy_terms: comma-separated slugs.
+        if (!empty($settings['taxonomy_terms'])) {
+            $terms = array_map('sanitize_title', array_map('trim', explode(',', $settings['taxonomy_terms'])));
+            $settings['taxonomy_terms'] = implode(',', array_filter($terms));
+        }
+
+        // orderby: whitelist.
+        $allowed_orderby = ['date', 'title', 'menu_order', 'rand', 'modified', 'ID', 'name', 'comment_count', 'author'];
+        if (isset($settings['orderby']) && !in_array($settings['orderby'], $allowed_orderby, true)) {
+            $settings['orderby'] = 'date';
+        }
+
+        // order: ASC/DESC only.
+        if (isset($settings['order'])) {
+            $settings['order'] = ('ASC' === strtoupper($settings['order'])) ? 'ASC' : 'DESC';
+        }
+
+        // posts_per_page: clamp to a sane range (no -1 / unbounded queries).
+        if (isset($settings['posts_per_page'])) {
+            $ppp = intval($settings['posts_per_page']);
+            $settings['posts_per_page'] = max(1, min(100, $ppp));
+        }
+
+        // exclude_posts: integers only.
+        if (!empty($settings['exclude_posts'])) {
+            $settings['exclude_posts'] = array_values(array_filter(array_map('intval', (array) $settings['exclude_posts'])));
+        }
+
+        return $settings;
     }
 }
 

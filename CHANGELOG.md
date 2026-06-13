@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.18.0] - 2026-06-13
+### Security
+- **AJAX query hardening**: Settings arriving from the client (Load More / JetSmartFilters) are now sanitized before reaching `WP_Query` — `post_type` must be publicly queryable, `taxonomy` must be registered, `orderby` is whitelisted, `order` is normalized, and `posts_per_page` is clamped (no unbounded queries).
+- **Modal endpoint (IDOR)**: The modal AJAX handler now only serves publicly viewable posts (published, non-password-protected) and rejects arbitrary `template_id` values that are not actual Elementor templates, preventing enumeration of private/draft content.
+- **Output escaping**: All inline overlay CSS variables are now consistently escaped, closing an attribute-injection vector on the unauthenticated filter endpoint.
+
+### Changed
+- **Unified renderer**: Item markup is now produced by a single `LoopMosaic_Renderer` class used by the widget, Load More / Infinite Scroll, and both JetSmartFilters paths. Previously the rendering logic was duplicated across five locations, which caused inconsistent markup between initial load and AJAX responses.
+
+### Fixed
+- **Consistent AJAX markup**: Load More and filtered results now include the media wrapper, hover overlay, custom overlay colors, and floating-icon decorations that the initial render produced.
+- **Masonry after filtering**: Masonry layouts are now re-laid out after a JetSmartFilters custom AJAX filter, and pagination resets to page 1 against the filtered set.
+- **Multi-grid filters**: Filter values are now scoped to their grid's query id, so multiple LoopMosaic grids on one page no longer cross-contaminate.
+
+### Removed
+- Dead `includes/jetsmartfilters-compat-clean.php` file, duplicate JavaScript helpers (`disableNativeLinks`, `initLoadMoreButton`), a duplicate Elementor provider-injection hook loop, and leftover `console.log` debug calls.
+
 ## [1.17.1] - 2026-04-30
 ### Fixed
 - **Install Package Slug**: Rebuilt the release ZIP with the canonical lowercase `loop-mosaic` plugin folder to avoid invalid plugin name warnings during upload/install.

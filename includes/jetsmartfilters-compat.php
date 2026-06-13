@@ -97,9 +97,12 @@ class LoopMosaic_JetSmartFilters_Compat {
         // Enqueue scripts
         add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_filter_scripts' ] );
         
-        // Brute Force Injection for Elementor Editor
+        // Inject the LoopMosaic provider option into every JSF filter widget's
+        // "Content Provider" control in the Elementor editor. Both checkbox
+        // naming variants are included to cover different JSF versions.
         $jsf_widgets = [
             'jet-smart-filters-checkboxes',
+            'jet-smart-filters-checkbox',
             'jet-smart-filters-radio',
             'jet-smart-filters-select',
             'jet-smart-filters-range',
@@ -111,38 +114,16 @@ class LoopMosaic_JetSmartFilters_Compat {
             'jet-smart-filters-search',
             'jet-smart-filters-color-image',
         ];
-        
-        foreach ( $jsf_widgets as $widget ) {
-            add_action( "elementor/element/$widget/section_general/before_section_end", [ $this, 'inject_provider_into_elementor' ], 10, 2 );
-            // Some widgets might use 'section_filter_settings' or similar, so let's be broad if needed
-            // But 'section_general' is usually where 'content_provider' lives in JSF widgets.
-            // Let's also try generic element update if specific one fails? No, specific is better for performance.
-            // Checkboxes widget usually puts it in 'section_general'.
-        }
-        
-        // Apply filters query
-        add_action( 'pre_get_posts', [ $this, 'apply_filters_to_query' ] );
-
-        // CORRECT FIX: Hook into the widget's query generation
-        add_filter( 'loopmosaic/query/args', [ $this, 'on_query_args_filter' ], 10, 3 );
-
-        // BRUTE FORCE: Inject Provider into Elementor Controls
-        $jsf_widgets = [
-            'jet-smart-filters-checkbox',
-            'jet-smart-filters-select',
-            'jet-smart-filters-radio',
-            'jet-smart-filters-range',
-            'jet-smart-filters-check-range',
-            'jet-smart-filters-date-range',
-            'jet-smart-filters-rating',
-            'jet-smart-filters-alphabet',
-            'jet-smart-filters-search',
-            'jet-smart-filters-color-image',
-        ];
 
         foreach ( $jsf_widgets as $widget ) {
             add_action( "elementor/element/{$widget}/section_general/before_section_end", [ $this, 'inject_provider_into_elementor' ], 10, 2 );
         }
+
+        // Apply filters query
+        add_action( 'pre_get_posts', [ $this, 'apply_filters_to_query' ] );
+
+        // Hook into the widget's query generation
+        add_filter( 'loopmosaic/query/args', [ $this, 'on_query_args_filter' ], 10, 3 );
     }
 
     /**
@@ -374,6 +355,11 @@ wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
         
         if ( empty( $settings ) ) {
 wp_send_json_error( [ 'message' => 'Settings not found' ] );
+        }
+
+        // Harden query-affecting values (settings may originate from the client).
+        if ( function_exists( 'loopmosaic_sanitize_query_settings' ) ) {
+            $settings = loopmosaic_sanitize_query_settings( $settings );
         }
 
         // Get filter args from JetSmartFilters
@@ -656,194 +642,17 @@ wp_send_json_error( [ 'message' => 'Settings not found' ] );
     private function render_filtered_content( $query, $settings ) {
         if ( $query->have_posts() ) {
             $index = 0;
-            $template_source = isset( $settings['template_source'] ) ? $settings['template_source'] : 'default';
 
             while ( $query->have_posts() ) {
                 $query->the_post();
-
-                $item_classes = [ 'loopmosaic-item' ];
-                $item_attrs = '';
-
-                // Add overlay for default template
-                if ( 'default' === $template_source && ! empty( $settings['color_overlay'] ) && 'yes' === $settings['color_overlay'] ) {
-                    // Custom Colors Logic
-                    if ( ! empty( $settings['use_custom_overlay_colors'] ) && 'yes' === $settings['use_custom_overlay_colors'] && ! empty( $settings['custom_overlay_colors'] ) ) {
-                        $custom_colors = $settings['custom_overlay_colors'];
-                        $color_data = $custom_colors[ $index % count( $custom_colors ) ];
-                        $color_hex = $color_data['overlay_color'];
-                        
-                        $text_inv_hex = ! empty( $color_data['overlay_text_color'] ) ? $color_data['overlay_text_color'] : '#ffffff';
-                        $hover_inv_hex = ! empty( $color_data['overlay_text_hover_color'] ) ? $color_data['overlay_text_hover_color'] : '#ffffff';
-                        $v_align = ! empty( $color_data['text_v_align'] ) ? $color_data['text_v_align'] : 'flex-end';
-                        $h_align = ! empty( $color_data['text_h_align'] ) ? $color_data['text_h_align'] : 'flex-start';
-
-                        // Map flex values to text-align values
-                        $text_align_map = [
-                            'flex-start' => 'left',
-                            'center'     => 'center',
-                            'flex-end'   => 'right',
-                        ];
-                        $text_align = isset( $text_align_map[ $h_align ] ) ? $text_align_map[ $h_align ] : 'left';
-
-                        $opacity = isset( $settings['overlay_opacity']['size'] ) ? $settings['overlay_opacity']['size'] : 0.85;
-
-                        // Convert Hex to RGBA
-                        $color_hex = str_replace('#', '', $color_hex);
-                        if ( strlen( $color_hex ) == 3 ) {
-                            $r = hexdec( substr( $color_hex, 0, 1 ) . substr( $color_hex, 0, 1 ) );
-                            $g = hexdec( substr( $color_hex, 1, 1 ) . substr( $color_hex, 1, 1 ) );
-                            $b = hexdec( substr( $color_hex, 2, 1 ) . substr( $color_hex, 2, 1 ) );
-                        } else {
-                            $r = hexdec( substr( $color_hex, 0, 2 ) );
-                            $g = hexdec( substr( $color_hex, 2, 2 ) );
-                            $b = hexdec( substr( $color_hex, 4, 2 ) );
-                        }
-                        $rgba_color = "rgba($r, $g, $b, $opacity)";
-                        
-                        $item_classes[] = 'overlay-custom';
-
-                        if ( ! empty( $settings['overlay_hover_effect'] ) && 'none' !== $settings['overlay_hover_effect'] ) {
-                             $item_classes[] = 'overlay-hover-' . $settings['overlay_hover_effect'];
-                        }
-                        
-                        $hover_opacity = isset($settings['overlay_hover_opacity_value']['size']) ? $settings['overlay_hover_opacity_value']['size'] : 0.5;
-                        // Handle legacy float/int structure in JSF if needed, usually passed as array from widget settings but here we read from parsed settings
-                        if ( isset($settings['overlay_hover_opacity_value']) && !is_array($settings['overlay_hover_opacity_value']) ) {
-                             $hover_opacity = $settings['overlay_hover_opacity_value'];
-                        }
-
-                        $rgb_commas = "$r, $g, $b";
-
-                        $item_attrs .= ' style="--lm-custom-overlay: ' . esc_attr( $rgba_color ) . '; --lm-custom-overlay-rgb: ' . $rgb_commas . '; --lm-custom-text: ' . esc_attr( $text_inv_hex ) . '; --lm-custom-text-hover: ' . esc_attr( $hover_inv_hex ) . '; --lm-custom-v-align: ' . $v_align . '; --lm-custom-h-align: ' . $h_align . '; --lm-custom-text-align: ' . $text_align . '; --lm-custom-hover-opacity: ' . $hover_opacity . ';"';
-                    } else {
-                        // Default Logic
-                        $colors = [ 'purple', 'teal', 'gold', 'coral', 'cyan', 'green' ];
-                        $item_classes[] = 'overlay-' . $colors[ $index % count( $colors ) ];
-                    }
-                }
-
-                echo '<div class="' . esc_attr( implode( ' ', $item_classes ) ) . '"' . $item_attrs . '>';
-                
-                switch ( $template_source ) {
-                    case 'elementor_loop':
-                        $this->render_elementor_template( $settings );
-                        break;
-                    case 'jetengine':
-                        $this->render_jetengine_template( $settings );
-                        break;
-                    default:
-                        $this->render_card( $settings );
-                        break;
-                }
-                
-                echo '</div>';
-
+                // Single source of truth for item markup (see class-renderer.php).
+                echo LoopMosaic_Renderer::render_item( $settings, get_the_ID(), $index );
                 $index++;
             }
 
             wp_reset_postdata();
         } else {
-            $no_posts_message = ! empty( $settings['no_posts_message'] ) ? $settings['no_posts_message'] : esc_html__( 'No posts found.', 'loop-mosaic' );
-            echo '<div class="loopmosaic-no-posts">' . esc_html( $no_posts_message ) . '</div>';
-        }
-    }
-
-    /**
-     * Render default card
-     */
-    private function render_card( $settings ) {
-        $image_size = isset( $settings['image_size'] ) ? $settings['image_size'] : 'large';
-        $thumbnail = get_the_post_thumbnail_url( get_the_ID(), $image_size );
-        $post_id = get_the_ID();
-        
-        $click_action = isset( $settings['click_action'] ) ? $settings['click_action'] : 'permalink';
-        $click_action = function_exists('loopmosaic_get_click_action') ? loopmosaic_get_click_action($post_id, $click_action) : $click_action;
-        $redirect_url = function_exists('loopmosaic_get_redirect_url') ? loopmosaic_get_redirect_url($post_id) : '';
-        $link_url = $redirect_url ? $redirect_url : get_permalink();
-        $link_classes = [ 'loopmosaic-item__link' ];
-        $popup_attr = '';
-        
-        if ( 'modal' === $click_action ) {
-            $link_url = 'javascript:void(0);'; 
-            $link_classes[] = 'loopmosaic-modal-trigger';
-            $popup_attr = ' data-post-id="' . $post_id . '"';
-
-            // Custom Template
-            if ( ! empty( $settings['modal_use_custom_template'] ) && 'yes' === $settings['modal_use_custom_template'] ) {
-                if ( ! empty( $settings['modal_auto_template'] ) && 'yes' === $settings['modal_auto_template'] ) {
-                     $popup_attr .= ' data-auto-template="1"';
-                } elseif ( ! empty( $settings['modal_template_id'] ) ) {
-                     $popup_attr .= ' data-modal-template-id="' . esc_attr( $settings['modal_template_id'] ) . '"';
-                }
-            }
-            
-            if ( empty( $settings['show_gallery_in_modal'] ) || 'yes' !== $settings['show_gallery_in_modal'] ) {
-                $popup_attr .= ' data-no-gallery="true"';
-            }
-        } elseif ( 'none' === $click_action ) {
-            $link_url = 'javascript:void(0);';
-        }
-        ?>
-        <a href="<?php echo esc_url( $link_url ); ?>" class="<?php echo esc_attr( implode( ' ', $link_classes ) ); ?>" aria-label="<?php the_title_attribute(); ?>"<?php echo $popup_attr; ?>></a>
-        
-        <?php if ( $thumbnail ) : ?>
-            <img src="<?php echo esc_url( $thumbnail ); ?>" alt="<?php the_title_attribute(); ?>" class="loopmosaic-item__image">
-        <?php endif; ?>
-        
-        <div class="loopmosaic-item__inner">
-            <?php if ( ! empty( $settings['show_category'] ) && 'yes' === $settings['show_category'] ) : ?>
-                <?php
-                $categories = get_the_category();
-                if ( ! empty( $categories ) ) :
-                ?>
-                    <span class="loopmosaic-item__category"><?php echo esc_html( $categories[0]->name ); ?></span>
-                <?php endif; ?>
-            <?php endif; ?>
-
-            <?php if ( ! empty( $settings['show_title'] ) && 'yes' === $settings['show_title'] ) : ?>
-                <h3 class="loopmosaic-item__title"><?php the_title(); ?></h3>
-            <?php endif; ?>
-
-            <?php if ( ! empty( $settings['show_excerpt'] ) && 'yes' === $settings['show_excerpt'] ) : ?>
-                <div class="loopmosaic-item__excerpt">
-                    <?php 
-                    $length = isset( $settings['excerpt_length'] ) ? intval( $settings['excerpt_length'] ) : 20;
-                    echo esc_html( wp_trim_words( get_the_excerpt(), $length, '...' ) ); 
-                    ?>
-                </div>
-            <?php endif; ?>
-        </div>
-        <?php
-    }
-
-    /**
-     * Render Elementor template
-     */
-    private function render_elementor_template( $settings ) {
-        $template_id = isset( $settings['elementor_loop_template'] ) ? $settings['elementor_loop_template'] : '';
-        
-        if ( ! $template_id || ! class_exists( '\Elementor\Plugin' ) ) {
-            $this->render_card( $settings );
-            return;
-        }
-
-        echo \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $template_id, true );
-    }
-
-    /**
-     * Render JetEngine template
-     */
-    private function render_jetengine_template( $settings ) {
-        $listing_id = isset( $settings['jetengine_listing'] ) ? $settings['jetengine_listing'] : '';
-        
-        if ( ! $listing_id || ! class_exists( 'Jet_Engine' ) ) {
-            $this->render_card( $settings );
-            return;
-        }
-
-        $listing = jet_engine()->listings;
-        if ( $listing ) {
-            echo $listing->get_listing_item_content( $listing_id );
+            echo LoopMosaic_Renderer::render_no_posts( $settings );
         }
     }
 

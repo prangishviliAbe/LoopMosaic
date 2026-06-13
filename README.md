@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.17.1-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.18.0-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -181,6 +181,16 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.18.0 (2026-06-13)
+- **Security:** AJAX query inputs (Load More / JetSmartFilters) are now sanitized before reaching `WP_Query` — post type must be publicly queryable, taxonomy must be registered, order/orderby are whitelisted, and posts-per-page is clamped.
+- **Security:** The modal endpoint now serves only publicly viewable posts and rejects non-template IDs, preventing enumeration of private/draft content (IDOR).
+- **Security:** All inline overlay CSS variables are consistently escaped, closing an attribute-injection vector on the filter endpoint.
+- **Refactor:** Item markup is now produced by a single shared `LoopMosaic_Renderer`, replacing five duplicated render paths.
+- **Fix:** Load More and filtered results now match the initial render (media wrapper, hover overlay, custom overlay colors, floating icons).
+- **Fix:** Masonry re-lays out after JetSmartFilters AJAX filtering, and pagination resets to page 1 for the filtered set.
+- **Fix:** Filter values are scoped per grid query ID, so multiple grids on one page no longer interfere.
+- **Cleanup:** Removed dead code (`jetsmartfilters-compat-clean.php`, duplicate JS helpers, duplicate provider hook, leftover `console.log` calls).
 
 ### Version 1.12.8 (2026-03-16)
 - **New:** Added **Featured Grid (2+3)** layout pattern — 2 large cards on top, 3 equal cards below, repeating cyclically.

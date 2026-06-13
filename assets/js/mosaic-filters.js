@@ -5,7 +5,7 @@
  * 
  * @package LoopMosaic
  * @author Abe Prangishvili
- * @version 1.14.0
+ * @version 1.18.0
  */
 
 (function ($) {
@@ -17,15 +17,13 @@
         init: function () {
             if (this.isInitialized) return;
             this.isInitialized = true;
-            console.log('LoopMosaic: Filters script initialized (v1.14.0) via ' + (document.readyState === 'complete' ? 'late' : 'ready'));
             this.grids = {};
             this.filterValues = {};
             this.debounceTimers = {};
 
-            // Global Interceptor - The Nuclear Option for cached HTML
+            // Global Interceptor - prevent navigation on cached modal triggers.
             $(document).on('click', '.loopmosaic-modal-trigger', function (e) {
                 if ($(this).attr('href') !== 'javascript:void(0);') {
-                    console.log('LoopMosaic: Global interception of legacy link');
                     e.preventDefault();
                     $(this).attr('href', 'javascript:void(0);');
                 }
@@ -39,17 +37,6 @@
             this.bindAllJSFFilters();
             this.initMasonry();
             this.initAnimations();
-        },
-
-        disableNativeLinks: function () {
-            $('.loopmosaic-modal-trigger').each(function () {
-                var $link = $(this);
-                // Aggressively rewrite href to prevent navigation
-                if ($link.attr('href') && $link.attr('href') !== 'javascript:void(0);') {
-                    console.log('LoopMosaic: Rewriting link for', $link);
-                    $link.attr('href', 'javascript:void(0);');
-                }
-            });
         },
 
         bindAllJSFFilters: function () {
@@ -254,9 +241,17 @@
         },
 
         collectFilterValues: function (queryId) {
+            const self = this;
             const filters = {};
 
+            // Only collect from filter widgets that resolve to the same query id,
+            // so multiple grids on one page don't cross-contaminate each other.
+            const belongs = function (el) {
+                return self.getQueryIdFromElement($(el)) === queryId;
+            };
+
             $('[class*="jet-smart-filters"] input[type="search"], [class*="jet-smart-filters"] input[type="text"], .jet-search-filter__input').each(function () {
+                if (!belongs(this)) return;
                 const val = $(this).val().trim();
                 if (val) {
                     filters._s = val;
@@ -265,6 +260,7 @@
 
             const checkboxes = {};
             $('.jet-checkboxes-list input[type="checkbox"]:checked, .jet-smart-filters-checkboxes input[type="checkbox"]:checked').each(function () {
+                if (!belongs(this)) return;
                 const name = $(this).attr('name') || 'checkbox';
                 const val = $(this).val();
                 if (!checkboxes[name]) checkboxes[name] = [];
@@ -275,11 +271,13 @@
             }
 
             $('.jet-radio-list input[type="radio"]:checked, .jet-smart-filters-radio input[type="radio"]:checked').each(function () {
+                if (!belongs(this)) return;
                 const name = $(this).attr('name') || 'radio';
                 filters[name] = $(this).val();
             });
 
             $('.jet-select select, .jet-smart-filters-select select, [class*="jet-filter"] select').each(function () {
+                if (!belongs(this)) return;
                 const val = $(this).val();
                 const name = $(this).attr('name') || 'select';
                 if (val && val !== '') {
@@ -288,6 +286,7 @@
             });
 
             $('.jet-range__slider input, .jet-smart-filters-range input').each(function () {
+                if (!belongs(this)) return;
                 const $input = $(this);
                 const name = $input.attr('name') || 'range';
                 const val = $input.val();
@@ -297,6 +296,7 @@
             });
 
             $('.jet-date-period input, .jet-smart-filters-date-period input').each(function () {
+                if (!belongs(this)) return;
                 const $input = $(this);
                 const name = $input.attr('name') || 'date';
                 const val = $input.val();
@@ -351,11 +351,28 @@
                         if (response.data.max_pages !== undefined) {
                             $grid.data('max-pages', response.data.max_pages);
                             $grid.data('found-posts', response.data.found_posts);
+                            // Reset pagination so Load More / Infinite Scroll restart
+                            // from page 1 against the freshly filtered result set.
+                            $grid.data('paged', 1);
+                            $grid.removeClass('is-finished');
                         }
                     }
 
                     $grid.removeClass('jet-filters-loading');
-                    self.animateItems($grid);
+
+                    // Re-run masonry layout for the replaced items, then animate.
+                    if ($grid.hasClass('loopmosaic-masonry')) {
+                        $grid.imagesLoaded(function () {
+                            $grid.masonry('reloadItems');
+                            $grid.masonry('layout');
+                            self.animateItems($grid);
+                            self.initAnimations($grid);
+                        });
+                    } else {
+                        self.animateItems($grid);
+                        self.initAnimations($grid);
+                    }
+
                     self.disableNativeLinks();
                 },
                 error: function () {
@@ -408,7 +425,6 @@
 
             // Delegated Click Handler
             $(document).on('click', '.loopmosaic-modal-trigger', function (e) {
-                console.log('LoopMosaic: Trigger clicked', this);
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -475,7 +491,7 @@
                                     // Trigger window resize to fix layout headers
                                     setTimeout(function () { $(window).trigger('resize'); }, 200);
                                 } catch (err) {
-                                    console.log('LoopMosaic: Elementor init warning', err);
+                                    // Elementor partial init can throw harmlessly; ignore.
                                 }
                             }
 
@@ -827,17 +843,6 @@
                 $items.each(function () {
                     observer.observe(this);
                 });
-            });
-        },
-
-        initLoadMoreButton: function () {
-            const self = this;
-            $('.loopmosaic-load-more-button').on('click', function () {
-                const $btn = $(this);
-                const $grid = $btn.closest('.loopmosaic-grid');
-                if (!$grid.length) return;
-
-                self.loadMorePosts($grid);
             });
         }
     };
