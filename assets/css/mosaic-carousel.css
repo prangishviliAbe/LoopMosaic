@@ -273,7 +273,7 @@
 .loopmosaic-carousel-wrap .swiper-pagination-bullet-active,
 .loopmosaic-carousel-wrap .swiper-pagination-bullet-active:hover {
     width: 46px;
-    background: #5FC2C2;
+    background: #5FC2C2 !important;
 }
 
 /* ── Responsive ─────────────────────────────────────────────── */
