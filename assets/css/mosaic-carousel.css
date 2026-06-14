@@ -27,8 +27,8 @@
     left: 20px;
     right: calc(var(--lm-carousel-nav-gap, 62px) + 20px);
     height: 72px;
-    border-radius: 20px 20px 0 0;
-    background: rgba(8, 35, 32, 0.92);
+    border-radius: 24px 24px 0 0;
+    background: rgba(15, 58, 50, 0.82);
     z-index: 0;
     pointer-events: none;
 }
@@ -39,7 +39,7 @@
     z-index: 1;
     width: 100%;
     height: var(--lm-carousel-height, 520px);
-    border-radius: 18px;
+    border-radius: 24px;
     overflow: hidden;
 }
 
@@ -53,7 +53,7 @@
 .loopmosaic-carousel-wrap .loopmosaic-item {
     height: 100% !important;
     margin: 0 !important;
-    border-radius: 18px;
+    border-radius: 24px;
     overflow: hidden;
 }
 

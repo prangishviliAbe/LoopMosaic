@@ -589,10 +589,11 @@ class Mosaic_Loop_Widget extends Widget_Base
             'type'       => Controls_Manager::SLIDER,
             'size_units' => ['px', '%'],
             'range'      => ['px' => ['min' => 0, 'max' => 60]],
-            'default'    => ['size' => 18, 'unit' => 'px'],
+            'default'    => ['size' => 24, 'unit' => 'px'],
             'selectors'  => [
-                '{{WRAPPER}} .loopmosaic-swiper' => 'border-radius: {{SIZE}}{{UNIT}};',
-                '{{WRAPPER}} .loopmosaic-item'   => 'border-radius: {{SIZE}}{{UNIT}};',
+                '{{WRAPPER}} .loopmosaic-swiper'                   => 'border-radius: {{SIZE}}{{UNIT}};',
+                '{{WRAPPER}} .loopmosaic-item'                     => 'border-radius: {{SIZE}}{{UNIT}};',
+                '{{WRAPPER}} .loopmosaic-carousel-stage::before'   => 'border-radius: {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0 0;',
             ],
         ]
         );
@@ -705,7 +706,7 @@ class Mosaic_Loop_Widget extends Widget_Base
         [
             'label'     => esc_html__('Stacked Card Color', 'loop-mosaic'),
             'type'      => Controls_Manager::COLOR,
-            'default'   => 'rgba(8,35,32,0.92)',
+            'default'   => 'rgba(15,58,50,0.82)',
             'selectors' => [
                 '{{WRAPPER}} .loopmosaic-carousel-stage::before' => 'background: {{VALUE}};',
             ],

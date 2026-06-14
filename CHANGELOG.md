@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.19.7] - 2026-06-14
+### Fixed
+- **Carousel border radius**: Default raised from 18 px to 24 px to match rounder reference design.
+- **Stacked card color**: Lightened default from `rgba(8,35,32,0.92)` to `rgba(15,58,50,0.82)` — less dark, more visible against section background.
+- **Stacked card corners**: `carousel_border_radius` selector now also targets `::before` (`border-radius: {{SIZE}} {{SIZE}} 0 0`) so the peek corners always match the main card.
+
 ## [1.19.6] - 2026-06-14
 ### Fixed
 - **Stacked card Elementor default**: The `carousel_stack_color` control default was `rgba(10,41,38,0.5)` (50% opacity). Elementor inlines control defaults as CSS, which overrides the stylesheet — so the CSS file change in v1.19.5 had no effect. Default is now `rgba(8,35,32,0.92)` (solid dark teal).
