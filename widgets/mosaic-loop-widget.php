@@ -1373,33 +1373,33 @@ class Mosaic_Loop_Widget extends Widget_Base
         // Relationship / Custom Elementor Query Section
         $this->start_controls_section(
             'section_custom_query',
-        [
-            'label' => esc_html__('Relationship Query', 'loop-mosaic'),
-            'tab'   => Controls_Manager::TAB_CONTENT,
-        ]
+            [
+                'label' => esc_html__('Relationship Query', 'loop-mosaic'),
+                'tab'   => Controls_Manager::TAB_CONTENT,
+            ]
         );
 
         $this->add_control(
             'use_custom_query',
-        [
-            'label'        => esc_html__('Enable Relationship Query', 'loop-mosaic'),
-            'type'         => Controls_Manager::SWITCHER,
-            'label_on'     => esc_html__('Yes', 'loop-mosaic'),
-            'label_off'    => esc_html__('No', 'loop-mosaic'),
-            'return_value' => 'yes',
-            'default'      => 'no',
-        ]
+            [
+                'label'        => esc_html__('Enable Relationship Query', 'loop-mosaic'),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => esc_html__('Yes', 'loop-mosaic'),
+                'label_off'    => esc_html__('No', 'loop-mosaic'),
+                'return_value' => 'yes',
+                'default'      => 'no',
+            ]
         );
 
         $this->add_control(
             'custom_query_id',
-        [
-            'label'       => esc_html__('Query ID', 'loop-mosaic'),
-            'type'        => Controls_Manager::TEXT,
-            'placeholder' => 'related_posts',
-            'condition'   => ['use_custom_query' => 'yes'],
-            'description' => esc_html__('Enter the Query ID from your relationship plugin. For Post Relationship for Elementor use: related_posts (forward) or referenced_by (reverse).', 'loop-mosaic'),
-        ]
+            [
+                'label'       => esc_html__('Query ID', 'loop-mosaic'),
+                'type'        => Controls_Manager::TEXT,
+                'placeholder' => 'related_posts',
+                'condition'   => [ 'use_custom_query' => 'yes' ],
+                'description' => esc_html__('Enter the Query ID registered by your relationship plugin (e.g. related_posts, referenced_by).', 'loop-mosaic'),
+            ]
         );
 
         $this->end_controls_section();
