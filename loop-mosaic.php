@@ -11,6 +11,8 @@
  * Domain Path: /languages
  * Elementor tested up to: 3.18
  * Elementor Pro tested up to: 3.18
+ * GitHub Plugin URI: prangishviliAbe/LoopMosaic
+ * Primary Branch: main
  */
 
 if (!defined('ABSPATH')) {
