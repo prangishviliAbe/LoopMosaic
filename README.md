@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.19.7-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.19.8-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -181,6 +181,9 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.19.8 (2026-06-14)
+- **Fixed:** Stacked card color lightened further to `rgba(22,82,68,0.74)`.
 
 ### Version 1.19.7 (2026-06-14)
 - **Fixed:** Carousel border radius default raised to 24px (was 18px); stacked card peek is now lighter (`rgba(15,58,50,0.82)`); stacked card top-corners now track the Border Radius control automatically.

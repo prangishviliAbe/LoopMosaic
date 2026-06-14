@@ -706,7 +706,7 @@ class Mosaic_Loop_Widget extends Widget_Base
         [
             'label'     => esc_html__('Stacked Card Color', 'loop-mosaic'),
             'type'      => Controls_Manager::COLOR,
-            'default'   => 'rgba(15,58,50,0.82)',
+            'default'   => 'rgba(22,82,68,0.74)',
             'selectors' => [
                 '{{WRAPPER}} .loopmosaic-carousel-stage::before' => 'background: {{VALUE}};',
             ],

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.19.8] - 2026-06-14
+### Fixed
+- **Stacked card color**: Lightened further to `rgba(22,82,68,0.74)`.
+
 ## [1.19.7] - 2026-06-14
 ### Fixed
 - **Carousel border radius**: Default raised from 18 px to 24 px to match rounder reference design.
