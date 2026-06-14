@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.20.3] - 2026-06-14
+### Fixed
+- **Dark strip above slide image**: Confirmed via live DOM measurement that slide `<img>` elements render as `display: inline-block`, which reserves baseline "leading" whitespace at the top of the line box. That ~18px gap exposed the opaque swiper background (added in 1.20.2) as a strip across the top of the card. Adding `display: block; vertical-align: top` to `.loopmosaic-carousel-wrap .swiper-slide img` removes the gap so the photo sits flush against the rounded top edge.
+
 ## [1.20.2] - 2026-06-14
 ### Fixed
 - **Stacked card flashing over photo on loop wrap (real root cause)**: Confirmed via live DOM inspection that Swiper's cloned loop slides retained `loading="lazy"` on their `<img>`, and the first clone had `complete: false` (image not loaded). When the carousel wrapped to that clone, the slide was transparent, revealing the `.lm-stack-card` (and section background) behind it. Two-pronged fix:

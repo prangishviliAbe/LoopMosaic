@@ -88,6 +88,15 @@
     border-radius: 0;
 }
 
+/* Slide images render as inline-block by default, which leaves baseline
+   "leading" whitespace above the image — that gap exposed the swiper
+   background as a strip at the top of the card. Force block so the
+   image (Elementor loop template or default card) sits flush to the top. */
+.loopmosaic-carousel-wrap .swiper-slide img {
+    display: block;
+    vertical-align: top;
+}
+
 /* Elementor loop template in carousel – allow full height */
 .loopmosaic-carousel-wrap .swiper-slide > .elementor,
 .loopmosaic-carousel-wrap .swiper-slide > .elementor > .e-con,
