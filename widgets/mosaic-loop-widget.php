@@ -3639,6 +3639,10 @@ class Mosaic_Loop_Widget extends Widget_Base
 
         echo '<div class="loopmosaic-carousel-wrap" id="' . esc_attr($carousel_id) . '" data-carousel="' . esc_attr(wp_json_encode($carousel_cfg)) . '">';
 
+        // Stage = card + side navigation. Its height drives the vertical
+        // centering of the arrows, so pagination (placed below) won't shift them.
+        echo '<div class="loopmosaic-carousel-stage">';
+
         echo '<div class="swiper loopmosaic-swiper">';
         echo '<div class="swiper-wrapper">';
 
@@ -3662,13 +3666,9 @@ class Mosaic_Loop_Widget extends Widget_Base
 
         echo '</div>'; // .swiper-wrapper
 
-        if ($carousel_cfg['dots']) {
-            echo '<div class="swiper-pagination"></div>';
-        }
-
         echo '</div>'; // .loopmosaic-swiper
 
-        // Navigation — right side, vertical
+        // Navigation — right side, vertical (anchored to the stage = card height)
         echo '<div class="loopmosaic-carousel-nav">';
 
         echo '<button class="lm-nav-btn lm-nav-prev" aria-label="' . esc_attr__('Previous slide', 'loop-mosaic') . '">';
@@ -3680,6 +3680,14 @@ class Mosaic_Loop_Widget extends Widget_Base
         echo '</button>';
 
         echo '</div>'; // .loopmosaic-carousel-nav
+
+        echo '</div>'; // .loopmosaic-carousel-stage
+
+        // Pagination switches — rendered BELOW the card (outside the stage)
+        // so they never overlap the slide content / photo.
+        if ($carousel_cfg['dots']) {
+            echo '<div class="swiper-pagination"></div>';
+        }
 
         echo '</div>'; // .loopmosaic-carousel-wrap
     }

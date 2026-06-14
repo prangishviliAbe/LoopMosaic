@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.19.2] - 2026-06-14
+### Fixed
+- **Carousel pagination position**: Pagination switches are now rendered *below* the card instead of on top of the slide, so they no longer overlap slide content (titles, buttons) on content-heavy slides.
+- **Arrow alignment**: Introduced a stage wrapper so the right-side navigation arrows stay vertically centered on the card even with pagination placed below.
+
 ## [1.19.1] - 2026-06-14
 ### Changed
 - **Carousel pagination switches**: Pagination is now enabled by default and restyled as modern "switch" indicators — inactive bullets are small dots, the active one elongates into a pill, matching the reference design.

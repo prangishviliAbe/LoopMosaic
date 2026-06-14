@@ -2,10 +2,18 @@
    LoopMosaic – Carousel Layout
    ============================================================ */
 
-/* Outer wrapper: leaves room for the right-side nav */
+/* Outer wrapper: holds the stage (card + nav) and the pagination below it */
 .loopmosaic-carousel-wrap {
     position: relative;
     width: 100%;
+    box-sizing: border-box;
+}
+
+/* Stage: card + side nav. padding-right reserves space for the arrows.
+   Its height is the card height, so the absolutely-centered nav stays
+   aligned to the card even though pagination sits below the stage. */
+.loopmosaic-carousel-stage {
+    position: relative;
     padding-right: 62px;
     box-sizing: border-box;
 }
@@ -102,19 +110,20 @@
     transform: none;
 }
 
-/* ── Pagination switches (bottom) ───────────────────────────── */
+/* ── Pagination switches (BELOW the card, not on the photo) ──── */
 
 .loopmosaic-carousel-wrap .swiper-pagination {
-    position: absolute;
-    bottom: 18px;
-    left: 0;
+    position: static !important;
+    bottom: auto !important;
+    top: auto !important;
+    transform: none !important;
+    margin: 18px 0 0;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     z-index: 15;
-    pointer-events: none;
 }
 
 .loopmosaic-carousel-wrap .swiper-pagination-bullet {
@@ -143,7 +152,7 @@
 /* ── Responsive ─────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
-    .loopmosaic-carousel-wrap {
+    .loopmosaic-carousel-stage {
         padding-right: 0;
     }
 
