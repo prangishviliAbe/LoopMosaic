@@ -1370,22 +1370,23 @@ class Mosaic_Loop_Widget extends Widget_Base
             $this->end_controls_section();
         }
 
-        // Relationship / Custom Elementor Query Section
+        // Relationship Query Section
         $this->start_controls_section(
-            'section_custom_query',
+            'lm_rel_query_section',
         [
-            'label' => esc_html__('Relationship Query', 'loop-mosaic'),
+            'label' => esc_html__( 'Relationship Query', 'loop-mosaic' ),
             'tab'   => Controls_Manager::TAB_CONTENT,
         ]
         );
 
         $this->add_control(
-            'custom_query_id',
+            'lm_rel_query_id',
         [
-            'label'       => esc_html__('Query ID', 'loop-mosaic'),
+            'label'       => esc_html__( 'Query ID', 'loop-mosaic' ),
             'type'        => Controls_Manager::TEXT,
+            'default'     => '',
             'placeholder' => 'related_posts',
-            'description' => esc_html__('Enter the Query ID from your relationship plugin (e.g. related_posts, referenced_by, pr_related_posts). Leave empty to use the standard query.', 'loop-mosaic'),
+            'description' => esc_html__( 'Enter the Query ID from your relationship plugin (e.g. related_posts, referenced_by). Leave empty to disable.', 'loop-mosaic' ),
         ]
         );
 
@@ -3529,9 +3530,9 @@ class Mosaic_Loop_Widget extends Widget_Base
         // will hook into. They call $q->set('post__in', [...]) on the passed
         // WP_Query object; we read those vars back into $args before running
         // the real query. No DB round-trip for the mock object (no args = no query).
-        if (!empty($settings['custom_query_id'])) {
+        if (!empty($settings['lm_rel_query_id'])) {
 
-            $cq_id  = sanitize_key($settings['custom_query_id']);
+            $cq_id  = sanitize_key($settings['lm_rel_query_id']);
             $mock_q = new \WP_Query();
             do_action("elementor/query/{$cq_id}", $mock_q);
 
