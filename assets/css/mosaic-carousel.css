@@ -40,6 +40,13 @@
     overflow: hidden;
 }
 
+/* No card-lift on hover inside the carousel: the grid applies
+   translateY(-4px) to lift cards, which makes the whole slide jump
+   "forward" in carousel mode. Keep slides flat. */
+.loopmosaic-carousel-wrap .loopmosaic-item:hover {
+    transform: none !important;
+}
+
 .loopmosaic-carousel-wrap .loopmosaic-media,
 .loopmosaic-carousel-wrap .loopmosaic-media img,
 .loopmosaic-carousel-wrap .loopmosaic-media .loopmosaic-bg-image {

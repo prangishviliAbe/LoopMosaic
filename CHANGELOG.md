@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.19.3] - 2026-06-14
+### Fixed
+- **Carousel hover lift**: Disabled the grid's `translateY(-4px)` card-lift inside the carousel, so slides no longer jump "forward" on hover.
+
 ## [1.19.2] - 2026-06-14
 ### Fixed
 - **Carousel pagination position**: Pagination switches are now rendered *below* the card instead of on top of the slide, so they no longer overlap slide content (titles, buttons) on content-heavy slides.
