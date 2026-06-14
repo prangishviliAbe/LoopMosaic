@@ -1,0 +1,147 @@
+/* ============================================================
+   LoopMosaic – Carousel Layout
+   ============================================================ */
+
+/* Outer wrapper: leaves room for the right-side nav */
+.loopmosaic-carousel-wrap {
+    position: relative;
+    width: 100%;
+    padding-right: 62px;
+    box-sizing: border-box;
+}
+
+/* Swiper container – height driven by Elementor selector or CSS var */
+.loopmosaic-carousel-wrap .loopmosaic-swiper {
+    width: 100%;
+    height: var(--lm-carousel-height, 520px);
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+/* Each slide fills the container */
+.loopmosaic-carousel-wrap .swiper-wrapper,
+.loopmosaic-carousel-wrap .swiper-slide {
+    height: 100%;
+}
+
+/* Default card inside carousel – fill the slide */
+.loopmosaic-carousel-wrap .loopmosaic-item {
+    height: 100% !important;
+    margin: 0 !important;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.loopmosaic-carousel-wrap .loopmosaic-media,
+.loopmosaic-carousel-wrap .loopmosaic-media img,
+.loopmosaic-carousel-wrap .loopmosaic-media .loopmosaic-bg-image {
+    height: 100% !important;
+    min-height: 100% !important;
+    border-radius: 0;
+}
+
+/* Elementor loop template in carousel – allow full height */
+.loopmosaic-carousel-wrap .swiper-slide > .elementor,
+.loopmosaic-carousel-wrap .swiper-slide > .elementor > .e-con,
+.loopmosaic-carousel-wrap .swiper-slide > .jet-listing-grid__item {
+    height: 100%;
+}
+
+/* ── Navigation (right side, vertical) ─────────────────────── */
+
+.loopmosaic-carousel-nav {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 50px;
+    z-index: 20;
+}
+
+.lm-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(8, 28, 28, 0.52);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.22s ease, transform 0.18s ease, box-shadow 0.22s ease;
+    outline: none;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.30);
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.lm-nav-btn:hover,
+.lm-nav-btn:focus-visible {
+    background: rgba(8, 28, 28, 0.82);
+    transform: scale(1.10);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.42);
+}
+
+.lm-nav-btn svg {
+    display: block;
+    pointer-events: none;
+}
+
+/* Swiper disabled state */
+.lm-nav-btn.swiper-button-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Pagination dots (optional) ─────────────────────────────── */
+
+.loopmosaic-carousel-wrap .swiper-pagination {
+    bottom: 16px;
+    left: 0;
+    width: 100%;
+}
+
+.loopmosaic-carousel-wrap .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.loopmosaic-carousel-wrap .swiper-pagination-bullet-active {
+    background: #ffffff;
+    transform: scale(1.3);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .loopmosaic-carousel-wrap {
+        padding-right: 0;
+    }
+
+    .loopmosaic-carousel-nav {
+        right: 10px;
+        flex-direction: row;
+        top: auto;
+        bottom: 14px;
+        transform: none;
+        width: auto;
+        gap: 8px;
+    }
+
+    .lm-nav-btn {
+        width: 38px;
+        height: 38px;
+    }
+}

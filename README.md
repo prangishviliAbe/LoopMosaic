@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.18.1-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.19.0-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -181,6 +181,10 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.19.0 (2026-06-14)
+- **New:** Carousel (Slider) layout mode — powered by Swiper 11, with right-side vertical navigation (↑↓ circular buttons). Supports Default Cards, Elementor Loop Templates, and JetEngine Listings.
+- **New:** Full Elementor controls for carousel: height, border radius, loop, autoplay, transition speed, pagination dots, and navigation button styling.
 
 ### Version 1.18.1 (2026-06-13)
 - **Performance:** `loopmosaic_get_redirect_url()` now skips four regex scans when post content doesn't contain `"location"`, eliminating unnecessary work for the vast majority of posts.

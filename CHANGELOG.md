@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.19.0] - 2026-06-14
+### Added
+- **Carousel Layout**: New `layout_mode` option "Carousel (Slider)" powered by Swiper 11. Each post becomes a slide; Elementor Loop Templates and JetEngine Listings render inside slides at full height.
+- **Right-side vertical navigation**: Two circular prev/next buttons (↑↓) positioned to the right of the carousel, matching the project card UI design.
+- **Carousel Settings panel** (Content tab, visible when Carousel mode is active): slide height (px/vh, responsive), border radius, loop toggle, autoplay + delay, transition speed, pagination dots toggle.
+- **Carousel Navigation Style panel** (Style tab): button size, icon size, icon color, background color, hover background color — all fully editable via Elementor controls.
+- Mobile layout: on ≤768px the navigation moves to bottom-right horizontal row automatically.
+
 ## [1.18.1] - 2026-06-13
 ### Performance
 - **Redirect scan guard**: `loopmosaic_get_redirect_url()` now skips four regex patterns when post content does not contain the substring `"location"`. Posts without JS redirects (the vast majority) pay only a fast `stripos` check instead of four full regex passes.

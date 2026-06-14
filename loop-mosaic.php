@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LoopMosaic for Elementor
  * Description: The ultimate Elementor addon for stunning post displays. Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings. Perfect for portfolios, blogs, product showcases, and dynamic content archives.
- * Version: 1.18.1
+ * Version: 1.19.0
  * Author: Abe Prangishvili
  * Author URI: https://github.com/prangishviliAbe/LoopMosaic
  * License: GPL v2 or later
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-define('LOOPMOSAIC_VERSION', '1.18.1');
+define('LOOPMOSAIC_VERSION', '1.19.0');
 define('LOOPMOSAIC_PATH', plugin_dir_path(__FILE__));
 define('LOOPMOSAIC_URL', plugin_dir_url(__FILE__));
 define('LOOPMOSAIC_BASENAME', plugin_basename(__FILE__));
@@ -140,10 +140,21 @@ final class LoopMosaic
      */
     public function enqueue_styles()
     {
-        $grid_css = LOOPMOSAIC_PATH . 'assets/css/mosaic-grid.css';
-        $modal_css = LOOPMOSAIC_PATH . 'assets/css/mosaic-modal.css';
-        wp_enqueue_style('loop-mosaic-grid', LOOPMOSAIC_URL . 'assets/css/mosaic-grid.css', [], file_exists($grid_css) ? filemtime($grid_css) : LOOPMOSAIC_VERSION);
-        wp_enqueue_style('loop-mosaic-modal', LOOPMOSAIC_URL . 'assets/css/mosaic-modal.css', [], file_exists($modal_css) ? filemtime($modal_css) : LOOPMOSAIC_VERSION);
+        $grid_css      = LOOPMOSAIC_PATH . 'assets/css/mosaic-grid.css';
+        $modal_css     = LOOPMOSAIC_PATH . 'assets/css/mosaic-modal.css';
+        $carousel_css  = LOOPMOSAIC_PATH . 'assets/css/mosaic-carousel.css';
+
+        wp_enqueue_style('loop-mosaic-grid',     LOOPMOSAIC_URL . 'assets/css/mosaic-grid.css',     [], file_exists($grid_css)     ? filemtime($grid_css)     : LOOPMOSAIC_VERSION);
+        wp_enqueue_style('loop-mosaic-modal',    LOOPMOSAIC_URL . 'assets/css/mosaic-modal.css',    [], file_exists($modal_css)    ? filemtime($modal_css)    : LOOPMOSAIC_VERSION);
+        wp_enqueue_style('loop-mosaic-carousel', LOOPMOSAIC_URL . 'assets/css/mosaic-carousel.css', [], file_exists($carousel_css) ? filemtime($carousel_css) : LOOPMOSAIC_VERSION);
+
+        // Swiper CSS (loaded only once; no-op if already enqueued by another plugin)
+        wp_enqueue_style(
+            'swiper',
+            'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+            [],
+            '11'
+        );
     }
 
     /**
@@ -156,12 +167,29 @@ final class LoopMosaic
         // if no filter widget is present. We handle its absence in JS.
         $deps = ['jquery', 'masonry', 'imagesloaded'];
 
+        // Swiper JS
+        wp_enqueue_script(
+            'swiper',
+            'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
+            [],
+            '11',
+            true
+        );
 
         wp_enqueue_script(
             'loop-mosaic-filters',
             LOOPMOSAIC_URL . 'assets/js/mosaic-filters.js',
             $deps,
             LOOPMOSAIC_VERSION,
+            true
+        );
+
+        $carousel_js = LOOPMOSAIC_PATH . 'assets/js/mosaic-carousel.js';
+        wp_enqueue_script(
+            'loop-mosaic-carousel',
+            LOOPMOSAIC_URL . 'assets/js/mosaic-carousel.js',
+            ['jquery', 'swiper'],
+            file_exists($carousel_js) ? filemtime($carousel_js) : LOOPMOSAIC_VERSION,
             true
         );
 

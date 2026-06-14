@@ -350,8 +350,9 @@ class Mosaic_Loop_Widget extends Widget_Base
             'label' => esc_html__('Layout Mode', 'loop-mosaic'),
             'type' => Controls_Manager::SELECT,
             'options' => [
-                'css_grid' => esc_html__('CSS Grid (Mosaic)', 'loop-mosaic'),
+                'css_grid'   => esc_html__('CSS Grid (Mosaic)', 'loop-mosaic'),
                 'masonry_js' => esc_html__('True Masonry (JS)', 'loop-mosaic'),
+                'carousel'   => esc_html__('Carousel (Slider)', 'loop-mosaic'),
             ],
             'default' => 'css_grid',
         ]
@@ -548,6 +549,189 @@ class Mosaic_Loop_Widget extends Widget_Base
             ],
             'selectors' => [
                 '{{WRAPPER}} .loopmosaic-item' => '--lm-max-height: {{SIZE}}{{UNIT}};',
+            ],
+        ]
+        );
+
+        $this->end_controls_section();
+
+        // ── Carousel Settings ─────────────────────────────────────────────────
+        $this->start_controls_section(
+            'section_carousel',
+        [
+            'label'     => esc_html__('Carousel Settings', 'loop-mosaic'),
+            'tab'       => Controls_Manager::TAB_CONTENT,
+            'condition' => ['layout_mode' => 'carousel'],
+        ]
+        );
+
+        $this->add_responsive_control(
+            'carousel_height',
+        [
+            'label'      => esc_html__('Slide Height', 'loop-mosaic'),
+            'type'       => Controls_Manager::SLIDER,
+            'size_units' => ['px', 'vh'],
+            'range'      => [
+                'px' => ['min' => 200, 'max' => 1200, 'step' => 10],
+                'vh' => ['min' => 20,  'max' => 100,  'step' => 1],
+            ],
+            'default'    => ['size' => 520, 'unit' => 'px'],
+            'selectors'  => [
+                '{{WRAPPER}} .loopmosaic-swiper' => 'height: {{SIZE}}{{UNIT}};',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_border_radius',
+        [
+            'label'      => esc_html__('Border Radius', 'loop-mosaic'),
+            'type'       => Controls_Manager::SLIDER,
+            'size_units' => ['px', '%'],
+            'range'      => ['px' => ['min' => 0, 'max' => 60]],
+            'default'    => ['size' => 18, 'unit' => 'px'],
+            'selectors'  => [
+                '{{WRAPPER}} .loopmosaic-swiper' => 'border-radius: {{SIZE}}{{UNIT}};',
+                '{{WRAPPER}} .loopmosaic-item'   => 'border-radius: {{SIZE}}{{UNIT}};',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_loop',
+        [
+            'label'        => esc_html__('Loop', 'loop-mosaic'),
+            'type'         => Controls_Manager::SWITCHER,
+            'label_on'     => esc_html__('Yes', 'loop-mosaic'),
+            'label_off'    => esc_html__('No', 'loop-mosaic'),
+            'return_value' => 'yes',
+            'default'      => 'yes',
+            'separator'    => 'before',
+        ]
+        );
+
+        $this->add_control(
+            'carousel_autoplay',
+        [
+            'label'        => esc_html__('Autoplay', 'loop-mosaic'),
+            'type'         => Controls_Manager::SWITCHER,
+            'label_on'     => esc_html__('Yes', 'loop-mosaic'),
+            'label_off'    => esc_html__('No', 'loop-mosaic'),
+            'return_value' => 'yes',
+            'default'      => '',
+        ]
+        );
+
+        $this->add_control(
+            'carousel_autoplay_speed',
+        [
+            'label'     => esc_html__('Autoplay Delay (ms)', 'loop-mosaic'),
+            'type'      => Controls_Manager::NUMBER,
+            'min'       => 1000,
+            'max'       => 10000,
+            'step'      => 500,
+            'default'   => 4000,
+            'condition' => ['carousel_autoplay' => 'yes'],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_speed',
+        [
+            'label'   => esc_html__('Transition Speed (ms)', 'loop-mosaic'),
+            'type'    => Controls_Manager::NUMBER,
+            'min'     => 100,
+            'max'     => 2000,
+            'step'    => 100,
+            'default' => 600,
+        ]
+        );
+
+        $this->add_control(
+            'carousel_dots',
+        [
+            'label'        => esc_html__('Pagination Dots', 'loop-mosaic'),
+            'type'         => Controls_Manager::SWITCHER,
+            'label_on'     => esc_html__('Yes', 'loop-mosaic'),
+            'label_off'    => esc_html__('No', 'loop-mosaic'),
+            'return_value' => 'yes',
+            'default'      => '',
+            'separator'    => 'before',
+        ]
+        );
+
+        $this->end_controls_section();
+
+        // ── Carousel Nav Style ────────────────────────────────────────────────
+        $this->start_controls_section(
+            'section_carousel_nav_style',
+        [
+            'label'     => esc_html__('Carousel Navigation', 'loop-mosaic'),
+            'tab'       => Controls_Manager::TAB_STYLE,
+            'condition' => ['layout_mode' => 'carousel'],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_nav_size',
+        [
+            'label'      => esc_html__('Button Size', 'loop-mosaic'),
+            'type'       => Controls_Manager::SLIDER,
+            'size_units' => ['px'],
+            'range'      => ['px' => ['min' => 28, 'max' => 80]],
+            'default'    => ['size' => 44, 'unit' => 'px'],
+            'selectors'  => [
+                '{{WRAPPER}} .lm-nav-btn' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_nav_icon_size',
+        [
+            'label'      => esc_html__('Icon Size', 'loop-mosaic'),
+            'type'       => Controls_Manager::SLIDER,
+            'size_units' => ['px'],
+            'range'      => ['px' => ['min' => 10, 'max' => 36]],
+            'default'    => ['size' => 18, 'unit' => 'px'],
+            'selectors'  => [
+                '{{WRAPPER}} .lm-nav-btn svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_nav_color',
+        [
+            'label'     => esc_html__('Icon Color', 'loop-mosaic'),
+            'type'      => Controls_Manager::COLOR,
+            'default'   => '#ffffff',
+            'selectors' => [
+                '{{WRAPPER}} .lm-nav-btn' => 'color: {{VALUE}};',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_nav_bg',
+        [
+            'label'     => esc_html__('Background', 'loop-mosaic'),
+            'type'      => Controls_Manager::COLOR,
+            'default'   => 'rgba(8,28,28,0.52)',
+            'selectors' => [
+                '{{WRAPPER}} .lm-nav-btn' => 'background: {{VALUE}};',
+            ],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_nav_bg_hover',
+        [
+            'label'     => esc_html__('Background (Hover)', 'loop-mosaic'),
+            'type'      => Controls_Manager::COLOR,
+            'default'   => 'rgba(8,28,28,0.85)',
+            'selectors' => [
+                '{{WRAPPER}} .lm-nav-btn:hover' => 'background: {{VALUE}};',
             ],
         ]
         );
@@ -3371,6 +3555,12 @@ class Mosaic_Loop_Widget extends Widget_Base
             }
         }
 
+        // ── Carousel render ───────────────────────────────────────────────────
+        if (!empty($settings['layout_mode']) && 'carousel' === $settings['layout_mode']) {
+            $this->render_carousel($settings, $query);
+            return;
+        }
+
         echo '<div ' . $this->get_render_attribute_string('jsf_grid_container') . '>';
 
         if ($query->have_posts()) {
@@ -3404,5 +3594,67 @@ class Mosaic_Loop_Widget extends Widget_Base
             echo '</button>';
             echo '</div>';
         }
+    }
+
+    /**
+     * Render the carousel (Swiper) layout.
+     */
+    private function render_carousel(array $settings, \WP_Query $query)
+    {
+        $carousel_id = 'lm-carousel-' . esc_attr($this->get_id());
+
+        $carousel_cfg = [
+            'loop'          => !empty($settings['carousel_loop']) && 'yes' === $settings['carousel_loop'],
+            'speed'         => intval($settings['carousel_speed'] ?? 600),
+            'autoplay'      => !empty($settings['carousel_autoplay']) && 'yes' === $settings['carousel_autoplay'],
+            'autoplaySpeed' => intval($settings['carousel_autoplay_speed'] ?? 4000),
+            'dots'          => !empty($settings['carousel_dots']) && 'yes' === $settings['carousel_dots'],
+        ];
+
+        echo '<div class="loopmosaic-carousel-wrap" id="' . esc_attr($carousel_id) . '" data-carousel="' . esc_attr(wp_json_encode($carousel_cfg)) . '">';
+
+        echo '<div class="swiper loopmosaic-swiper">';
+        echo '<div class="swiper-wrapper">';
+
+        if ($query->have_posts()) {
+            $index = 0;
+
+            while ($query->have_posts()) {
+                $query->the_post();
+                echo '<div class="swiper-slide">';
+                echo \LoopMosaic_Renderer::render_item($settings, get_the_ID(), $index);
+                echo '</div>';
+                $index++;
+            }
+
+            wp_reset_postdata();
+        } else {
+            echo '<div class="swiper-slide">';
+            echo \LoopMosaic_Renderer::render_no_posts($settings);
+            echo '</div>';
+        }
+
+        echo '</div>'; // .swiper-wrapper
+
+        if ($carousel_cfg['dots']) {
+            echo '<div class="swiper-pagination"></div>';
+        }
+
+        echo '</div>'; // .loopmosaic-swiper
+
+        // Navigation — right side, vertical
+        echo '<div class="loopmosaic-carousel-nav">';
+
+        echo '<button class="lm-nav-btn lm-nav-prev" aria-label="' . esc_attr__('Previous slide', 'loop-mosaic') . '">';
+        echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+        echo '</button>';
+
+        echo '<button class="lm-nav-btn lm-nav-next" aria-label="' . esc_attr__('Next slide', 'loop-mosaic') . '">';
+        echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        echo '</button>';
+
+        echo '</div>'; // .loopmosaic-carousel-nav
+
+        echo '</div>'; // .loopmosaic-carousel-wrap
     }
 }
