@@ -194,9 +194,9 @@
     border: 1px solid rgba(255, 255, 255, 0.13);
     color: #ffffff;
     cursor: pointer;
-    transition: background 0.22s ease, transform 0.18s ease, box-shadow 0.22s ease;
+    transition: background 0.22s ease, transform 0.18s ease;
     outline: none;
-    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.30);
+    box-shadow: none;
     padding: 0;
     flex-shrink: 0;
 }
@@ -204,8 +204,8 @@
 .lm-nav-btn:hover,
 .lm-nav-btn:focus-visible {
     background: rgba(8, 28, 28, 0.82);
-    transform: scale(1.10);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.42);
+    transform: scale(1.08);
+    box-shadow: none;
 }
 
 .lm-nav-btn svg {

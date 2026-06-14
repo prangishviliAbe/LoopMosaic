@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.23.1] - 2026-06-14
+### Changed
+- **Flat navigation arrows**: Removed the drop shadow from the carousel navigation arrows (and from their hover state) for the clean, flat look in the design reference. Hover scale softened slightly (1.10 → 1.08).
+
 ## [1.23.0] - 2026-06-14
 ### Added
 - **Slide counter**: A "current / total" counter is now shown beneath the carousel pagination (matching the design reference). It updates on every slide change and auto-hides when there is only one slide.
