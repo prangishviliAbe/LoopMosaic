@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.22.3] - 2026-06-14
+### Changed
+- **Stacked card default color**: Changed the carousel stacked-card (peek bar behind the slide) default color from `rgba(139,92,246,0.60)` (purple) to a solid `#184e4e` (dark teal) to better match the surrounding section background.
+
 ## [1.22.2] - 2026-06-14
 ### Fixed
 - **Loop template layout (justify-content / alignment) ignored in carousel**: The aggressive `flex: 1 1 0%` rule added in 1.20.9 to fix portrait image-widget overflow made image widgets grow to consume all free flex space — which disabled the container's own `justify-content` (centering, bottom-alignment, space-between, etc.), since there was no free space left to distribute. Removed the forced flex/height overrides on inner widgets. The carousel now only forces `height: 100%` at the ROOT container level (so the template has the full slide to lay out in) and applies a minimal `max-width: 100%` image safety, letting the Elementor loop template's own layout settings render as designed.
