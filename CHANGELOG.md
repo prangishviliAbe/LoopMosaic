@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.23.3] - 2026-06-14
+### Changed
+- **Active pagination pill color**: Set to the exact design value `#5FC2C2`.
+
 ## [1.23.2] - 2026-06-14
 ### Changed
 - **Active pagination pill style**: The active pagination switch is now a wider teal-cyan pill (`#5ec8be`, width 46px) matching the design reference, instead of the previous white 28px pill.
