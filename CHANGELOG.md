@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.20.5] - 2026-06-14
+### Fixed
+- **Carousel image border/gap (object-fit)**: Added `width: 100% !important` and `object-fit: cover !important` to the carousel media wrapper and image classes. This fixes the issue where landscape images scaled to 100% height would leave vertical empty columns (showing as a thick green border/gap) on the left and right sides of the slide.
+
 ## [1.20.4] - 2026-06-14
 ### Fixed
 - **Carousel template height collapsing and alignment**: Corrected CSS selectors for `.loopmosaic-item__media`, `.loopmosaic-item__image`, and Elementor loop templates (`.elementor`) to properly inherit the 100% height inside the Swiper carousel. This stops container backgrounds and layout designs from collapsing or shifting out of place.

@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.20.4-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.20.5-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -181,6 +181,9 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.20.5 (2026-06-14)
+- **Fixed:** Carousel image border/gap (object-fit) — added `width: 100% !important` and `object-fit: cover !important` to the carousel media wrapper and image classes. This fixes the issue where landscape images scaled to 100% height would leave vertical empty columns (showing as a thick green border/gap) on the left and right sides of the slide.
 
 ### Version 1.20.4 (2026-06-14)
 - **Fixed:** Carousel template height collapsing and alignment — corrected CSS selectors for `.loopmosaic-item__media`, `.loopmosaic-item__image`, and Elementor loop templates (`.elementor`) to properly inherit the 100% height inside the Swiper carousel. This stops container backgrounds and layout designs from collapsing or shifting out of place.

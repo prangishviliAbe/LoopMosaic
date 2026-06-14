@@ -90,8 +90,10 @@
 .loopmosaic-carousel-wrap .loopmosaic-item__media img,
 .loopmosaic-carousel-wrap .loopmosaic-item__image,
 .loopmosaic-carousel-wrap .loopmosaic-item__media .loopmosaic-bg-image {
+    width: 100% !important;
     height: 100% !important;
     min-height: 100% !important;
+    object-fit: cover !important;
     border-radius: 0;
 }
 
