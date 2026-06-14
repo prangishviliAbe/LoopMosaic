@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.19.8-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.19.9-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -181,6 +181,10 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.19.9 (2026-06-14)
+- **Fixed:** Stacked card glitch during slide transition — replaced CSS `::before` pseudo-element with a real DOM element so Swiper's GPU compositing layers don't interfere.
+- **Fixed:** Hover lift now suppressed for all element types inside carousel (Elementor Loop `.e-con`, `.elementor-widget-wrap`, JetEngine `.jet-listing-grid__item`, Swiper slide, default card).
 
 ### Version 1.19.8 (2026-06-14)
 - **Fixed:** Stacked card color lightened further to `rgba(22,82,68,0.74)`.

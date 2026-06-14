@@ -593,7 +593,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'selectors'  => [
                 '{{WRAPPER}} .loopmosaic-swiper'                   => 'border-radius: {{SIZE}}{{UNIT}};',
                 '{{WRAPPER}} .loopmosaic-item'                     => 'border-radius: {{SIZE}}{{UNIT}};',
-                '{{WRAPPER}} .loopmosaic-carousel-stage::before'   => 'border-radius: {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0 0;',
+                '{{WRAPPER}} .lm-stack-card'                       => 'border-radius: {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0 0;',
             ],
         ]
         );
@@ -708,7 +708,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'type'      => Controls_Manager::COLOR,
             'default'   => 'rgba(22,82,68,0.74)',
             'selectors' => [
-                '{{WRAPPER}} .loopmosaic-carousel-stage::before' => 'background: {{VALUE}};',
+                '{{WRAPPER}} .lm-stack-card' => 'background: {{VALUE}};',
             ],
             'condition' => ['carousel_stack' => 'yes'],
         ]
@@ -723,7 +723,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'range'      => ['px' => ['min' => 4, 'max' => 40]],
             'default'    => ['size' => 14, 'unit' => 'px'],
             'selectors'  => [
-                '{{WRAPPER}} .loopmosaic-carousel-stage::before' => 'top: calc(-1 * {{SIZE}}{{UNIT}});',
+                '{{WRAPPER}} .lm-stack-card' => 'top: calc(-1 * {{SIZE}}{{UNIT}});',
             ],
             'condition'  => ['carousel_stack' => 'yes'],
         ]
@@ -738,7 +738,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'range'      => ['px' => ['min' => 0, 'max' => 80]],
             'default'    => ['size' => 24, 'unit' => 'px'],
             'selectors'  => [
-                '{{WRAPPER}} .loopmosaic-carousel-stage::before' => 'left: {{SIZE}}{{UNIT}}; right: calc(var(--lm-carousel-nav-gap, 62px) + {{SIZE}}{{UNIT}});',
+                '{{WRAPPER}} .lm-stack-card' => 'left: {{SIZE}}{{UNIT}}; right: calc(var(--lm-carousel-nav-gap, 62px) + {{SIZE}}{{UNIT}});',
             ],
             'condition'  => ['carousel_stack' => 'yes'],
         ]
@@ -3701,8 +3701,13 @@ class Mosaic_Loop_Widget extends Widget_Base
 
         // Stage = card + side navigation. Its height drives the vertical
         // centering of the arrows, so pagination (placed below) won't shift them.
-        $stage_class = 'loopmosaic-carousel-stage' . ($has_stack ? ' has-stack' : '');
-        echo '<div class="' . esc_attr($stage_class) . '">';
+        echo '<div class="loopmosaic-carousel-stage">';
+
+        // Stacked card peek — real DOM element (not ::before) so Swiper's
+        // composited transition layers don't cause pseudo-element glitches.
+        if ($has_stack) {
+            echo '<div class="lm-stack-card" aria-hidden="true"></div>';
+        }
 
         echo '<div class="swiper loopmosaic-swiper">';
         echo '<div class="swiper-wrapper">';

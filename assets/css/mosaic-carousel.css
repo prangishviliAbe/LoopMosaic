@@ -11,17 +11,18 @@
 }
 
 /* Stage: card + side nav. padding-right reserves space for the arrows.
-   Its height is the card height, so the absolutely-centered nav stays
-   aligned to the card even though pagination sits below the stage. */
+   isolation: isolate creates a local stacking context so Swiper's
+   composited layers never bleed through the stacked card. */
 .loopmosaic-carousel-stage {
     position: relative;
     padding-right: var(--lm-carousel-nav-gap, 62px);
     box-sizing: border-box;
+    isolation: isolate;
 }
 
-/* Stacked card peeking behind the slide (decorative depth). */
-.loopmosaic-carousel-stage.has-stack::before {
-    content: "";
+/* Stacked card peek — real DOM element (not ::before) to avoid
+   GPU compositing glitches during Swiper slide transitions. */
+.lm-stack-card {
     position: absolute;
     top: -18px;
     left: 20px;
@@ -33,7 +34,9 @@
     pointer-events: none;
 }
 
-/* Swiper container – height driven by Elementor selector or CSS var */
+/* Swiper container – z-index 1 lifts it above .lm-stack-card (z-index 0).
+   will-change: transform keeps the animation in its own GPU layer so
+   slide transitions don't repaint the stacked card underneath. */
 .loopmosaic-carousel-wrap .loopmosaic-swiper {
     position: relative;
     z-index: 1;
@@ -41,6 +44,7 @@
     height: var(--lm-carousel-height, 520px);
     border-radius: 24px;
     overflow: hidden;
+    will-change: transform;
 }
 
 /* Each slide fills the container */
@@ -57,10 +61,14 @@
     overflow: hidden;
 }
 
-/* No card-lift on hover inside the carousel: the grid applies
-   translateY(-4px) to lift cards, which makes the whole slide jump
-   "forward" in carousel mode. Keep slides flat. */
-.loopmosaic-carousel-wrap .loopmosaic-item:hover {
+/* Disable ALL hover-lift transforms inside the carousel.
+   The grid CSS lifts .loopmosaic-item; Elementor loop templates can
+   lift .e-con or .elementor-widget-wrap. Cover all of them. */
+.loopmosaic-carousel-wrap .swiper-slide:hover,
+.loopmosaic-carousel-wrap .loopmosaic-item:hover,
+.loopmosaic-carousel-wrap .e-con:hover,
+.loopmosaic-carousel-wrap .elementor-widget-wrap:hover,
+.loopmosaic-carousel-wrap .jet-listing-grid__item:hover {
     transform: none !important;
 }
 

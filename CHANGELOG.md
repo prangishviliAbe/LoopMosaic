@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.19.9] - 2026-06-14
+### Fixed
+- **Stacked card slide glitch**: Replaced `::before` pseudo-element with a real `<div class="lm-stack-card">` DOM element. Pseudo-elements on Swiper's parent container got repainted during GPU-composited slide transitions, causing flicker. A real element stays stable.
+- **Hover lift (all template types)**: Extended the hover-transform override to cover `.swiper-slide`, `.e-con`, `.elementor-widget-wrap`, and `.jet-listing-grid__item` in addition to `.loopmosaic-item`. Elementor Loop Templates and JetEngine Listings use those containers and were still lifting.
+
 ## [1.19.8] - 2026-06-14
 ### Fixed
 - **Stacked card color**: Lightened further to `rgba(22,82,68,0.74)`.
