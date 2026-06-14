@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.20.7] - 2026-06-14
+### Fixed
+- **Stacked card color matched to section background**: Identified the section background overlay color as `#072A2A` (Elementor overlay at 98% opacity) by fetching the generated Elementor post CSS. Updated the `carousel_stack_color` control default from `rgba(22,82,68,0.74)` to `rgba(7,42,42,0.98)` and the swiper fallback background from `#0c2b28` to `#072a2a`, so the peek card blends naturally with the dark teal section surrounding the carousel.
+
 ## [1.20.6] - 2026-06-14
 ### Fixed
 - **Carousel image scale overrides**: Added image property overrides (`transform: none !important`, `opacity: 1 !important`, and `transition: none !important`) to all images inside `.loopmosaic-carousel-wrap`. This neutralizes external page animations (e.g. `.img_gal` scroll animations) that scale down the carousel's slide images and leave thick gaps/borders on the sides of the slides.
