@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.19.4] - 2026-06-14
+### Added
+- **Stacked card behind carousel**: New decorative "stacked-deck" peek behind the slide (on by default). Controls: enable toggle, color, peek amount, and side inset.
+
 ## [1.19.3] - 2026-06-14
 ### Fixed
 - **Carousel hover lift**: Disabled the grid's `translateY(-4px)` card-lift inside the carousel, so slides no longer jump "forward" on hover.

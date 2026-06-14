@@ -686,6 +686,63 @@ class Mosaic_Loop_Widget extends Widget_Base
         ]
         );
 
+        $this->add_control(
+            'carousel_stack',
+        [
+            'label'        => esc_html__('Stacked Card Behind', 'loop-mosaic'),
+            'type'         => Controls_Manager::SWITCHER,
+            'label_on'     => esc_html__('Yes', 'loop-mosaic'),
+            'label_off'    => esc_html__('No', 'loop-mosaic'),
+            'return_value' => 'yes',
+            'default'      => 'yes',
+            'separator'    => 'before',
+            'description'  => esc_html__('Shows a peeking card behind the slide for a stacked-deck look.', 'loop-mosaic'),
+        ]
+        );
+
+        $this->add_control(
+            'carousel_stack_color',
+        [
+            'label'     => esc_html__('Stacked Card Color', 'loop-mosaic'),
+            'type'      => Controls_Manager::COLOR,
+            'default'   => 'rgba(10,41,38,0.5)',
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-carousel-stage::before' => 'background: {{VALUE}};',
+            ],
+            'condition' => ['carousel_stack' => 'yes'],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_stack_peek',
+        [
+            'label'      => esc_html__('Peek Amount', 'loop-mosaic'),
+            'type'       => Controls_Manager::SLIDER,
+            'size_units' => ['px'],
+            'range'      => ['px' => ['min' => 4, 'max' => 40]],
+            'default'    => ['size' => 14, 'unit' => 'px'],
+            'selectors'  => [
+                '{{WRAPPER}} .loopmosaic-carousel-stage::before' => 'top: calc(-1 * {{SIZE}}{{UNIT}});',
+            ],
+            'condition'  => ['carousel_stack' => 'yes'],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_stack_inset',
+        [
+            'label'      => esc_html__('Side Inset', 'loop-mosaic'),
+            'type'       => Controls_Manager::SLIDER,
+            'size_units' => ['px'],
+            'range'      => ['px' => ['min' => 0, 'max' => 80]],
+            'default'    => ['size' => 24, 'unit' => 'px'],
+            'selectors'  => [
+                '{{WRAPPER}} .loopmosaic-carousel-stage::before' => 'left: {{SIZE}}{{UNIT}}; right: calc(var(--lm-carousel-nav-gap, 62px) + {{SIZE}}{{UNIT}});',
+            ],
+            'condition'  => ['carousel_stack' => 'yes'],
+        ]
+        );
+
         $this->end_controls_section();
 
         // ── Carousel Nav Style ────────────────────────────────────────────────
@@ -3637,11 +3694,14 @@ class Mosaic_Loop_Widget extends Widget_Base
             'dots'          => !empty($settings['carousel_dots']) && 'yes' === $settings['carousel_dots'],
         ];
 
+        $has_stack = empty($settings['carousel_stack']) || 'yes' === $settings['carousel_stack'];
+
         echo '<div class="loopmosaic-carousel-wrap" id="' . esc_attr($carousel_id) . '" data-carousel="' . esc_attr(wp_json_encode($carousel_cfg)) . '">';
 
         // Stage = card + side navigation. Its height drives the vertical
         // centering of the arrows, so pagination (placed below) won't shift them.
-        echo '<div class="loopmosaic-carousel-stage">';
+        $stage_class = 'loopmosaic-carousel-stage' . ($has_stack ? ' has-stack' : '');
+        echo '<div class="' . esc_attr($stage_class) . '">';
 
         echo '<div class="swiper loopmosaic-swiper">';
         echo '<div class="swiper-wrapper">';

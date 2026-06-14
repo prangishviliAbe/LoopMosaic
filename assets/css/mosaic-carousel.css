@@ -7,6 +7,7 @@
     position: relative;
     width: 100%;
     box-sizing: border-box;
+    --lm-carousel-nav-gap: 62px;
 }
 
 /* Stage: card + side nav. padding-right reserves space for the arrows.
@@ -14,12 +15,28 @@
    aligned to the card even though pagination sits below the stage. */
 .loopmosaic-carousel-stage {
     position: relative;
-    padding-right: 62px;
+    padding-right: var(--lm-carousel-nav-gap, 62px);
     box-sizing: border-box;
+}
+
+/* Stacked card peeking behind the slide (decorative depth). */
+.loopmosaic-carousel-stage.has-stack::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 24px;
+    right: calc(var(--lm-carousel-nav-gap, 62px) + 24px);
+    height: 64px;
+    border-radius: 22px 22px 0 0;
+    background: rgba(10, 41, 38, 0.5);
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* Swiper container – height driven by Elementor selector or CSS var */
 .loopmosaic-carousel-wrap .loopmosaic-swiper {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: var(--lm-carousel-height, 520px);
     border-radius: 18px;
@@ -159,8 +176,8 @@
 /* ── Responsive ─────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
-    .loopmosaic-carousel-stage {
-        padding-right: 0;
+    .loopmosaic-carousel-wrap {
+        --lm-carousel-nav-gap: 0px;
     }
 
     .loopmosaic-carousel-nav {
