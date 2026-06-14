@@ -47,6 +47,15 @@
                     prevSlideMessage: 'Previous slide',
                     nextSlideMessage: 'Next slide',
                 },
+
+                on: {
+                    init: function () {
+                        toggleStackCard(this, $wrap);
+                    },
+                    slideChange: function () {
+                        toggleStackCard(this, $wrap);
+                    }
+                }
             };
 
             if (rawSettings.autoplay) {
@@ -65,6 +74,14 @@
             // every carousel image to load eagerly so wraps are always seamless.
             eagerLoadImages($wrap);
         });
+    }
+
+    function toggleStackCard(swiper, $wrap) {
+        if (!swiper.params.loop && swiper.isEnd) {
+            $wrap.addClass('lm-carousel-end');
+        } else {
+            $wrap.removeClass('lm-carousel-end');
+        }
     }
 
     function eagerLoadImages($wrap) {

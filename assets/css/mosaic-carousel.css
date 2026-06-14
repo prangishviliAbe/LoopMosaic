@@ -38,6 +38,12 @@
     transition: none !important;
 }
 
+/* Hide stacked card on the last slide when loop is disabled */
+.loopmosaic-carousel-wrap.lm-carousel-end .lm-stack-card {
+    opacity: 0;
+    visibility: hidden;
+}
+
 /* Swiper container — z-index 1 paints it above .lm-stack-card (z-index 0).
    No transform/will-change: promoting to a GPU composite layer breaks the
    z-index ordering, letting the stack card bleed over slide content.
@@ -80,9 +86,10 @@
     box-shadow: none !important;
 }
 
-.loopmosaic-carousel-wrap .loopmosaic-media,
-.loopmosaic-carousel-wrap .loopmosaic-media img,
-.loopmosaic-carousel-wrap .loopmosaic-media .loopmosaic-bg-image {
+.loopmosaic-carousel-wrap .loopmosaic-item__media,
+.loopmosaic-carousel-wrap .loopmosaic-item__media img,
+.loopmosaic-carousel-wrap .loopmosaic-item__image,
+.loopmosaic-carousel-wrap .loopmosaic-item__media .loopmosaic-bg-image {
     height: 100% !important;
     min-height: 100% !important;
     border-radius: 0;
@@ -98,9 +105,10 @@
 }
 
 /* Elementor loop template in carousel – allow full height */
-.loopmosaic-carousel-wrap .swiper-slide > .elementor,
-.loopmosaic-carousel-wrap .swiper-slide > .elementor > .e-con,
-.loopmosaic-carousel-wrap .swiper-slide > .jet-listing-grid__item {
+.loopmosaic-carousel-wrap .swiper-slide .elementor,
+.loopmosaic-carousel-wrap .swiper-slide .elementor .e-con,
+.loopmosaic-carousel-wrap .swiper-slide .elementor .e-con-inner,
+.loopmosaic-carousel-wrap .swiper-slide .jet-listing-grid__item {
     height: 100%;
 }
 
