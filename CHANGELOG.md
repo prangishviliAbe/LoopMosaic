@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.22.2] - 2026-06-14
+### Fixed
+- **Loop template layout (justify-content / alignment) ignored in carousel**: The aggressive `flex: 1 1 0%` rule added in 1.20.9 to fix portrait image-widget overflow made image widgets grow to consume all free flex space — which disabled the container's own `justify-content` (centering, bottom-alignment, space-between, etc.), since there was no free space left to distribute. Removed the forced flex/height overrides on inner widgets. The carousel now only forces `height: 100%` at the ROOT container level (so the template has the full slide to lay out in) and applies a minimal `max-width: 100%` image safety, letting the Elementor loop template's own layout settings render as designed.
+
 ## [1.22.1] - 2026-06-14
 ### Fixed
 - **Featured-image container background missing in carousel**: Elementor loop templates that use the post's Featured Image as a *container background* (dynamic tag) rendered with an empty background in the carousel — Elementor only resolves dynamic container backgrounds inside its own Loop Grid, so when LoopMosaic renders the template standalone the URL was never emitted. The renderer now exposes the post's featured image as a `--lm-featured-bg` CSS variable on `.loopmosaic-item`, and the carousel CSS paints it as a fallback layer behind the template. Templates with their own opaque background still cover it; transparent/failed dynamic backgrounds now show the photo with the heading/text on top.

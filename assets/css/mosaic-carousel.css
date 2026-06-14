@@ -126,11 +126,13 @@
     transition: none !important;
 }
 
-/* Elementor loop template in carousel – full-height layout.
-   Only the ROOT e-con (direct child of .elementor) gets height: 100%.
-   Nested .e-con widgets must NOT inherit this — it breaks flex layouts
-   where text sits below images (nested containers demand 100% of the
-   parent and push text siblings off-screen). */
+/* Elementor loop template in carousel – fill the slide height ONLY at the
+   root level, so the container's own flex / justify-content / alignment
+   settings have full height to work against. We deliberately do NOT force
+   heights or flex on inner widgets — that would override the template's own
+   layout (e.g. justify-content: flex-end / center stops working when a child
+   widget is given flex-grow and eats all the free space). The template owns
+   its internal layout; we only guarantee it has the full slide to lay out in. */
 .loopmosaic-carousel-wrap .swiper-slide .elementor,
 .loopmosaic-carousel-wrap .swiper-slide .elementor > .e-con,
 .loopmosaic-carousel-wrap .swiper-slide .elementor > .e-con > .e-con-inner,
@@ -138,28 +140,10 @@
     height: 100%;
 }
 
-/* Elementor Image widget in carousel: grow to fill remaining flex space
-   after text widgets (heading, post title, etc.) take their natural height.
-   Without this, a portrait image expands to its natural size, overflows the
-   card, and pushes every text element below the overflow:hidden boundary —
-   making them completely invisible.
-   flex: 1 1 0% + min-height: 0 = "take all leftover height, shrink freely". */
-.loopmosaic-carousel-wrap .swiper-slide .elementor-widget-image {
-    flex: 1 1 0%;
-    min-height: 0;
-    overflow: hidden;
-}
-/* Pass the definite height down through every wrapper Elementor may insert */
-.loopmosaic-carousel-wrap .swiper-slide .elementor-widget-image .elementor-widget-container,
-.loopmosaic-carousel-wrap .swiper-slide .elementor-widget-image figure.wp-caption,
-.loopmosaic-carousel-wrap .swiper-slide .elementor-widget-image a {
-    display: block;
-    height: 100%;
-}
+/* Minimal image safety: keep image widgets from busting the slide width
+   without stealing flex space (which would disable justify-content). */
 .loopmosaic-carousel-wrap .swiper-slide .elementor-widget-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
 }
 
 /* ── Navigation (right side, vertical) ─────────────────────── */
