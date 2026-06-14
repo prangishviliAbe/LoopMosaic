@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.22.0] - 2026-06-14
+### Changed
+- **Relationship Query is now a smart dropdown**: Instead of typing a Query ID by hand, the Relationship Query section now auto-detects active relationship plugins and presents a friendly dropdown of available sources. *Post Relationship for Elementor* is detected automatically (via `PR_Rel_Elementor`), offering "Related posts (this post → linked posts)" and "Referenced by (posts that link to this one)". A new `loopmosaic/relationship_query_ids` filter lets any relationship plugin register its own query IDs (`[ query_id => label ]`). When no relationship plugin is detected, the section shows an explanatory notice and falls back to a manual Query ID text field, so custom integrations still work.
+
 ## [1.21.0] - 2026-06-14
 ### Added
 - **Relationship Query support**: New "Relationship Query" content section with an Enable toggle and a Query ID text field. When enabled, LoopMosaic fires the standard `elementor/query/{id}` action on a bare WP_Query object before running its own query — any plugin that hooks into this action (PostRelation-Elementor, JetEngine Relations, etc.) can set `post__in` to related post IDs. For *Post Relationship for Elementor*: use `related_posts` / `pr_related_posts` (forward — posts linked from current post) or `referenced_by` / `pr_referenced_by` (reverse — posts that link to current post).

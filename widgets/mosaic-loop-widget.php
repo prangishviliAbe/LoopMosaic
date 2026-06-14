@@ -1379,16 +1379,53 @@ class Mosaic_Loop_Widget extends Widget_Base
         ]
         );
 
-        $this->add_control(
-            'lm_rel_query_id',
-        [
-            'label'       => esc_html__( 'Query ID', 'loop-mosaic' ),
-            'type'        => Controls_Manager::TEXT,
-            'default'     => '',
-            'placeholder' => 'related_posts',
-            'description' => esc_html__( 'Enter the Query ID from your relationship plugin (e.g. related_posts, referenced_by). Leave empty to disable.', 'loop-mosaic' ),
-        ]
-        );
+        // Discover available relationship query IDs.
+        // Built-in detection for "Post Relationship for Elementor", plus a
+        // filter so any relationship plugin can register its own query IDs.
+        $rel_ids = [];
+        if ( class_exists( 'PR_Rel_Elementor' ) ) {
+            $rel_ids['related_posts'] = esc_html__( 'Related posts (this post → linked posts)', 'loop-mosaic' );
+            $rel_ids['referenced_by'] = esc_html__( 'Referenced by (posts that link to this one)', 'loop-mosaic' );
+        }
+        $rel_ids = apply_filters( 'loopmosaic/relationship_query_ids', $rel_ids );
+
+        if ( ! empty( $rel_ids ) && is_array( $rel_ids ) ) {
+            $options = [ '' => esc_html__( '— None —', 'loop-mosaic' ) ];
+            foreach ( $rel_ids as $id => $label ) {
+                $options[ (string) $id ] = $label;
+            }
+
+            $this->add_control(
+                'lm_rel_query_id',
+            [
+                'label'       => esc_html__( 'Relationship Source', 'loop-mosaic' ),
+                'type'        => Controls_Manager::SELECT,
+                'options'     => $options,
+                'default'     => '',
+                'description' => esc_html__( 'Pull connected posts from your relationship plugin based on the current post.', 'loop-mosaic' ),
+            ]
+            );
+        } else {
+            $this->add_control(
+                'lm_rel_query_notice',
+            [
+                'type'            => Controls_Manager::RAW_HTML,
+                'raw'             => esc_html__( 'No relationship plugin detected. Activate a compatible plugin (e.g. Post Relationship for Elementor) to pull connected posts automatically, or enter a Query ID manually below.', 'loop-mosaic' ),
+                'content_classes' => 'elementor-control-field-description',
+            ]
+            );
+
+            $this->add_control(
+                'lm_rel_query_id',
+            [
+                'label'       => esc_html__( 'Query ID (manual)', 'loop-mosaic' ),
+                'type'        => Controls_Manager::TEXT,
+                'default'     => '',
+                'placeholder' => 'related_posts',
+                'description' => esc_html__( 'Enter the Query ID registered by your relationship plugin. Leave empty to disable.', 'loop-mosaic' ),
+            ]
+            );
+        }
 
         $this->end_controls_section();
 
