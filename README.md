@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.19.5-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.19.6-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -182,8 +182,11 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 
 ## 📋 Changelog
 
+### Version 1.19.6 (2026-06-14)
+- **Fixed:** Stacked card Elementor control default was `rgba(10,41,38,0.5)` (50% opacity) and was overriding the CSS file — raised default to `rgba(8,35,32,0.92)` so the peek renders solid by default.
+
 ### Version 1.19.5 (2026-06-14)
-- **Fixed:** Stacked card behind carousel is now visually solid (opacity raised from 0.5 → 0.92) so it actually contrasts against the slide.
+- **Fixed:** Stacked card behind carousel CSS opacity raised from 0.5 → 0.92.
 
 ### Version 1.19.4 (2026-06-14)
 - **New:** Stacked card "peek" behind carousel slides for a layered look, with toggle, color, peek-amount, and inset controls.

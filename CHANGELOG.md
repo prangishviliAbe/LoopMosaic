@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.19.6] - 2026-06-14
+### Fixed
+- **Stacked card Elementor default**: The `carousel_stack_color` control default was `rgba(10,41,38,0.5)` (50% opacity). Elementor inlines control defaults as CSS, which overrides the stylesheet — so the CSS file change in v1.19.5 had no effect. Default is now `rgba(8,35,32,0.92)` (solid dark teal).
+
 ## [1.19.5] - 2026-06-14
 ### Fixed
 - **Stacked card opacity**: Raised pseudo-element background opacity from 0.5 to 0.92 so the stacked card peek is clearly visible against the slide.
