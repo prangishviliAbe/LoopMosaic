@@ -62,6 +62,21 @@ if (!class_exists('LoopMosaic_Renderer')) {
                 $item_attrs .= ' data-popup-id="' . esc_attr($settings['click_popup_id']) . '"';
             }
 
+            // Featured-image background fallback for non-default templates.
+            // Elementor loop templates commonly set the Featured Image as a
+            // CONTAINER background via a dynamic tag. Elementor only resolves
+            // that dynamic background inside its own Loop Grid widget; when the
+            // template is rendered standalone (as here) the URL is never emitted
+            // and the slide appears empty. We expose the post's featured image
+            // as the --lm-featured-bg CSS variable so the carousel/grid CSS can
+            // paint it BEHIND the template as a fallback layer.
+            if ('default' !== $template_source) {
+                $featured_url = get_the_post_thumbnail_url($post_id, 'large');
+                if ($featured_url) {
+                    $item_attrs .= " style=\"--lm-featured-bg: url('" . esc_url($featured_url) . "');\"";
+                }
+            }
+
             $html = '<div class="' . esc_attr(implode(' ', $item_classes)) . '"' . $item_attrs . '>';
 
             // Non-default templates render the overlay link, hover overlay and

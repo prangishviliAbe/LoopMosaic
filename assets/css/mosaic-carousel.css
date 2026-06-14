@@ -74,6 +74,20 @@
     overflow: hidden;
 }
 
+/* Featured-image background fallback. Elementor loop templates that use the
+   Featured Image as a CONTAINER background don't resolve that dynamic URL
+   when rendered outside Elementor's own Loop Grid (see class-renderer.php).
+   The renderer exposes the post's featured image as --lm-featured-bg; paint
+   it behind the template here. A real container background in the template
+   (opaque) covers this; a transparent/failed one lets the photo show, with
+   the heading/text rendering on top. */
+.loopmosaic-carousel-wrap .loopmosaic-item[style*="--lm-featured-bg"] {
+    background-image: var(--lm-featured-bg);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
 /* Disable ALL hover-lift effects inside the carousel.
    The grid CSS lifts .loopmosaic-item; Elementor loop templates lift
    via .e-con (transform + box-shadow). Cover both properties. */

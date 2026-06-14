@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.22.1] - 2026-06-14
+### Fixed
+- **Featured-image container background missing in carousel**: Elementor loop templates that use the post's Featured Image as a *container background* (dynamic tag) rendered with an empty background in the carousel — Elementor only resolves dynamic container backgrounds inside its own Loop Grid, so when LoopMosaic renders the template standalone the URL was never emitted. The renderer now exposes the post's featured image as a `--lm-featured-bg` CSS variable on `.loopmosaic-item`, and the carousel CSS paints it as a fallback layer behind the template. Templates with their own opaque background still cover it; transparent/failed dynamic backgrounds now show the photo with the heading/text on top.
+
 ## [1.22.0] - 2026-06-14
 ### Changed
 - **Relationship Query is now a smart dropdown**: Instead of typing a Query ID by hand, the Relationship Query section now auto-detects active relationship plugins and presents a friendly dropdown of available sources. *Post Relationship for Elementor* is detected automatically (via `PR_Rel_Elementor`), offering "Related posts (this post → linked posts)" and "Referenced by (posts that link to this one)". A new `loopmosaic/relationship_query_ids` filter lets any relationship plugin register its own query IDs (`[ query_id => label ]`). When no relationship plugin is detected, the section shows an explanatory notice and falls back to a manual Query ID text field, so custom integrations still work.
