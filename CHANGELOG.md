@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.22.5] - 2026-06-14
+### Fixed
+- **Loop template text/content disappearing after sliding**: Content with an entrance or scroll-reveal animation (Elementor entrance animation or the theme's scroll-reveal) starts at `opacity: 0` and is only revealed when scrolled into the viewport. Because Swiper moves slides horizontally rather than scrolling them, non-active and cloned slides never triggered their reveal, leaving headings, descriptions and buttons invisible after navigating to them. The carousel now forces all slide content (`.elementor-element` / `.elementor-invisible`) to `opacity: 1; visibility: visible` and disables widget entrance animations/transforms inside slides.
+
 ## [1.22.4] - 2026-06-14
 ### Fixed
 - **Carousel not visually centered**: The stage reserved space for the navigation arrows with `padding-right` only, pushing the slide off-center to the left. Added matching `padding-left` so the slide is centered within the section, with equal breathing room on both sides. The stacked card peek's `left` inset now also accounts for the nav gap (mirroring `right`) so it stays aligned with the centered slide.

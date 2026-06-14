@@ -129,6 +129,22 @@
     transition: none !important;
 }
 
+/* Force loop-template CONTENT visible inside slides. Swiper translates slides
+   horizontally, so any entrance / scroll-reveal animation that starts content
+   at opacity:0 (Elementor "entrance animation" or the theme's scroll-reveal)
+   never triggers for non-active or cloned slides — the heading, description
+   and button would disappear after sliding to them. Override the hidden start
+   state so all slide content is always shown. */
+.loopmosaic-carousel-wrap .swiper-slide .elementor-element,
+.loopmosaic-carousel-wrap .swiper-slide .elementor-invisible {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+.loopmosaic-carousel-wrap .swiper-slide .elementor-widget {
+    animation: none !important;
+    transform: none !important;
+}
+
 /* Elementor loop template in carousel – fill the slide height ONLY at the
    root level, so the container's own flex / justify-content / alignment
    settings have full height to work against. We deliberately do NOT force
