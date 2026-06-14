@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.19.1] - 2026-06-14
+### Changed
+- **Carousel pagination switches**: Pagination is now enabled by default and restyled as modern "switch" indicators — inactive bullets are small dots, the active one elongates into a pill, matching the reference design.
+- Added **Switch Color** and **Active Switch Color** controls to the Carousel Navigation style panel.
+
 ## [1.19.0] - 2026-06-14
 ### Added
 - **Carousel Layout**: New `layout_mode` option "Carousel (Slider)" powered by Swiper 11. Each post becomes a slide; Elementor Loop Templates and JetEngine Listings render inside slides at full height.

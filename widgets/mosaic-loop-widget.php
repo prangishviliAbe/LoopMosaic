@@ -650,13 +650,39 @@ class Mosaic_Loop_Widget extends Widget_Base
         $this->add_control(
             'carousel_dots',
         [
-            'label'        => esc_html__('Pagination Dots', 'loop-mosaic'),
+            'label'        => esc_html__('Pagination Switches', 'loop-mosaic'),
             'type'         => Controls_Manager::SWITCHER,
             'label_on'     => esc_html__('Yes', 'loop-mosaic'),
             'label_off'    => esc_html__('No', 'loop-mosaic'),
             'return_value' => 'yes',
-            'default'      => '',
+            'default'      => 'yes',
             'separator'    => 'before',
+        ]
+        );
+
+        $this->add_control(
+            'carousel_dots_color',
+        [
+            'label'     => esc_html__('Switch Color', 'loop-mosaic'),
+            'type'      => Controls_Manager::COLOR,
+            'default'   => 'rgba(255,255,255,0.45)',
+            'selectors' => [
+                '{{WRAPPER}} .swiper-pagination-bullet' => 'background: {{VALUE}};',
+            ],
+            'condition' => ['carousel_dots' => 'yes'],
+        ]
+        );
+
+        $this->add_control(
+            'carousel_dots_active_color',
+        [
+            'label'     => esc_html__('Active Switch Color', 'loop-mosaic'),
+            'type'      => Controls_Manager::COLOR,
+            'default'   => '#ffffff',
+            'selectors' => [
+                '{{WRAPPER}} .swiper-pagination-bullet-active' => 'background: {{VALUE}};',
+            ],
+            'condition' => ['carousel_dots' => 'yes'],
         ]
         );
 
