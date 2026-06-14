@@ -23,12 +23,12 @@
 .loopmosaic-carousel-stage.has-stack::before {
     content: "";
     position: absolute;
-    top: -14px;
-    left: 24px;
-    right: calc(var(--lm-carousel-nav-gap, 62px) + 24px);
-    height: 64px;
-    border-radius: 22px 22px 0 0;
-    background: rgba(10, 41, 38, 0.5);
+    top: -18px;
+    left: 20px;
+    right: calc(var(--lm-carousel-nav-gap, 62px) + 20px);
+    height: 72px;
+    border-radius: 20px 20px 0 0;
+    background: rgba(8, 35, 32, 0.92);
     z-index: 0;
     pointer-events: none;
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.19.5] - 2026-06-14
+### Fixed
+- **Stacked card opacity**: Raised pseudo-element background opacity from 0.5 to 0.92 so the stacked card peek is clearly visible against the slide.
+
 ## [1.19.4] - 2026-06-14
 ### Added
 - **Stacked card behind carousel**: New decorative "stacked-deck" peek behind the slide (on by default). Controls: enable toggle, color, peek amount, and side inset.
