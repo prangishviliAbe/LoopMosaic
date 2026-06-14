@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.22.4] - 2026-06-14
+### Fixed
+- **Carousel not visually centered**: The stage reserved space for the navigation arrows with `padding-right` only, pushing the slide off-center to the left. Added matching `padding-left` so the slide is centered within the section, with equal breathing room on both sides. The stacked card peek's `left` inset now also accounts for the nav gap (mirroring `right`) so it stays aligned with the centered slide.
+
 ## [1.22.3] - 2026-06-14
 ### Changed
 - **Stacked card default color**: Changed the carousel stacked-card (peek bar behind the slide) default color from `rgba(139,92,246,0.60)` (purple) to a solid `#184e4e` (dark teal) to better match the surrounding section background.

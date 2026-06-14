@@ -738,7 +738,7 @@ class Mosaic_Loop_Widget extends Widget_Base
             'range'      => ['px' => ['min' => 0, 'max' => 80]],
             'default'    => ['size' => 24, 'unit' => 'px'],
             'selectors'  => [
-                '{{WRAPPER}} .lm-stack-card' => 'left: {{SIZE}}{{UNIT}}; right: calc(var(--lm-carousel-nav-gap, 62px) + {{SIZE}}{{UNIT}});',
+                '{{WRAPPER}} .lm-stack-card' => 'left: calc(var(--lm-carousel-nav-gap, 62px) + {{SIZE}}{{UNIT}}); right: calc(var(--lm-carousel-nav-gap, 62px) + {{SIZE}}{{UNIT}});',
             ],
             'condition'  => ['carousel_stack' => 'yes'],
         ]
