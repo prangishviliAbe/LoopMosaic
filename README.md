@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.19.9-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.20.0-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -181,6 +181,11 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.20.0 (2026-06-14)
+- **Fixed:** Slide transition glitch — removed `will-change: transform` from swiper container (was corrupting `overflow: hidden` clip for GPU-composited children); replaced with `transform: translateZ(0)`.
+- **Fixed:** Stage and stacked card now have `transition: none !important` to prevent the theme's blanket `transition: all` from animating them during Swiper's slide changes.
+- **Fixed:** Hover lift — extended override to include `box-shadow: none !important` alongside `transform: none !important` (Elementor Loop Template containers animate a box-shadow on hover which was creating the "lift forward" illusion).
 
 ### Version 1.19.9 (2026-06-14)
 - **Fixed:** Stacked card glitch during slide transition — replaced CSS `::before` pseudo-element with a real DOM element so Swiper's GPU compositing layers don't interfere.

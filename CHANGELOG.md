@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.20.0] - 2026-06-14
+### Fixed
+- **Slide transition glitch (root cause)**: `will-change: transform` on the swiper container was promoting it to a GPU compositing layer, which caused the `overflow: hidden` clip to stop applying to GPU-composited child slides — letting transitioning slides bleed into the stacked card area. Replaced with `transform: translateZ(0)` which composites the swiper itself without breaking child clipping.
+- **Stage/stacked card animated by theme**: The theme applies `transition: all` to all elements. During Swiper transitions, any property change on the stage would animate smoothly rather than snap, causing visual glitches. Fixed with `transition: none !important` on both `.loopmosaic-carousel-stage` and `.lm-stack-card`.
+- **Hover lift "coming forward"**: Elementor Loop Template containers (`.e-con`) apply a `box-shadow` change on hover (0.3s transition) in addition to transform, creating a "lift forward" illusion. Extended the hover override to include `box-shadow: none !important` in addition to `transform: none !important`.
+
 ## [1.19.9] - 2026-06-14
 ### Fixed
 - **Stacked card slide glitch**: Replaced `::before` pseudo-element with a real `<div class="lm-stack-card">` DOM element. Pseudo-elements on Swiper's parent container got repainted during GPU-composited slide transitions, causing flicker. A real element stays stable.
