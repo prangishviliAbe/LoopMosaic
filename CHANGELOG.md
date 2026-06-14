@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.20.9] - 2026-06-14
+### Fixed
+- **Elementor loop template text invisible in carousel**: When an Elementor loop template contained an image widget + text widgets (heading, post title, etc.) stacked vertically, text elements were completely invisible in the carousel. Root cause: (1) the previous `.elementor .e-con` selector (no `>`) applied `height: 100%` to ALL nested containers including child Container widgets, breaking the flex layout; (2) the Elementor Image widget had no height constraint, so a portrait photo expanded to its full natural size, overflowing the fixed-height card and pushing every text element below the `overflow: hidden` boundary. Fix: scoped `height: 100%` to only the root `.e-con` (direct child of `.elementor`) using `>` child combinator; added `flex: 1 1 0%; min-height: 0` to `.elementor-widget-image` so the image fills remaining flex space after text widgets take their natural height; made intermediate widget containers (`elementor-widget-container`, `figure`, `a`) `height: 100%` so the `<img>` can fill the allocated area with `object-fit: cover`.
+
 ## [1.20.7] - 2026-06-14
 ### Fixed
 - **Stacked card color matched to section background**: Identified the section background overlay color as `#072A2A` (Elementor overlay at 98% opacity) by fetching the generated Elementor post CSS. Updated the `carousel_stack_color` control default from `rgba(22,82,68,0.74)` to `rgba(7,42,42,0.98)` and the swiper fallback background from `#0c2b28` to `#072a2a`, so the peek card blends naturally with the dark teal section surrounding the carousel.
