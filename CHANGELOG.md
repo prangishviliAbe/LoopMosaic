@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.20.4] - 2026-06-14
+### Fixed
+- **Carousel template height collapsing and alignment**: Corrected CSS selectors for `.loopmosaic-item__media`, `.loopmosaic-item__image`, and Elementor loop templates (`.elementor`) to properly inherit the 100% height inside the Swiper carousel. This stops container backgrounds and layout designs from collapsing or shifting out of place.
+- **Stacked card on last slide**: Added swiper callbacks to dynamically add `.lm-carousel-end` class to the wrapper when reaching the last slide (with loop disabled), hiding the stacked card when there are no subsequent cards.
+
 ## [1.20.3] - 2026-06-14
 ### Fixed
 - **Dark strip above slide image**: Confirmed via live DOM measurement that slide `<img>` elements render as `display: inline-block`, which reserves baseline "leading" whitespace at the top of the line box. That ~18px gap exposed the opaque swiper background (added in 1.20.2) as a strip across the top of the card. Adding `display: block; vertical-align: top` to `.loopmosaic-carousel-wrap .swiper-slide img` removes the gap so the photo sits flush against the rounded top edge.
