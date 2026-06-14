@@ -269,10 +269,11 @@
     background: rgba(255, 255, 255, 0.75);
 }
 
-/* Active switch elongates into a pill */
-.loopmosaic-carousel-wrap .swiper-pagination-bullet-active {
-    width: 28px;
-    background: #ffffff;
+/* Active switch elongates into a teal-cyan pill (design reference) */
+.loopmosaic-carousel-wrap .swiper-pagination-bullet-active,
+.loopmosaic-carousel-wrap .swiper-pagination-bullet-active:hover {
+    width: 46px;
+    background: #5ec8be;
 }
 
 /* ── Responsive ─────────────────────────────────────────────── */

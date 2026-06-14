@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.23.2] - 2026-06-14
+### Changed
+- **Active pagination pill style**: The active pagination switch is now a wider teal-cyan pill (`#5ec8be`, width 46px) matching the design reference, instead of the previous white 28px pill.
+
 ## [1.23.1] - 2026-06-14
 ### Changed
 - **Flat navigation arrows**: Removed the drop shadow from the carousel navigation arrows (and from their hover state) for the clean, flat look in the design reference. Hover scale softened slightly (1.10 → 1.08).
