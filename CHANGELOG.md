@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.20.2] - 2026-06-14
+### Fixed
+- **Stacked card flashing over photo on loop wrap (real root cause)**: Confirmed via live DOM inspection that Swiper's cloned loop slides retained `loading="lazy"` on their `<img>`, and the first clone had `complete: false` (image not loaded). When the carousel wrapped to that clone, the slide was transparent, revealing the `.lm-stack-card` (and section background) behind it. Two-pronged fix:
+  - **JS**: `eagerLoadImages()` runs after Swiper init — switches every carousel `<img>` from `loading="lazy"` to `eager` and forces an immediate fetch for any not-yet-complete image, so cloned slides are painted before the user can wrap to them.
+  - **CSS**: `.loopmosaic-swiper` now has an opaque `background: var(--lm-carousel-bg, #0c2b28)`. If a slide is ever momentarily transparent, the swiper's own background covers the stacked card rather than letting the green bar show through. The peek above the swiper still displays the stacked card as intended.
+
 ## [1.20.1] - 2026-06-14
 ### Fixed
 - **Stacked card overlaying slide content**: `transform: translateZ(0)` on `.loopmosaic-swiper` promoted it to a GPU compositing layer. GPU-composited elements are composited AFTER the main-thread paint, so the non-composited `.lm-stack-card` (z-index 0) was rendered on top of the GPU-composited swiper (z-index 1) — opposite of the intended order. Removed the transform; `z-index: 1` without any transform correctly places the swiper above the stack card in the same paint layer.

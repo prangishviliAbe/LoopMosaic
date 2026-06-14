@@ -4,7 +4,7 @@
 
 **The ultimate Elementor addon for stunning post displays.** Create beautiful Mosaic, Grid, and Masonry layouts with advanced features including AJAX-powered modal popups, real-time JetSmartFilters search integration, infinite scroll pagination, and seamless support for Elementor Loop Items & JetEngine Listings.
 
-[![Version](https://img.shields.io/badge/version-1.20.1-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
+[![Version](https://img.shields.io/badge/version-1.20.2-blue.svg)](https://github.com/prangishviliAbe/LoopMosaic)
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-green.svg)](https://wordpress.org/)
 [![Elementor](https://img.shields.io/badge/Elementor-3.0%2B-purple.svg)](https://elementor.com/)
 [![License](https://img.shields.io/badge/license-GPL%20v2-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -181,6 +181,9 @@ Forget heavy third-party popup plugins! LoopMosaic includes a lightweight, perfo
 ---
 
 ## 📋 Changelog
+
+### Version 1.20.2 (2026-06-14)
+- **Fixed (root cause):** Green stacked-card bar flashing over the photo during a loop wrap. Swiper's cloned loop slides kept `loading="lazy"` images that weren't loaded yet, so the wrapped-to slide was transparent and revealed the stacked card behind it. Carousel images are now force-loaded eagerly, and the swiper container has an opaque background as a fallback.
 
 ### Version 1.20.1 (2026-06-14)
 - **Fixed:** Stacked card overlay on last slide — `transform: translateZ(0)` on the swiper promoted it to a GPU composite layer, breaking z-index ordering so the stack card rendered over slide content. Removed the transform; simple `z-index: 1` is sufficient and correct.

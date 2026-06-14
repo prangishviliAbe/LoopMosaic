@@ -58,6 +58,26 @@
             }
 
             new Swiper(swiperEl, config);
+
+            // Loop mode clones slides; cloned <img> keep loading="lazy" and may
+            // not be loaded when the carousel wraps to them, leaving the slide
+            // transparent for a frame (the stacked card shows through). Force
+            // every carousel image to load eagerly so wraps are always seamless.
+            eagerLoadImages($wrap);
+        });
+    }
+
+    function eagerLoadImages($wrap) {
+        $wrap.find('img').each(function () {
+            var img = this;
+            if (img.getAttribute('loading') === 'lazy') {
+                img.setAttribute('loading', 'eager');
+            }
+            // Kick off the fetch now for anything not yet loaded.
+            if (!img.complete && img.getAttribute('src')) {
+                var src = img.getAttribute('src');
+                img.setAttribute('src', src);
+            }
         });
     }
 
