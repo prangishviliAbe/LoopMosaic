@@ -28,17 +28,18 @@
 
             var config = {
                 loop:           rawSettings.loop !== false,
+                loopAdditionalSlides: 1,
                 speed:          parseInt(rawSettings.speed, 10)  || 600,
                 grabCursor:     true,
-                watchSlidesProgress: true,
 
                 navigation: {
-                    prevEl: prevBtn,
-                    nextEl: nextBtn,
+                    prevEl:         prevBtn,
+                    nextEl:         nextBtn,
+                    disabledClass:  'swiper-button-disabled',
                 },
 
                 pagination: rawSettings.dots ? {
-                    el: $wrap.find('.swiper-pagination')[0] || null,
+                    el:        $wrap.find('.swiper-pagination')[0] || null,
                     clickable: true,
                 } : false,
 

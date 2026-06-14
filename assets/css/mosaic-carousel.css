@@ -38,10 +38,9 @@
     transition: none !important;
 }
 
-/* Swiper container — z-index 1 lifts it above .lm-stack-card (z-index 0).
-   No will-change here: promoting the container to a GPU layer can cause
-   its overflow:hidden clip to stop working for composited children,
-   letting transitioning slides bleed above/below the rounded card. */
+/* Swiper container — z-index 1 paints it above .lm-stack-card (z-index 0).
+   No transform/will-change: promoting to a GPU composite layer breaks the
+   z-index ordering, letting the stack card bleed over slide content. */
 .loopmosaic-carousel-wrap .loopmosaic-swiper {
     position: relative;
     z-index: 1;
@@ -49,7 +48,6 @@
     height: var(--lm-carousel-height, 520px);
     border-radius: 24px;
     overflow: hidden;
-    transform: translateZ(0);
 }
 
 /* Each slide fills the container */

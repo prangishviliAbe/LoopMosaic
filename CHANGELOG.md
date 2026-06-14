@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.20.1] - 2026-06-14
+### Fixed
+- **Stacked card overlaying slide content**: `transform: translateZ(0)` on `.loopmosaic-swiper` promoted it to a GPU compositing layer. GPU-composited elements are composited AFTER the main-thread paint, so the non-composited `.lm-stack-card` (z-index 0) was rendered on top of the GPU-composited swiper (z-index 1) — opposite of the intended order. Removed the transform; `z-index: 1` without any transform correctly places the swiper above the stack card in the same paint layer.
+- **Carousel stopping at last slide**: `watchSlidesProgress: true` can interfere with Swiper 11's loop mode, causing the navigation to appear disabled at loop boundaries. Removed `watchSlidesProgress`. Added `loopAdditionalSlides: 1` so Swiper always has enough duplicate slides to slide seamlessly from last back to first.
+
 ## [1.20.0] - 2026-06-14
 ### Fixed
 - **Slide transition glitch (root cause)**: `will-change: transform` on the swiper container was promoting it to a GPU compositing layer, which caused the `overflow: hidden` clip to stop applying to GPU-composited child slides — letting transitioning slides bleed into the stacked card area. Replaced with `transform: translateZ(0)` which composites the swiper itself without breaking child clipping.
