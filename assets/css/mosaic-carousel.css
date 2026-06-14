@@ -7,7 +7,7 @@
     position: relative;
     width: 100%;
     box-sizing: border-box;
-    --lm-carousel-nav-gap: 62px;
+    --lm-carousel-nav-gap: 84px;
 }
 
 /* Stage: card + side nav. The arrows sit in the reserved gap on the right;
@@ -227,13 +227,29 @@
     bottom: auto !important;
     top: auto !important;
     transform: none !important;
-    margin: 18px 0 0;
+    margin: 30px 0 0;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     z-index: 15;
+}
+
+/* Slide counter (current / total) below the pagination switches. */
+.loopmosaic-carousel-counter {
+    width: 100%;
+    margin: 12px 0 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.loopmosaic-carousel-counter .lm-counter-current {
+    color: #ffffff;
 }
 
 .loopmosaic-carousel-wrap .swiper-pagination-bullet {

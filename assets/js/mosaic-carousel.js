@@ -51,9 +51,11 @@
                 on: {
                     init: function () {
                         toggleStackCard(this, $wrap);
+                        updateCounter(this, $wrap);
                     },
                     slideChange: function () {
                         toggleStackCard(this, $wrap);
+                        updateCounter(this, $wrap);
                     }
                 }
             };
@@ -74,6 +76,21 @@
             // every carousel image to load eagerly so wraps are always seamless.
             eagerLoadImages($wrap);
         });
+    }
+
+    function updateCounter(swiper, $wrap) {
+        var $counter = $wrap.find('.loopmosaic-carousel-counter');
+        if (!$counter.length) return;
+
+        // Count only real slides (exclude Swiper's loop-mode clones).
+        var total = $wrap.find('.swiper-slide').not('.swiper-slide-duplicate').length;
+        var current = (typeof swiper.realIndex === 'number' ? swiper.realIndex : 0) + 1;
+
+        $counter.find('.lm-counter-current').text(current);
+        $counter.find('.lm-counter-total').text(total);
+
+        // Nothing to count through with a single slide.
+        $counter.css('display', total > 1 ? '' : 'none');
     }
 
     function toggleStackCard(swiper, $wrap) {

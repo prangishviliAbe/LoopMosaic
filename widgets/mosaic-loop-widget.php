@@ -3837,6 +3837,12 @@ class Mosaic_Loop_Widget extends Widget_Base
             echo '<div class="swiper-pagination"></div>';
         }
 
+        // Slide counter (current / total) — shown beneath the pagination.
+        // JS fills in the numbers and hides it when there is only one slide.
+        echo '<div class="loopmosaic-carousel-counter" aria-hidden="true">';
+        echo '<span class="lm-counter-current">1</span> / <span class="lm-counter-total">1</span>';
+        echo '</div>';
+
         echo '</div>'; // .loopmosaic-carousel-wrap
     }
 }

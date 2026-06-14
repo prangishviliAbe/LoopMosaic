@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.23.0] - 2026-06-14
+### Added
+- **Slide counter**: A "current / total" counter is now shown beneath the carousel pagination (matching the design reference). It updates on every slide change and auto-hides when there is only one slide.
+### Changed
+- **Carousel spacing tuned to design**: Increased the navigation-arrow gap from the card (`--lm-carousel-nav-gap` 62px → 84px) and the pagination spacing below the card (18px → 30px) to match the Figma reference.
+
 ## [1.22.5] - 2026-06-14
 ### Fixed
 - **Loop template text/content disappearing after sliding**: Content with an entrance or scroll-reveal animation (Elementor entrance animation or the theme's scroll-reveal) starts at `opacity: 0` and is only revealed when scrolled into the viewport. Because Swiper moves slides horizontally rather than scrolling them, non-active and cloned slides never triggered their reveal, leaving headings, descriptions and buttons invisible after navigating to them. The carousel now forces all slide content (`.elementor-element` / `.elementor-invisible`) to `opacity: 1; visibility: visible` and disables widget entrance animations/transforms inside slides.
