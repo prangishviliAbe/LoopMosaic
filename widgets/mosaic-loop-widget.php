@@ -1370,6 +1370,40 @@ class Mosaic_Loop_Widget extends Widget_Base
             $this->end_controls_section();
         }
 
+        // Relationship / Custom Elementor Query Section
+        $this->start_controls_section(
+            'section_custom_query',
+        [
+            'label' => esc_html__('Relationship Query', 'loop-mosaic'),
+            'tab'   => Controls_Manager::TAB_CONTENT,
+        ]
+        );
+
+        $this->add_control(
+            'use_custom_query',
+        [
+            'label'        => esc_html__('Enable Relationship Query', 'loop-mosaic'),
+            'type'         => Controls_Manager::SWITCHER,
+            'label_on'     => esc_html__('Yes', 'loop-mosaic'),
+            'label_off'    => esc_html__('No', 'loop-mosaic'),
+            'return_value' => 'yes',
+            'default'      => 'no',
+        ]
+        );
+
+        $this->add_control(
+            'custom_query_id',
+        [
+            'label'       => esc_html__('Query ID', 'loop-mosaic'),
+            'type'        => Controls_Manager::TEXT,
+            'placeholder' => 'related_posts',
+            'condition'   => ['use_custom_query' => 'yes'],
+            'description' => esc_html__('Enter the Query ID from your relationship plugin. For Post Relationship for Elementor use: related_posts (forward) or referenced_by (reverse).', 'loop-mosaic'),
+        ]
+        );
+
+        $this->end_controls_section();
+
         // Interaction Section
         $this->start_controls_section(
             'section_interaction',
@@ -3501,6 +3535,30 @@ class Mosaic_Loop_Widget extends Widget_Base
 
         // Apply filters hook
         $args = apply_filters('loopmosaic/query/args', $args, $settings, $query_id);
+
+        // Apply Relationship / Custom Elementor query hook.
+        // Fires elementor/query/{id} — the same action PostRelation-Elementor,
+        // JetEngine Relations, and any plugin using this Elementor standard
+        // will hook into. They call $q->set('post__in', [...]) on the passed
+        // WP_Query object; we read those vars back into $args before running
+        // the real query. No DB round-trip for the mock object (no args = no query).
+        if (!empty($settings['use_custom_query']) && 'yes' === $settings['use_custom_query']
+            && !empty($settings['custom_query_id'])) {
+
+            $cq_id  = sanitize_key($settings['custom_query_id']);
+            $mock_q = new \WP_Query();
+            do_action("elementor/query/{$cq_id}", $mock_q);
+
+            if (isset($mock_q->query_vars['post__in'])) {
+                $args['post__in'] = $mock_q->query_vars['post__in'];
+            }
+            if (!empty($mock_q->query_vars['orderby'])) {
+                $args['orderby'] = $mock_q->query_vars['orderby'];
+            }
+            if (!empty($mock_q->query_vars['order'])) {
+                $args['order'] = $mock_q->query_vars['order'];
+            }
+        }
 
         $query = new \WP_Query($args);
 

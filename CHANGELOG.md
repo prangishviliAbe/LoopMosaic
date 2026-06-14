@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.21.0] - 2026-06-14
+### Added
+- **Relationship Query support**: New "Relationship Query" content section with an Enable toggle and a Query ID text field. When enabled, LoopMosaic fires the standard `elementor/query/{id}` action on a bare WP_Query object before running its own query — any plugin that hooks into this action (PostRelation-Elementor, JetEngine Relations, etc.) can set `post__in` to related post IDs. For *Post Relationship for Elementor*: use `related_posts` / `pr_related_posts` (forward — posts linked from current post) or `referenced_by` / `pr_referenced_by` (reverse — posts that link to current post).
+
 ## [1.20.9] - 2026-06-14
 ### Fixed
 - **Elementor loop template text invisible in carousel**: When an Elementor loop template contained an image widget + text widgets (heading, post title, etc.) stacked vertically, text elements were completely invisible in the carousel. Root cause: (1) the previous `.elementor .e-con` selector (no `>`) applied `height: 100%` to ALL nested containers including child Container widgets, breaking the flex layout; (2) the Elementor Image widget had no height constraint, so a portrait photo expanded to its full natural size, overflowing the fixed-height card and pushing every text element below the `overflow: hidden` boundary. Fix: scoped `height: 100%` to only the root `.e-con` (direct child of `.elementor`) using `>` child combinator; added `flex: 1 1 0%; min-height: 0` to `.elementor-widget-image` so the image fills remaining flex space after text widgets take their natural height; made intermediate widget containers (`elementor-widget-container`, `figure`, `a`) `height: 100%` so the `<img>` can fill the allocated area with `object-fit: cover`.
