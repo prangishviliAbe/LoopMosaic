@@ -1373,33 +1373,20 @@ class Mosaic_Loop_Widget extends Widget_Base
         // Relationship / Custom Elementor Query Section
         $this->start_controls_section(
             'section_custom_query',
-            [
-                'label' => esc_html__('Relationship Query', 'loop-mosaic'),
-                'tab'   => Controls_Manager::TAB_CONTENT,
-            ]
-        );
-
-        $this->add_control(
-            'use_custom_query',
-            [
-                'label'        => esc_html__('Enable Relationship Query', 'loop-mosaic'),
-                'type'         => Controls_Manager::SWITCHER,
-                'label_on'     => esc_html__('Yes', 'loop-mosaic'),
-                'label_off'    => esc_html__('No', 'loop-mosaic'),
-                'return_value' => 'yes',
-                'default'      => 'no',
-            ]
+        [
+            'label' => esc_html__('Relationship Query', 'loop-mosaic'),
+            'tab'   => Controls_Manager::TAB_CONTENT,
+        ]
         );
 
         $this->add_control(
             'custom_query_id',
-            [
-                'label'       => esc_html__('Query ID', 'loop-mosaic'),
-                'type'        => Controls_Manager::TEXT,
-                'placeholder' => 'related_posts',
-                'condition'   => [ 'use_custom_query' => 'yes' ],
-                'description' => esc_html__('Enter the Query ID registered by your relationship plugin (e.g. related_posts, referenced_by).', 'loop-mosaic'),
-            ]
+        [
+            'label'       => esc_html__('Query ID', 'loop-mosaic'),
+            'type'        => Controls_Manager::TEXT,
+            'placeholder' => 'related_posts',
+            'description' => esc_html__('Enter the Query ID from your relationship plugin (e.g. related_posts, referenced_by, pr_related_posts). Leave empty to use the standard query.', 'loop-mosaic'),
+        ]
         );
 
         $this->end_controls_section();
@@ -3542,8 +3529,7 @@ class Mosaic_Loop_Widget extends Widget_Base
         // will hook into. They call $q->set('post__in', [...]) on the passed
         // WP_Query object; we read those vars back into $args before running
         // the real query. No DB round-trip for the mock object (no args = no query).
-        if (!empty($settings['use_custom_query']) && 'yes' === $settings['use_custom_query']
-            && !empty($settings['custom_query_id'])) {
+        if (!empty($settings['custom_query_id'])) {
 
             $cq_id  = sanitize_key($settings['custom_query_id']);
             $mock_q = new \WP_Query();
