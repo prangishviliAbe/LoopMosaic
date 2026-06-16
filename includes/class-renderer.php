@@ -70,6 +70,8 @@ if (!class_exists('LoopMosaic_Renderer')) {
             // and the slide appears empty. We expose the post's featured image
             // as the --lm-featured-bg CSS variable so the carousel/grid CSS can
             // paint it BEHIND the template as a fallback layer.
+            $featured_url = '';
+
             if ('default' !== $template_source) {
                 $featured_url = get_the_post_thumbnail_url($post_id, 'large');
                 if ($featured_url) {
@@ -90,6 +92,7 @@ if (!class_exists('LoopMosaic_Renderer')) {
                     $html .= self::render_floating_icon($settings, $index);
                     $html .= self::render_floating_arrow($settings);
                 }
+
             }
 
             switch ($template_source) {
@@ -98,7 +101,7 @@ if (!class_exists('LoopMosaic_Renderer')) {
                     if ($is_floating_icon_card) {
                         $html .= '<div class="loopmosaic-item__template-content">';
                     }
-                    $html .= self::render_elementor_template($template_id);
+                    $html .= self::render_elementor_template($template_id, $post_id);
                     if ($is_floating_icon_card) {
                         $html .= '</div>';
                     }
@@ -443,12 +446,37 @@ if (!class_exists('LoopMosaic_Renderer')) {
         /**
          * Render an Elementor Loop template.
          */
-        private static function render_elementor_template($template_id)
+        private static function render_elementor_template($template_id, $post_id = 0)
         {
             if (!$template_id || !class_exists('\Elementor\Plugin')) {
                 return '<div class="loopmosaic-template-placeholder">' . esc_html__('Please select a template', 'loop-mosaic') . '</div>';
             }
-            return \Elementor\Plugin::$instance->frontend->get_builder_content_for_display($template_id, true);
+
+            $elementor_db_switched = false;
+            if ($post_id && \Elementor\Plugin::$instance->db->switch_to_post($post_id)) {
+                $elementor_db_switched = true;
+            }
+
+            $html = \Elementor\Plugin::$instance->frontend->get_builder_content_for_display($template_id, true);
+
+            if ($elementor_db_switched) {
+                \Elementor\Plugin::$instance->db->switch_to_post(0);
+            }
+
+            if (class_exists('\Elementor\Core\Files\CSS\Post')) {
+                $css_file = new \Elementor\Core\Files\CSS\Post($template_id);
+                $css_file->enqueue();
+                $css = $css_file->get_content();
+                if (!empty($css)) {
+                    $html = '<style>' . $css . '</style>' . $html;
+                }
+            }
+
+            if (!empty($html)) {
+                $html = '<div class="loopmosaic-elementor-content">' . $html . '</div>';
+            }
+
+            return $html;
         }
 
         /**

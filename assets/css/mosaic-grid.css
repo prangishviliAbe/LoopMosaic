@@ -1171,11 +1171,30 @@
     width: 100%;
 }
 
+
 /* === Elementor Loop Template Support === */
 .loopmosaic-item .elementor-loop-container,
 .loopmosaic-item .e-loop-item,
 .loopmosaic-item .elementor-widget-container {
     height: 100%;
+}
+
+.loopmosaic-elementor-content {
+    height: 100%;
+    width: 100%;
+}
+
+.loopmosaic-elementor-content > .elementor {
+    height: 100%;
+}
+
+.loopmosaic-elementor-content > .elementor > .elementor-inner {
+    height: 100%;
+}
+
+.loopmosaic-item__template-content {
+    height: 100%;
+    width: 100%;
 }
 
 .loopmosaic-item .elementor-section,
