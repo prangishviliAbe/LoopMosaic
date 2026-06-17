@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.24.1] - 2026-06-17
+### Added
+- **Eager image loading for grid/masonry**: Mirrors the carousel's lazy-load fix — `eagerLoadGridImages()` switches every grid image from `loading="lazy"` to `eager` and kicks off the fetch immediately, called after initial render, AJAX filter results, infinite scroll, and load-more. Prevents images from staying blank when JetSmartFilters or infinite scroll injects new cards below the fold.
+
 ## [1.24.0] - 2026-06-17
 ### Added
 - **Vertical slide direction**: New "Slide Direction" control in Carousel Settings lets the carousel transition vertically (top/bottom) instead of the default horizontal (left/right). Passed through to Swiper's `direction` option via the `data-carousel` config; adds a `loopmosaic-carousel-wrap--vertical` class on the wrapper for any future direction-specific styling.

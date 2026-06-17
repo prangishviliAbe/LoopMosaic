@@ -31,6 +31,7 @@
 
             this.bindEvents();
             this.storeGridSettings();
+            this.eagerLoadGridImages();
             this.initModalHandler();
             this.initInfiniteScroll();
             this.disableNativeLinks();
@@ -344,6 +345,7 @@
                     if (response.success && response.data) {
                         if (response.data.content) {
                             $grid.html(response.data.content);
+                            self.eagerLoadGridImages($grid);
                         } else if (response.data.found_posts === 0) {
                             $grid.html('<div class="loopmosaic-no-results">No results found.</div>');
                         }
@@ -530,6 +532,19 @@
             });
         },
 
+        eagerLoadGridImages: function ($context) {
+            const $grids = $context ? $context.filter('.loopmosaic-grid').add($context.find('.loopmosaic-grid')) : $('.loopmosaic-grid');
+            $grids.find('img').each(function () {
+                if (this.getAttribute('loading') === 'lazy') {
+                    this.setAttribute('loading', 'eager');
+                }
+                if (!this.complete && this.getAttribute('src')) {
+                    const src = this.getAttribute('src');
+                    this.setAttribute('src', src);
+                }
+            });
+        },
+
         bindEvents: function () {
             const self = this;
 
@@ -542,7 +557,10 @@
                     const $grid = self.getGrid(queryId);
                     if ($grid.length) {
                         $grid.removeClass('jet-filters-loading');
-                        if (response && response.content) $grid.html(response.content);
+                        if (response && response.content) {
+                            $grid.html(response.content);
+                            self.eagerLoadGridImages($grid);
+                        }
 
                         if ($grid.hasClass('loopmosaic-masonry')) {
                             $grid.imagesLoaded(function () {
@@ -705,6 +723,7 @@
                     if (response.success && response.data.content) {
                         const $newItems = $(response.data.content).addClass('loopmosaic-item-new');
                         $grid.append($newItems);
+                        self.eagerLoadGridImages($newItems);
 
                         if ($grid.hasClass('loopmosaic-masonry')) {
                             $grid.imagesLoaded(function () {
