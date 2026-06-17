@@ -31,6 +31,7 @@
                 loopAdditionalSlides: 1,
                 speed:          parseInt(rawSettings.speed, 10)  || 600,
                 grabCursor:     true,
+                direction:      rawSettings.direction === 'vertical' ? 'vertical' : 'horizontal',
 
                 navigation: {
                     prevEl:         prevBtn,

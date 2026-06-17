@@ -599,6 +599,20 @@ class Mosaic_Loop_Widget extends Widget_Base
         );
 
         $this->add_control(
+            'carousel_direction',
+        [
+            'label'       => esc_html__('Slide Direction', 'loop-mosaic'),
+            'type'        => Controls_Manager::SELECT,
+            'options'     => [
+                'horizontal' => esc_html__('Horizontal (left / right)', 'loop-mosaic'),
+                'vertical'   => esc_html__('Vertical (top / bottom)', 'loop-mosaic'),
+            ],
+            'default'     => 'horizontal',
+            'separator'   => 'before',
+        ]
+        );
+
+        $this->add_control(
             'carousel_loop',
         [
             'label'        => esc_html__('Loop', 'loop-mosaic'),
@@ -607,7 +621,6 @@ class Mosaic_Loop_Widget extends Widget_Base
             'label_off'    => esc_html__('No', 'loop-mosaic'),
             'return_value' => 'yes',
             'default'      => 'yes',
-            'separator'    => 'before',
         ]
         );
 
@@ -3775,11 +3788,17 @@ class Mosaic_Loop_Widget extends Widget_Base
             'autoplay'      => !empty($settings['carousel_autoplay']) && 'yes' === $settings['carousel_autoplay'],
             'autoplaySpeed' => intval($settings['carousel_autoplay_speed'] ?? 4000),
             'dots'          => !empty($settings['carousel_dots']) && 'yes' === $settings['carousel_dots'],
+            'direction'     => ('vertical' === ($settings['carousel_direction'] ?? 'horizontal')) ? 'vertical' : 'horizontal',
         ];
 
         $has_stack = empty($settings['carousel_stack']) || 'yes' === $settings['carousel_stack'];
 
-        echo '<div class="loopmosaic-carousel-wrap" id="' . esc_attr($carousel_id) . '" data-carousel="' . esc_attr(wp_json_encode($carousel_cfg)) . '">';
+        $wrap_classes = ['loopmosaic-carousel-wrap'];
+        if ('vertical' === $carousel_cfg['direction']) {
+            $wrap_classes[] = 'loopmosaic-carousel-wrap--vertical';
+        }
+
+        echo '<div class="' . esc_attr(implode(' ', $wrap_classes)) . '" id="' . esc_attr($carousel_id) . '" data-carousel="' . esc_attr(wp_json_encode($carousel_cfg)) . '">';
 
         // Stage = card + side navigation. Its height drives the vertical
         // centering of the arrows, so pagination (placed below) won't shift them.

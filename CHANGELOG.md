@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.24.0] - 2026-06-17
+### Added
+- **Vertical slide direction**: New "Slide Direction" control in Carousel Settings lets the carousel transition vertically (top/bottom) instead of the default horizontal (left/right). Passed through to Swiper's `direction` option via the `data-carousel` config; adds a `loopmosaic-carousel-wrap--vertical` class on the wrapper for any future direction-specific styling.
+
 ## [1.23.3] - 2026-06-14
 ### Changed
 - **Active pagination pill color**: Set to the exact design value `#5FC2C2`.
