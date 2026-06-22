@@ -60,7 +60,15 @@
 .loopmosaic-grid:not(.img-mode-auto).pattern-classic,
 .loopmosaic-grid:not(.img-mode-auto).pattern-metro,
 .loopmosaic-grid:not(.img-mode-auto).pattern-masonry,
-.loopmosaic-grid:not(.img-mode-auto).pattern-highlight {
+.loopmosaic-grid:not(.img-mode-auto).pattern-highlight,
+.loopmosaic-grid:not(.img-mode-auto).pattern-spotlight_grid,
+.loopmosaic-grid:not(.img-mode-auto).pattern-portrait_mosaic,
+.loopmosaic-grid:not(.img-mode-auto).pattern-editorial_spread,
+.loopmosaic-grid:not(.img-mode-auto).pattern-sidebar_feature,
+.loopmosaic-grid:not(.img-mode-auto).pattern-windmill_corner,
+.loopmosaic-grid:not(.img-mode-auto).pattern-filmstrip_break,
+.loopmosaic-grid:not(.img-mode-auto).pattern-staggered_columns,
+.loopmosaic-grid:not(.img-mode-auto).pattern-overlapping_stack {
     grid-auto-rows: minmax(var(--lm-min-height, 200px), auto);
 }
 
@@ -234,6 +242,253 @@
 .loopmosaic-grid.pattern-hero_grid .loopmosaic-item:nth-child(4n+3),
 .loopmosaic-grid.pattern-hero_grid .loopmosaic-item:nth-child(4n+4) {
     grid-column: span 1;
+}
+
+/* === Pattern 8: Spotlight Grid (1+2+4) === */
+.loopmosaic-grid.pattern-spotlight_grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-spotlight_grid .loopmosaic-item:nth-child(7n+1) {
+    grid-column: 1 / 3;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-spotlight_grid .loopmosaic-item:nth-child(7n+2),
+.loopmosaic-grid.pattern-spotlight_grid .loopmosaic-item:nth-child(7n+3) {
+    grid-column: 3 / 5;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-spotlight_grid .loopmosaic-item:nth-child(7n+4) {
+    grid-column: 1 / 2;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-spotlight_grid .loopmosaic-item:nth-child(7n+5) {
+    grid-column: 2 / 3;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-spotlight_grid .loopmosaic-item:nth-child(7n+6) {
+    grid-column: 3 / 4;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-spotlight_grid .loopmosaic-item:nth-child(7n+7) {
+    grid-column: 4 / 5;
+    grid-row: span 1;
+}
+
+/* === Pattern 9: Portrait Mosaic (2+5) === */
+.loopmosaic-grid.pattern-portrait_mosaic {
+    grid-template-columns: repeat(6, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-portrait_mosaic .loopmosaic-item:nth-child(7n+1) {
+    grid-column: 1 / 4;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-portrait_mosaic .loopmosaic-item:nth-child(7n+2) {
+    grid-column: 4 / 7;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-portrait_mosaic .loopmosaic-item:nth-child(7n+3) {
+    grid-column: 1 / 3;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-portrait_mosaic .loopmosaic-item:nth-child(7n+4),
+.loopmosaic-grid.pattern-portrait_mosaic .loopmosaic-item:nth-child(7n+5) {
+    grid-column: 3 / 5;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-portrait_mosaic .loopmosaic-item:nth-child(7n+6) {
+    grid-column: 5 / 7;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-portrait_mosaic .loopmosaic-item:nth-child(7n+7) {
+    grid-column: 1 / 5;
+    grid-row: span 1;
+}
+
+/* === Pattern 10: Editorial Spread === */
+.loopmosaic-grid.pattern-editorial_spread {
+    grid-template-columns: repeat(6, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-editorial_spread .loopmosaic-item:nth-child(6n+1) {
+    grid-column: 1 / 5;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-editorial_spread .loopmosaic-item:nth-child(6n+2),
+.loopmosaic-grid.pattern-editorial_spread .loopmosaic-item:nth-child(6n+3) {
+    grid-column: 5 / 7;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-editorial_spread .loopmosaic-item:nth-child(6n+4) {
+    grid-column: 1 / 7;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-editorial_spread .loopmosaic-item:nth-child(6n+5) {
+    grid-column: 1 / 4;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-editorial_spread .loopmosaic-item:nth-child(6n+6) {
+    grid-column: 4 / 7;
+    grid-row: span 1;
+}
+
+/* === Pattern 11: Sidebar Feature === */
+.loopmosaic-grid.pattern-sidebar_feature {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-sidebar_feature .loopmosaic-item:nth-child(5n+1) {
+    grid-column: 1 / 2;
+    grid-row: span 3;
+}
+
+.loopmosaic-grid.pattern-sidebar_feature .loopmosaic-item:nth-child(5n+2) {
+    grid-column: 2 / 5;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-sidebar_feature .loopmosaic-item:nth-child(5n+3) {
+    grid-column: 2 / 4;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-sidebar_feature .loopmosaic-item:nth-child(5n+4) {
+    grid-column: 4 / 5;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-sidebar_feature .loopmosaic-item:nth-child(5n+5) {
+    grid-column: 2 / 5;
+    grid-row: span 1;
+}
+
+/* === Pattern 12: Windmill Corner === */
+.loopmosaic-grid.pattern-windmill_corner {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-windmill_corner .loopmosaic-item:nth-child(5n+1) {
+    grid-column: 2 / 5;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-windmill_corner .loopmosaic-item:nth-child(5n+2),
+.loopmosaic-grid.pattern-windmill_corner .loopmosaic-item:nth-child(5n+3) {
+    grid-column: 1 / 2;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-windmill_corner .loopmosaic-item:nth-child(5n+4) {
+    grid-column: 1 / 3;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-windmill_corner .loopmosaic-item:nth-child(5n+5) {
+    grid-column: 3 / 5;
+    grid-row: span 1;
+}
+
+/* === Pattern 13: Filmstrip Break === */
+.loopmosaic-grid.pattern-filmstrip_break {
+    grid-template-columns: repeat(6, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item:nth-child(8n+1) {
+    grid-column: 1 / 4;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item:nth-child(8n+2) {
+    grid-column: 4 / 7;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item:nth-child(8n+3),
+.loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item:nth-child(8n+4),
+.loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item:nth-child(8n+5),
+.loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item:nth-child(8n+6),
+.loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item:nth-child(8n+7),
+.loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item:nth-child(8n+8) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* === Pattern 14: Staggered Columns === */
+.loopmosaic-grid.pattern-staggered_columns {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-staggered_columns .loopmosaic-item:nth-child(6n+1) {
+    grid-column: 1 / 2;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-staggered_columns .loopmosaic-item:nth-child(6n+2) {
+    grid-column: 2 / 3;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-staggered_columns .loopmosaic-item:nth-child(6n+3) {
+    grid-column: 3 / 4;
+    grid-row: span 2;
+}
+
+.loopmosaic-grid.pattern-staggered_columns .loopmosaic-item:nth-child(6n+4) {
+    grid-column: 4 / 5;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-staggered_columns .loopmosaic-item:nth-child(6n+5) {
+    grid-column: 2 / 3;
+    grid-row: span 1;
+}
+
+.loopmosaic-grid.pattern-staggered_columns .loopmosaic-item:nth-child(6n+6) {
+    grid-column: 4 / 5;
+    grid-row: span 1;
+}
+
+/* === Pattern 15: Overlapping Stack ===
+   item2 is placed in normal grid flow (auto row), then pulled up with a
+   negative margin so it visually overlaps item1's bottom edge. This keeps
+   placement safe across repeating cycles instead of hardcoding row lines,
+   which would make every cycle overlap the first. */
+.loopmosaic-grid.pattern-overlapping_stack {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.loopmosaic-grid.pattern-overlapping_stack .loopmosaic-item:nth-child(3n+1) {
+    grid-column: 1 / 5;
+    grid-row: span 2;
+    z-index: 1;
+}
+
+.loopmosaic-grid.pattern-overlapping_stack .loopmosaic-item:nth-child(3n+2) {
+    grid-column: 3 / 5;
+    grid-row: span 1;
+    position: relative;
+    z-index: 2;
+    margin: -48px 12px 12px 0;
+}
+
+.loopmosaic-grid.pattern-overlapping_stack .loopmosaic-item:nth-child(3n+3) {
+    grid-column: 1 / 3;
+    grid-row: span 1;
 }
 
 
@@ -880,20 +1135,45 @@
     .loopmosaic-grid.pattern-masonry .loopmosaic-item,
     .loopmosaic-grid.pattern-featured_grid .loopmosaic-item,
     .loopmosaic-grid.pattern-featured_grid_2_4 .loopmosaic-item,
-    .loopmosaic-grid.pattern-hero_grid .loopmosaic-item {
+    .loopmosaic-grid.pattern-hero_grid .loopmosaic-item,
+    .loopmosaic-grid.pattern-spotlight_grid .loopmosaic-item,
+    .loopmosaic-grid.pattern-portrait_mosaic .loopmosaic-item,
+    .loopmosaic-grid.pattern-editorial_spread .loopmosaic-item,
+    .loopmosaic-grid.pattern-sidebar_feature .loopmosaic-item,
+    .loopmosaic-grid.pattern-windmill_corner .loopmosaic-item,
+    .loopmosaic-grid.pattern-filmstrip_break .loopmosaic-item,
+    .loopmosaic-grid.pattern-staggered_columns .loopmosaic-item {
         grid-column: span 1 !important;
         grid-row: span 1 !important;
     }
 
     .loopmosaic-grid.pattern-featured_grid,
     .loopmosaic-grid.pattern-featured_grid_2_4,
-    .loopmosaic-grid.pattern-hero_grid {
+    .loopmosaic-grid.pattern-hero_grid,
+    .loopmosaic-grid.pattern-spotlight_grid,
+    .loopmosaic-grid.pattern-portrait_mosaic,
+    .loopmosaic-grid.pattern-editorial_spread,
+    .loopmosaic-grid.pattern-sidebar_feature,
+    .loopmosaic-grid.pattern-windmill_corner,
+    .loopmosaic-grid.pattern-filmstrip_break,
+    .loopmosaic-grid.pattern-staggered_columns {
         grid-template-columns: repeat(3, 1fr) !important;
     }
 
     .loopmosaic-grid.pattern-highlight .loopmosaic-item:first-child {
         grid-column: span 2 !important;
         grid-row: span 1 !important;
+    }
+
+    .loopmosaic-grid.pattern-overlapping_stack {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    .loopmosaic-grid.pattern-overlapping_stack .loopmosaic-item {
+        grid-column: span 1 !important;
+        grid-row: span 1 !important;
+        margin: 0 !important;
+        z-index: auto !important;
     }
 
     .loopmosaic-grid {
