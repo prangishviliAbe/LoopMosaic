@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.24.2] - 2026-06-22
+### Fixed
+- **Row-spanning grid patterns collapsing to ~1x height**: The `classic`, `metro`, `masonry` and `highlight` patterns assign `grid-row: span 2` to some cards, but the grid never defined an implicit-row track (`grid-auto-rows`). Tall cards only got their height from single-span siblings propping each spanned row up to the card min-height, so any spanned row *without* such a sibling — most often the last row, or with certain item/column counts — collapsed and the "tall" card rendered at roughly single-row height. The four row-spanning patterns now set `grid-auto-rows: minmax(var(--lm-min-height, 200px), auto)`, flooring every implicit row at the card min-height (so `span 2` = exactly two tracks + the row gap) while still letting content-taller cards grow. Auto image mode (`img-mode-auto`) is excluded so it keeps flowing naturally. The **Card Min Height** control now also emits `--lm-min-height` on `.loopmosaic-grid` (in addition to `.loopmosaic-item`) so the auto-rows track follows it — regenerate Elementor CSS to pick up customized values. The column-only patterns (`uniform`, `featured_grid`, `featured_grid_2_4`, `hero_grid`) were already correct and are unaffected.
+### Removed
+- **Dead CSS in `mosaic-grid.css`**: Removed the unused `.loopmosaic-item__content` rule (the renderer outputs `.loopmosaic-item__inner`, never `__content`) along with ~43 lines of stale developer stream-of-consciousness comments at the end of the file, plus a duplicate `@keyframes loopmosaic-spin` definition (one canonical copy remains).
+
 ## [1.24.1] - 2026-06-17
 ### Added
 - **Eager image loading for grid/masonry**: Mirrors the carousel's lazy-load fix — `eagerLoadGridImages()` switches every grid image from `loading="lazy"` to `eager` and kicks off the fetch immediately, called after initial render, AJAX filter results, infinite scroll, and load-more. Prevents images from staying blank when JetSmartFilters or infinite scroll injects new cards below the fold.

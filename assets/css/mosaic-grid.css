@@ -50,6 +50,20 @@
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+/* === Implicit Row Track for Row-Spanning Patterns ===
+   classic / metro / masonry / highlight give some cards `grid-row: span 2`.
+   With no defined implicit-row track, a spanned row that has no single-span
+   sibling collapses, so the tall card renders at ~1x height (most visible on
+   the last row). minmax() floors every implicit row at the card min-height —
+   span-2 then equals two tracks + the row gap — while still letting taller
+   cards grow. Auto image mode flows naturally, so it opts out. */
+.loopmosaic-grid:not(.img-mode-auto).pattern-classic,
+.loopmosaic-grid:not(.img-mode-auto).pattern-metro,
+.loopmosaic-grid:not(.img-mode-auto).pattern-masonry,
+.loopmosaic-grid:not(.img-mode-auto).pattern-highlight {
+    grid-auto-rows: minmax(var(--lm-min-height, 200px), auto);
+}
+
 /* === Pattern 1: Classic Mosaic (Based on Screenshot) === */
 .loopmosaic-grid.pattern-classic .loopmosaic-item:nth-child(13n+1) {
     grid-column: span 1;
@@ -1272,12 +1286,6 @@
     animation: loopmosaic-spin 1s ease-in-out infinite;
 }
 
-@keyframes loopmosaic-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 .loopmosaic-grid.is-loading-more .loopmosaic-item-new {
     animation: loopmosaic-fade-up 0.5s ease forwards;
 }
@@ -1354,54 +1362,3 @@
     opacity: 1;
     visibility: visible;
 }
-
-.loopmosaic-item__content {
-    pointer-events: none;
-    /* Text not selectable, clicks pass to link */
-    z-index: 11;
-    /* Visible above link */
-}
-
-/* If we want text selection, we need pointer-events: auto on content. But then we lose the "click anywhere" on text. */
-/* Standard practice for these cards: "Click anywhere" implies link covers all. */
-/* Then button hover is fake? No, we can't hover button if link is on top. */
-/* SOLUTION: Make link z-index 1. Content z-index 2. 
-   But then clicking content (text) won't trigger link unless content is wrapped in <a> or JS handles it. */
-/* OR: Link covers all. Button hover is just card hover. */
-/* WAITING: User asked for "button styling". If they want specific button hover (like button turns red when mouse is OVER BUTTON), button must be on top. */
-/* If button is on top, clicking it must go to post. */
-/* We can wrap button in <a> tag? */
-/* Current implementation: Button is <span> inside <div>. */
-/* If I change span to <a>, nested links are illegal. .loopmosaic-item__link is <a>. */
-/* SO: I will keep it visual. */
-/* CSS targeting: .loopmosaic-item:hover .loopmosaic-read-more vs .loopmosaic-read-more:hover */
-/* If link covers all, .loopmosaic-read-more:hover NEVER fires. */
-/* I will assume user is okay with card hover effects, OR I need to move link to be siblings or z-index magic. */
-/* For now, I'll stick to standard overlay link behavior where link is absolute and covers everything. item:hover triggers effects. */
-/* BUT user added "Hover" tab for button. They expect button to change when hovered? */
-/* If so, I need to make button clickable/hoverable. */
-/* I will make .loopmosaic-read-more pointer-events: auto and z-index higher than link. */
-/* And add onclick="location.href='...'"? No, that's messy. */
-/* BETTER: Link covers image. Content (text) is above link (z-index). Pointer events on text are 'none' (clicks pass through). */
-/* Pointer events on Button are 'auto'. */
-/* BUT button is NOT an <a> tag. So clicking it does nothing if it blocks the link! */
-/* So I MUST wrap button in <a> anchor if I want it to be actionable on top. */
-/* But nested <a> is invalid HTML5 if the parent container is <a>? No, the container is <div>. The link is valid sibling or absolute overlay. */
-/* Structure:
-   <div item>
-      <img />
-      <div content> ... <span button> ... </div>
-      <a link full-cover />
-   </div>
-*/
-/* If content is above link, and button has pointer-events: auto, clicking button BLOCKS link click. */
-/* So button MUST be a link itself OR have JS to bubble click? */
-/* JS bubble: Click on button -> bubbles to item -> item has click listener? */
-/* The main link is `a.loopmosaic-item__link`. */
-/* I can add a click handler to the button that simulates clicking the link. */
-/* OR simpler: `.loopmosaic-read-more` is just styled text. Link covers it. */
-/* AND: Hover effects on button only trigger when hovering the CARD? */
-/* NO, users hate that. They want button to react when mouse is ON BUTTON. */
-/* So Button MUST be above link. And thus Button MUST be a link. */
-/* I will change <span> to <a> for the button. */
-/* And ensure z-index is correct. */

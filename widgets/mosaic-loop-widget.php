@@ -526,6 +526,11 @@ class Mosaic_Loop_Widget extends Widget_Base
                 'unit' => 'px',
             ],
             'selectors' => [
+                // Also set on the grid so row-spanning patterns can feed it into
+                // grid-auto-rows; the property still inherits down to each card.
+                // Kept on .loopmosaic-item too so carousel/other contexts are
+                // unaffected by the move.
+                '{{WRAPPER}} .loopmosaic-grid' => '--lm-min-height: {{SIZE}}{{UNIT}};',
                 '{{WRAPPER}} .loopmosaic-item' => '--lm-min-height: {{SIZE}}{{UNIT}};',
             ],
         ]
