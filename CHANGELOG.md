@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.25.1] - 2026-06-23
+### Fixed
+- **Card hover border overflowing past the card edge**: `.loopmosaic-item` had no `box-sizing` set, so it defaulted to the browser's `content-box`. Setting a border on the widget's Card Border *Hover* tab added that border width on top of the card's existing size instead of absorbing it, growing the box slightly on hover and pushing it past its grid cell — most visible at the bottom edge. Added `box-sizing: border-box` so any hover border now draws inside the card's existing footprint and can never exceed it.
+
 ## [1.25.0] - 2026-06-22
 ### Added
 - **8 new Mosaic Pattern layouts**: `Spotlight Grid (1+2+4)` and `Portrait Mosaic (2+5)` recreate two specific editorial card-grid layouts pixel-for-pixel (hero block + stacked side cells + footer row; twin hero strip + tall side columns + stacked middle cells + wide closer row). Also added six original layouts — `Editorial Spread`, `Sidebar Feature`, `Windmill Corner`, `Filmstrip Break`, `Staggered Columns`, and `Overlapping Stack` (a card that visually overlaps the hero above it via a negative margin, with the offset cleanly reset below 768px). All eight use explicit `grid-column` line placement with indefinite (`span`-only) row placement, which keeps repeating item cycles from colliding across rows — plain `grid-column`/`grid-row: span N` auto-placement alone could not reliably reproduce the more complex shapes. Added to the existing `grid-auto-rows` row-collapse safety net and given the same tablet-breakpoint flattening as the other mosaic patterns.
