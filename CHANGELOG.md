@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.25.2] - 2026-06-23
+### Added
+- **Hover Overlay Border Radius control**: New responsive "Border Radius" setting in the Hover Overlay style section, applied directly to `.loopmosaic-item__hover-overlay`. Lets the overlay's own rounding match a custom Elementor Loop Item template's corner radius independently of the Card section's Border Radius — useful when the card's visible chrome comes from a custom template with its own rounding rather than the plugin's built-in card styles.
+
 ## [1.25.1] - 2026-06-23
 ### Fixed
 - **Card hover border overflowing past the card edge**: `.loopmosaic-item` had no `box-sizing` set, so it defaulted to the browser's `content-box`. Setting a border on the widget's Card Border *Hover* tab added that border width on top of the card's existing size instead of absorbing it, growing the box slightly on hover and pushing it past its grid cell — most visible at the bottom edge. Added `box-sizing: border-box` so any hover border now draws inside the card's existing footprint and can never exceed it.

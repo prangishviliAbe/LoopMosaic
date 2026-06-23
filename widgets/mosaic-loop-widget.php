@@ -2756,6 +2756,28 @@ class Mosaic_Loop_Widget extends Widget_Base
             ]
         );
 
+        $this->add_responsive_control(
+            'hover_overlay_border_radius',
+        [
+            'label' => esc_html__('Border Radius', 'loop-mosaic'),
+            'type' => Controls_Manager::DIMENSIONS,
+            'size_units' => ['px', '%'],
+            'default' => [
+                'top' => 0,
+                'right' => 0,
+                'bottom' => 0,
+                'left' => 0,
+                'unit' => 'px',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .loopmosaic-item__hover-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
+            'condition' => [
+                'enable_hover_overlay' => 'yes',
+            ],
+        ]
+        );
+
         // --- Position Controls ---
         $this->add_control(
             'hover_overlay_position_heading',
